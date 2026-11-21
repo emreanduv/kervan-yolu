@@ -1,0 +1,21 @@
+# Kervan Yolu — Yayın durumu (21 Kasım 2026)
+
+Kimlik: `com.anduv.kervanyolu` (iOS + Android) · SKU `kervan-yolu` · Mağazada ücretsiz, Tam Sürüm 1,99 $ (`com.anduv.kervanyolu.tamsurum`, ilk 3 sefer açık) · Dikey + yatay
+Gizlilik: https://emreanduv.github.io/kervan-yolu/gizlilik.html · Mağaza metinleri: `store/magaza-metinleri.md`, `store/appstore-metadata/`
+Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar/magaza-gorselleri.py`), `store/play-icon-512.png`
+
+## Durum
+- [x] Oyun 1.0.0: 1923 sefer, 5 sefer türü (kasa/forklift, kule segmenti, 40 m kanat, acil yedek parça, dönüş), drone ile hasar tespiti, sigorta, gece/sabah/öğle/akşam, kabin içi kamera, çarpışmalar, Serbest Sürüş ilk sekme
+- [x] Standart: dil sorusu, rehber, Nasıl Oynanır, puan, paylaş, Bize yaz, Verilerimi sil, Tam Sürüm + geri yükle, ekran uyanık, Mr. Anduv! pano seti, yayın öncesi kontrol
+- [x] Capacitor iOS + Android projesi, simge ve açılış ekranı
+- [x] Repo: emreanduv/kervan-yolu (Emre açtı, 21 Kas 2026)
+- [ ] Emre: repo sırları — `ASC_KEY_P8` (diğer oyunlardakiyle aynı), `ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`; değişken `FEEDBACK_MAIL`
+- [ ] Bundle ID kaydı: sırlar girilince `asc-bundle-id.yml` çalıştırılır
+- [ ] Emre: App Store Connect → Uygulamalar → + Yeni Uygulama (ad Kervan Yolu, kimlik com.anduv.kervanyolu, SKU kervan-yolu). Uygulama kimliği (id) gelince iş akışlarındaki `ASC_APP_ID_BEKLIYOR` ve `www/index.html` → `APPSTORE_ID` doldurulur
+- [ ] iOS derleme (`store/TETIK-IOS`) → TestFlight → App Store metin/görsel/IAP (`store/TETIK-APPSTORE`) → incelemeye gönder
+- [ ] Emre: Play Console'da "Uygulama oluştur" + kapalı test listesi
+- [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri
+
+## Android yükleme anahtarı — KAYBETME
+`kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)
+SHA-256: 06:D1:CD:D6:E7:08:75:1E:29:FE:20:CC:54:BD:38:3D:B3:CB:63:A9:D5:C0:A0:B7:08:57:A1:75:85:5F:75:5C

@@ -1,0 +1,1 @@
+First release: 1923 jobs, five job types (crates, tower, blade, urgent spare part, return), forklift, drone inspection, insurance, night driving and cab view.

@@ -1,0 +1,30 @@
+name: TestFlight — test ekibine aç
+# iOS derlemesi bitince çalışır: derlemenin işlenmesini bekler, "Mr. Anduv! Testçileri" dış grubunu kurar,
+# store/testflight-testciler.txt'teki kişileri ekler, derlemeyi gruba verir ve Beta incelemesine gönderir.
+# İnceleme iletişim bilgileri Malazgirt Akıncıları'nın TestFlight bilgilerinden kopyalanır.
+on:
+  workflow_run:
+    workflows: ["iOS (App Store Connect / TestFlight)"]
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */2 * * *'   # önceki derleme beta incelemesindeyse sonrakini yeniden göndermek için
+  push:
+    branches: [main]
+    paths: ['store/DERLEME', '.github/workflows/testflight-test.yml']
+env:
+  ASC_KEY_ID: DJSHKK6T3P
+  ASC_ISSUER_ID: f4943ef8-df6f-42c8-a561-58554097ea35
+  APP_ID: "ASC_APP_ID_BEKLIYOR"
+  KAYNAK_BUNDLE: com.anduv.malazgirt
+jobs:
+  ac:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pyjwt cryptography requests
+      - name: Test ekibine aç
+        env: { P8: "${{ secrets.ASC_KEY_P8 }}", MIN_BUILD: "${{ github.event.workflow_run.run_number }}" }
+        run: python3 araclar/testflight-ac.py

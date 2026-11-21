@@ -1,0 +1,26 @@
+Wind turbine logistics simulator: drive a truck from the port to a wind farm in the hills hauling tower sections, blades, SCADA panels and spare parts. 1923 jobs, forklift loading, drone damage inspection and realistic freight pay.
+
+JOBS
+• Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
+• Tower section: a heavy load on a lowbed trailer; manage gears and brakes on the climbs.
+• Turbine blade: a 40 metre blade sticking out 30 metres behind the trailer. Take corners wide and keep it off the slopes.
+• Urgent spare part: a turbine is down; short deadline, high pay.
+• Return job: take the empty blade racks back to the port.
+
+DELIVERY AND DAMAGE
+• Fly the drone at delivery and scan the cargo: scratches, dents and coating damage go into the report.
+• Going off road, harsh corners, sudden braking and collisions damage the cargo.
+• Job report: freight fee, damage deduction, insurance payout (after the deductible), late penalty and damage-free bonus.
+
+THE ROAD
+From the port, past the container crane and the cargo ship, along the coast and up into the hills; a caravanserai by the road, spinning wind turbines and a crawler crane on site. Morning, noon, evening and night drives; at night, drive by your headlights.
+
+THE CAB
+Live gauges, steering wheel, tachograph, prayer beads hanging from the windscreen and a tulip tea glass on the dashboard.
+
+GAMEPLAY
+• Free Drive: no jobs and no clock; pick the time of day and enjoy the road.
+• The first 3 jobs are free. The Full Version (one-time purchase) unlocks all 1923 jobs.
+• Turkish and English, no ads, works offline, collects no data.
+
+A Mr. Anduv! production.

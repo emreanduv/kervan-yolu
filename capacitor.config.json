@@ -1,0 +1,13 @@
+{
+  "appId": "com.anduv.kervanyolu",
+  "appName": "Kervan Yolu",
+  "webDir": "www",
+  "backgroundColor": "#0b1410",
+  "android": {
+    "backgroundColor": "#0b1410"
+  },
+  "ios": {
+    "backgroundColor": "#0b1410",
+    "contentInset": "never"
+  }
+}

@@ -1,0 +1,1 @@
+truck,simulator,wind turbine,logistics,forklift,drone,cargo,trucking,driving,haul,blade
