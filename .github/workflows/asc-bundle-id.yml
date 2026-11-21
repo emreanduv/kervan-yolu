@@ -1,4 +1,5 @@
 name: App Store Connect — Bundle ID kaydet
+# Kervan Yolu: com.anduv.kervanyolu (21 Kas 2026 ilk kayıt)
 # com.anduv.kervanyolu kimliğini Apple Developer hesabına kaydeder (zaten varsa dokunmaz).
 # Sonra App Store Connect → Uygulamalar → + Yeni Uygulama ekranında bu kimlik listede çıkar.
 on:

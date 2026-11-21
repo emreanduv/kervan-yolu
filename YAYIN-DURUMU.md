@@ -9,12 +9,13 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] Standart: dil sorusu, rehber, Nasıl Oynanır, puan, paylaş, Bize yaz, Verilerimi sil, Tam Sürüm + geri yükle, ekran uyanık, Mr. Anduv! pano seti, yayın öncesi kontrol
 - [x] Capacitor iOS + Android projesi, simge ve açılış ekranı
 - [x] Repo: emreanduv/kervan-yolu (Emre açtı, 21 Kas 2026)
-- [ ] Emre: repo sırları — `ASC_KEY_P8` (diğer oyunlardakiyle aynı), `ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`; değişken `FEEDBACK_MAIL`
-- [ ] Bundle ID kaydı: sırlar girilince `asc-bundle-id.yml` çalıştırılır
+- [x] Emre: `ASC_KEY_P8` girildi (21 Kas 2026) · [ ] Android sırları Google çalışmasında · [ ] değişken `FEEDBACK_MAIL`
+- [x] Bundle ID kaydı tetiklendi (`asc-bundle-id.yml`, 21 Kas 2026)
 - [ ] Emre: App Store Connect → Uygulamalar → + Yeni Uygulama (ad Kervan Yolu, kimlik com.anduv.kervanyolu, SKU kervan-yolu). Uygulama kimliği (id) gelince iş akışlarındaki `ASC_APP_ID_BEKLIYOR` ve `www/index.html` → `APPSTORE_ID` doldurulur
 - [ ] iOS derleme (`store/TETIK-IOS`) → TestFlight → App Store metin/görsel/IAP (`store/TETIK-APPSTORE`) → incelemeye gönder
-- [ ] Emre: Play Console'da "Uygulama oluştur" + kapalı test listesi
-- [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri
+- [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
+- [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra
+- [ ] EN ekran görüntülerini yeniden üret (hız birimi KM/H), App Store metin/görsel gönderiminden önce
 
 ## Android yükleme anahtarı — KAYBETME
 `kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)
