@@ -40,19 +40,19 @@ if src:
         sd=get(f"/apps/{src[0]['id']}/betaAppReviewDetail")['data']['attributes']
         md=get(f'/apps/{APP}/betaAppReviewDetail')['data']
         at={k:sd.get(k) for k in ('contactFirstName','contactLastName','contactPhone','contactEmail')}
-        at.update({'demoAccountRequired':False,'notes':'Tek kişilik, çevrimdışı tepe tırmanma oyunu. Hesap/giriş yok. Sağdaki GAZ pedalı ileri, soldaki FREN.'})
+        at.update({'demoAccountRequired':False,'notes':'Tek kişilik, çevrimdışı tır simülasyonu (rüzgâr türbini lojistiği). Hesap/giriş yok. Sağda GAZ ve FREN pedalları, solda direksiyon okları. İlk 3 sefer ücretsiz.'})
         patch(f"/betaAppReviewDetails/{md['id']}",{'data':{'type':'betaAppReviewDetails','id':md['id'],'attributes':at}})
     except Exception as e: print('iletişim kopyalanamadı:',e)
     try:
         sl=get(f"/apps/{src[0]['id']}/betaAppLocalizations")['data']
         ml={x['attributes']['locale']:x for x in get(f'/apps/{APP}/betaAppLocalizations')['data']}
         for s in sl:
-            loc=s['attributes']['locale']; a={'feedbackEmail':s['attributes'].get('feedbackEmail'),'description':'Kervan Yolu: klasik araçlarla fizik tabanlı tepe tırmanma yarışı.'}
+            loc=s['attributes']['locale']; a={'feedbackEmail':s['attributes'].get('feedbackEmail'),'description':'Kervan Yolu: tırla limandan rüzgâr sahasına kule, kanat ve yedek parça taşı; forklift, drone ile hasar tespiti, 1923 sefer.'}
             if loc in ml: patch(f"/betaAppLocalizations/{ml[loc]['id']}",{'data':{'type':'betaAppLocalizations','id':ml[loc]['id'],'attributes':a}})
             else: post('/betaAppLocalizations',{'data':{'type':'betaAppLocalizations','attributes':dict(a,locale=loc),'relationships':{'app':{'data':{'type':'apps','id':APP}}}}})
     except Exception as e: print('yerelleştirme kopyalanamadı:',e)
 # 4) "Neyi test etmeli"
-for loc,txt in [('tr','İlk sürüm: 6 sahne, 5 araç, garaj geliştirmeleri, 1923 m hedefi. Lütfen dil seçimi, sürüş, ipucu kartları, Ayarlar (puan, bize yaz, paylaş, verilerimi sil) ve iPad görünümünü deneyin.'),('en-US','First release: 6 stages, 5 vehicles, garage upgrades, 1923 m goal. Please try language choice, driving, tip cards, Settings and the iPad layout.')]:
+for loc,txt in [('tr','İlk sürüm: Serbest Sürüş ve 1923 sefer (kasa/forklift, kule, kanat, acil yedek parça, dönüş), drone ile hasar tespiti, gece sürüşü, kabin içi kamera. Lütfen dil seçimi, forklift yükleme, sürüş, teslim, ipucu kartları, Ayarlar ve iPad görünümünü deneyin.'),('en-US','First release: Free Drive and 1923 jobs (crates/forklift, tower, blade, urgent spare part, return), drone inspection, night driving, cab view. Please try language choice, forklift loading, driving, delivery, tip cards, Settings and the iPad layout.')]:
     ex=[x for x in get(f'/builds/{bid}/betaBuildLocalizations')['data'] if x['attributes']['locale']==loc]
     if ex: patch(f"/betaBuildLocalizations/{ex[0]['id']}",{'data':{'type':'betaBuildLocalizations','id':ex[0]['id'],'attributes':{'whatsNew':txt}}})
     else: post('/betaBuildLocalizations',{'data':{'type':'betaBuildLocalizations','attributes':{'locale':loc,'whatsNew':txt},'relationships':{'build':{'data':{'type':'builds','id':bid}}}}})
@@ -68,6 +68,23 @@ for e in open('store/testflight-testciler.txt').read().split():
     if e.lower() in var: print('✓ zaten var',e); continue
     r=post('/betaTesters',{'data':{'type':'betaTesters','attributes':{'email':e},'relationships':{'betaGroups':{'data':[{'type':'betaGroups','id':gid}]}}}})
     print('testçi',e,r.status_code)
+# 6b) dahili test (Emre'nin kuralı, 22 Kas 2026): emreanduv@hotmail.com her üründe varsayılan dahili testçi;
+#     dahili grup Apple beta incelemesini beklemez, derleme işlenir işlenmez telefona düşer
+IC='Mr. Anduv! İç Test'; IC_MAIL='emreanduv@hotmail.com'
+try:
+    ig=[x for x in get(f'/apps/{APP}/betaGroups')['data'] if x['attributes'].get('isInternalGroup')]
+    if ig: igid=ig[0]['id']
+    else:
+        r=post('/betaGroups',{'data':{'type':'betaGroups','attributes':{'name':IC,'isInternalGroup':True,'hasAccessToAllBuilds':True},'relationships':{'app':{'data':{'type':'apps','id':APP}}}}})
+        igid=r.json()['data']['id'] if r.status_code<400 else None
+    if igid:
+        iv={t['attributes']['email'].lower() for t in get(f'/betaGroups/{igid}/betaTesters',limit=200)['data']}
+        if IC_MAIL not in iv:
+            r=post('/betaTesters',{'data':{'type':'betaTesters','attributes':{'email':IC_MAIL,'firstName':'Emre','lastName':'Anduv'},'relationships':{'betaGroups':{'data':[{'type':'betaGroups','id':igid}]}}}})
+            print('dahili testçi',IC_MAIL,r.status_code)
+        post(f'/betaGroups/{igid}/relationships/builds',{'data':[{'type':'builds','id':bid}]})
+        print('✓ dahili grup',igid)
+except Exception as e: print('dahili grup kurulamadı:',e)
 # 7) derlemeyi gruba ver + incelemeye gönder
 post(f'/betaGroups/{gid}/relationships/builds',{'data':[{'type':'builds','id':bid}]})
 # Aynı sürümde başka derleme beta incelemesindeyse (ANOTHER_BUILD_IN_REVIEW) o bitene kadar bekle ve yeniden dene
