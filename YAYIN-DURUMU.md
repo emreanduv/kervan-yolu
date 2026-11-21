@@ -12,10 +12,13 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] Emre: `ASC_KEY_P8` girildi (21 Kas 2026) · [ ] Android sırları Google çalışmasında · [ ] değişken `FEEDBACK_MAIL`
 - [x] Bundle ID kaydı tetiklendi (`asc-bundle-id.yml`, 21 Kas 2026)
 - [x] App Store Connect kaydı açıldı (id 6837800818, 21 Kas 2026)
-- [ ] iOS derleme (`store/TETIK-IOS`) → TestFlight → App Store metin/görsel/IAP (`store/TETIK-APPSTORE`) → incelemeye gönder
+- [x] 21 Kas 2026: iOS 1.0.0 (1) TestFlight'ta, Mr. Anduv! Testçileri grubuna bağlı, beta incelemesi bekleniyor
+- [x] App Store 1.0.0: metin + görseller TR/EN, fiyat ücretsiz, Tam Sürüm IAP (Prepare for Submission), inceleme notu, derleme 1 seçili
+- [x] App Privacy "Data Not Collected" yayınlandı; gizlilik URL'si GitHub'daki docs/GIZLILIK.md
+- [ ] Emre: TestFlight'ta dene → onay verince "Add for Review" (Tam Sürüm IAP'yi sürüme ekleyerek) ve gönder
 - [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
 - [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra
-- [ ] EN ekran görüntülerini yeniden üret (hız birimi KM/H), App Store metin/görsel gönderiminden önce
+- [x] EN ekran görüntüleri yeniden üretildi (KM/H)
 
 ## Android yükleme anahtarı — KAYBETME
 `kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)
