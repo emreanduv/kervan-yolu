@@ -133,7 +133,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#0b1410;font-family:Ru
 </div>
 
 <div id="pause" class="scr"><div class="panel"><div class="phead"><span id="pH"></span><span>II</span></div><div class="pbody">
-  <button class="btn go blk" id="pRes"></button><button class="btn blk" id="pRetry"></button><button class="btn blk" id="pHelp"></button><button class="btn blk" id="pSet"></button><button class="btn blk" id="pMenu"></button>
+  <button class="btn go blk" id="pRes"></button><button class="btn blk" id="pRetry"></button><button class="btn blk" id="pRescue"></button><button class="btn blk" id="pHelp"></button><button class="btn blk" id="pSet"></button><button class="btn blk" id="pMenu"></button>
   <div class="made sig">Bir Mr. Anduv! yapımıdır.</div></div></div></div>
 
 <div id="over" class="scr"><div class="panel"><div class="phead"><span id="rTitle"></span><span id="rSefer"></span></div><div class="pbody">
@@ -194,7 +194,7 @@ j_kasa:"SCADA panosu, kesici ve yedek parça kasaları",j_kule:"Türbin kule seg
 j_kasaS:"Forkliftle yükle",j_kuleS:"Ağır yük: yokuşta dikkat",j_kanatS:"40 m kanat: virajları geniş al",j_yedekS:"Süre kısa, navlun yüksek",j_donusS:"Dönüş seferi",
 lRoute:"Güzergâh",lCargo:"Yük",lTime:"Saat",lFee:"Navlun",lLimit:"Teslim süresi",lastJobs:"Son seferler",
 o_fork:"Forkliftle kasaları dorseye yükle",o_strap:"Yükü spanzetle bağla",o_board:"Yükleme tamam: tıra bin",o_drive:"Yükü rüzgâr sahasına teslim et",o_back:"Rafları limandaki depoya teslim et",o_park:"Teslim alanında dur",o_drone:"Drone ile yükü tara: işaretlere dokun",o_free:"Serbest sürüş: yol senin",o_prep:"Yük vinçle dorseye kondu: spanzetle bağla",
-lift:"KALDIR",drop:"İNDİR",strap:"SPANZET BAĞLA",board:"TIRA BİN",deliver:"TESLİM ET",
+lift:"KALDIR",rescue:"ARACI YOLA ÇIKAR",t_rescued:"Araç yola çıkarıldı",rescueP:"Aracı yola çıkar",drop:"İNDİR",strap:"SPANZET BAĞLA",board:"TIRA BİN",deliver:"TESLİM ET",
 load:"Yük",time:"Süre",dist:"Hedef",pts:"Puan",
 cr1:"SCADA PANOSU",cr2:"KESİCİ",cr3:"YEDEK PARÇA",cr4:"ACİL YEDEK PARÇA",
 t_lift:"Kasa forkliftte",t_drop:"Kasa dorsede",t_strap:"Yük bağlandı",t_off:"Yol dışı! Yük sarsılıyor",t_hard:"Sert manevra! Yük kayıyor",t_water:"Su! Geri dön",t_clean:"Temiz",t_dmg:"Hasar tespit edildi",t_arr:"Hedefe az kaldı",t_crash:"Çarpışma! Yük sarsıldı",t_scrape:"Kanat şeve sürtüyor!",t_strapFirst:"Önce yükü spanzetle bağla",t_cabRot:"Ön kamera: kabin içi için telefonu yan çevir",
@@ -218,7 +218,7 @@ j_kasa:"SCADA panel, switchgear and spare part crates",j_kule:"Turbine tower seg
 j_kasaS:"Load with the forklift",j_kuleS:"Heavy load: careful on climbs",j_kanatS:"40 m blade: take corners wide",j_yedekS:"Short deadline, high fee",j_donusS:"Return job",
 lRoute:"Route",lCargo:"Cargo",lTime:"Time",lFee:"Freight",lLimit:"Deadline",lastJobs:"Recent jobs",
 o_fork:"Load the crates onto the trailer with the forklift",o_strap:"Strap down the cargo",o_board:"Loading done: get in the truck",o_drive:"Deliver the cargo to the wind farm",o_back:"Deliver the racks to the port warehouse",o_park:"Stop in the delivery area",o_drone:"Scan the cargo with the drone: tap the markers",o_free:"Free drive: the road is yours",o_prep:"The crane loaded your trailer: strap it down",
-lift:"LIFT",drop:"DROP",strap:"STRAP DOWN",board:"GET IN TRUCK",deliver:"DELIVER",
+lift:"LIFT",rescue:"BACK TO ROAD",t_rescued:"Truck put back on the road",rescueP:"Put truck back on road",drop:"DROP",strap:"STRAP DOWN",board:"GET IN TRUCK",deliver:"DELIVER",
 load:"Cargo",time:"Time",dist:"Target",pts:"Points",
 cr1:"SCADA PANEL",cr2:"SWITCHGEAR",cr3:"SPARE PARTS",cr4:"URGENT SPARE PART",
 t_lift:"Crate on the forks",t_drop:"Crate on the trailer",t_strap:"Cargo secured",t_off:"Off road! Cargo shaking",t_hard:"Harsh manoeuvre! Cargo shifting",t_water:"Water! Turn back",t_clean:"Clean",t_dmg:"Damage found",t_arr:"Almost there",t_crash:"Collision! Cargo jolted",t_scrape:"Blade scraping the slope!",t_strapFirst:"Strap down the cargo first",t_cabRot:"Front cam: rotate phone for cab view",
@@ -590,7 +590,7 @@ function vehStep(v,dt,inp,load){const p=v.p;let acc=0;const af=load||1;
  const yaw=v.speed*Math.tan(v.steer)/p.wb;v.lat=v.speed*yaw;v.h+=yaw*dt;
  const nx=v.x-Math.sin(v.h)*v.speed*dt,nz=v.z-Math.cos(v.h)*v.speed*dt;
  if(getH(nx,nz)<.4||nx<TX0+20||nx>TX1-20||nz<TZ0+20||nz>TZ1-20){v.speed*=-.2;if(G.warnT<=0){toast(T('t_water'),'#7fd0ff');G.warnT=2}}
- else if(collides(v,nx,nz)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
+ else if(collides(v,nx,nz)&&!collides(v,v.x,v.z)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
  else{v.x=nx;v.z=nz}}
 function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h);if(v===fork.v)return hitObs(nx+fx*1.2,nz+fz*1.2)||hitObs(nx-fx*2.1,nz-fz*2.1);
  if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'?[4,8,12,20,28,36]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
@@ -643,7 +643,11 @@ function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);
  if(G.lift!=null)fork.car.position.y=lerp(fork.car.position.y,G.lift,.08)}
 function doStrap(){const t=G.job.type;const sc=t==='kule'?[1.8,3.15]:t==='kanat'?[1,1.75]:t==='donus'?[1,1.65]:[1,1];world.straps.forEach(s=>s.scale.set(sc[0],sc[1],1));if(t==='kasa'||t==='yedek')world.straps.forEach((s,i)=>s.visible=(t==='kasa'||i===1));else{world.straps[0].visible=world.straps[2].visible=true;if(t==='kule')world.straps[1].visible=true}
  G.strapped=true;toast(T('t_strap'),'#8ff0a4');blip(400,700,.2);setAct(null);if(phase==='drive'){G.t0=G.t;setObj(G.job.type==='donus'?T('o_back'):T('o_drive'))}else setObj(T('o_board'))}
+function rescue(){const v=truck.v;let bi=0,bd=1e9;for(let i=0;i<NS;i++){const d=Math.hypot(RS[i].x-v.x,RS[i].z-v.z);if(d<bd){bd=d;bi=i}}
+ const back=mode==='career'&&G.job.type==='donus';const i=clamp(bi,2,NS-3),j=back?i-1:i+1;v.x=RS[i].x;v.z=RS[i].z;v.h=Math.atan2(-(RS[j].x-RS[i].x),-(RS[j].z-RS[i].z));v.speed=0;v.steer=0;trailer.th=v.h;G.stuckT=0;setAct(null);snapCam();toast(T('t_rescued'),'#8ff0a4')}
 function driveLogic(dt){const v=truck.v;const sp=Math.abs(v.speed);G.dist+=sp*dt;
+ if((mode==='free'||G.strapped)&&(input.gas||input.brake)&&sp<.3)G.stuckT=(G.stuckT||0)+dt;else if(sp>1)G.stuckT=0;if(G.stuckT===0&&actFn===rescue)setAct(null);
+ if(G.stuckT>2.5&&!actFn){setAct(T('rescue'),rescue);return}
  if(mode==='free'){G.score=Math.floor(G.dist/100);return}
  if(!G.strapped){if(sp<.5&&G.job.type!=='kasa'){setAct(T('strap'),doStrap);coach('strap')}if(input.gas&&G.warnT<=0){toast(T('t_strapFirst'),'#ffe08a');G.warnT=2}return}
  let add=0;if(v.off&&sp>2){add+=sp*.045*dt;coach('off');if(G.warnT<=0){toast(T('t_off'),'#ffb36b');G.warnT=2.5}}
@@ -704,10 +708,10 @@ function startGame(m,n){$('loadTxt').textContent=T('loading');$('load').classLis
 $('goBtn').onclick=()=>{if(SAVE.tab==='free'){startGame('free')}else{const n=nextSefer();if(needFull(n)){openFull(n);return}startGame('career',n)}};
 function toMenu(){phase='menu';state='menu';showHud(false);if(arrow)arrow.visible=false;renderMenu();show('menu')}
 function pauseGame(){if(state!=='play')return;state='paused';input.gas=input.brake=input.left=input.right=0;document.querySelectorAll('.cb').forEach(b=>b.classList.remove('down'));
- $('pH').textContent=T('pause');$('pRes').textContent=T('resume');$('pRetry').textContent=T('retry');$('pHelp').textContent=T('help');$('pSet').textContent=T('settings');$('pMenu').textContent=T('menu');show('pause')}
+ $('pH').textContent=T('pause');$('pRes').textContent=T('resume');$('pRetry').textContent=T('retry');$('pRescue').textContent=T('rescueP');$('pRescue').hidden=phase!=='drive';$('pHelp').textContent=T('help');$('pSet').textContent=T('settings');$('pMenu').textContent=T('menu');show('pause')}
 $('hPause').onclick=pauseGame;$('pRes').onclick=()=>{state='play';show(null)};
 $('pRetry').onclick=()=>{show(null);if(mode==='career')resetGame('career',G.job.n);else resetGame('free')};
-$('pMenu').onclick=toMenu;$('pHelp').onclick=()=>openHelp('pause');$('pSet').onclick=()=>openSettings('pause');
+$('pMenu').onclick=toMenu;$('pRescue').onclick=()=>{state='play';show(null);rescue()};$('pHelp').onclick=()=>openHelp('pause');$('pSet').onclick=()=>openSettings('pause');
 $('bcam').onclick=()=>{camMode=(camMode+1)%2;if(camMode===0)snapCam();if(camMode===1&&innerWidth<innerHeight&&!window._rotHint){window._rotHint=1;toast(T('t_cabRot'),'#ffe08a',2.6)}};
 function setMute(m){SAVE.muted=m;save();$('hSnd').innerHTML=m?'&#x2715;&#xFE0E;':'&#x266B;&#xFE0E;'}
 $('hSnd').onclick=()=>setMute(!SAVE.muted);$('mSnd').onclick=()=>{setMute(!SAVE.muted);renderMenu()};
