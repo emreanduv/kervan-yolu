@@ -70,12 +70,10 @@ for i,t in enumerate(ters):
 r=send('POST','/v2/appAvailabilities',{'data':{'type':'appAvailabilities','attributes':{'availableInNewTerritories':True},'relationships':{'app':{'data':{'type':'apps','id':APP}},'territoryAvailabilities':{'data':refs}}},'included':inc})
 if r.status_code==409: print('bölgeler zaten ayarlı')
 # --- inceleme bilgileri (iletişim Malazgirt'ten)
-notes=('Kervan Yolu is a single-player, offline hill climbing game with 1923 levels. No account or login, no ads, no data collection. '
- 'The first 10 levels are free; the one-time non-consumable in-app purchase "Tam Sürüm / Full Version" (com.anduv.kervanyolu.tamsurum) unlocks levels 11-1923. '
- 'It can be bought from the star button in the main menu or Settings, and restored with "Restore purchases" in the same places. '
- 'On first launch the game asks for the language (Turkish/English). Tap "Yola çık / Hit the road" and hold the right pedal (GAS); the left pedal is BRAKE. '
- 'Vehicles and upgrades are bought only with in-game coins (akçe) earned by playing. '
- 'Settings (gear icon) contains How to Play, Rate, Feedback (opens mail), Recommend to a friend and Delete my data.')
+notes=('Kervan Yolu is a single-player, offline truck driving simulator about wind turbine logistics. No account or login, no ads, no data collection. '
+ 'On launch the game asks for the language (Turkish/English). The first tab is Free Drive (no jobs). The second tab, Jobs, starts job 1: drive the forklift to the crate marked by the yellow arrow, tap LIFT, drive to the trailer, tap DROP (3 crates), tap STRAP DOWN and GET IN TRUCK, drive with the GAS pedal (right) and steering arrows (left) to the green ring at the wind farm, stop and tap DELIVER, then tap the markers on the cargo for the drone inspection. '
+ 'Jobs 1-3 are free; the one-time non-consumable in-app purchase "Tam Sürüm / Full Version" (com.anduv.kervanyolu.tamsurum) unlocks jobs 4-1923. It is offered when job 4 is started and from the star button in the main menu or Settings; "Restore purchase" is in the same places. '
+ 'Settings (gear icon) contains How to Play, Rate, Feedback (opens mail), Recommend and Delete my data.')
 at={'notes':notes,'demoAccountRequired':False}
 mal=get('/v1/apps',**{'filter[bundleId]':'com.anduv.malazgirt'})['data']
 if mal:
@@ -110,11 +108,11 @@ iap=[x for x in iaps if x['attributes']['productId']==PID]
 if iap: iid2=iap[0]['id']; print('IAP var',iid2,iap[0]['attributes'].get('state'))
 else:
     r=send('POST','/v2/inAppPurchases',{'data':{'type':'inAppPurchases','attributes':{'name':'Tam Sürüm','productId':PID,'inAppPurchaseType':'NON_CONSUMABLE','familySharable':False,
-      'reviewNote':'Unlocks levels 11-1923. Offered after level 10 and from the star button in the main menu / Settings. Restore purchases is in the same places.'},'relationships':{'app':{'data':{'type':'apps','id':APP}}}}})
+      'reviewNote':'Unlocks jobs 4-1923. Offered when job 4 is started and from the star button in the main menu / Settings. Restore purchase is in the same places.'},'relationships':{'app':{'data':{'type':'apps','id':APP}}}}})
     iid2=r.json()['data']['id'] if r.status_code<400 else None
 if iid2:
     have={x['attributes']['locale'] for x in get(f'/v2/inAppPurchases/{iid2}/inAppPurchaseLocalizations')['data']}
-    for loc,nm,ds in [('tr','Tam Sürüm','1923 bölümün hepsini ve 10 sahneyi açar'),('en-US','Full Version','Unlocks all 1923 levels and 10 stages')]:
+    for loc,nm,ds in [('tr','Tam Sürüm','1923 seferin hepsini açar'),('en-US','Full Version','Unlocks all 1923 jobs')]:
         if loc not in have: send('POST','/v1/inAppPurchaseLocalizations',{'data':{'type':'inAppPurchaseLocalizations','attributes':{'locale':loc,'name':nm,'description':ds},'relationships':{'inAppPurchaseV2':{'data':{'type':'inAppPurchases','id':iid2}}}}})
     url=f'{B}/v2/inAppPurchases/{iid2}/pricePoints'; q={'filter[territory]':'USA','limit':200}; ipp=None
     while url and not ipp:

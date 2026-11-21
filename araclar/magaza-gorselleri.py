@@ -15,7 +15,7 @@ async def frames(pg,n=40):
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(executable_path=os.environ.get('CHROME','/usr/bin/google-chrome'),args=['--use-gl=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
-        for lang in ['tr','en']:
+        for lang in os.environ.get('LANGS','tr,en').split(','):
             for k,(w,h,d) in SIZES.items():
                 out=os.path.join(KOK,'store','screenshots',lang,k);os.makedirs(out,exist_ok=True)
                 pg=await b.new_page(viewport={'width':w,'height':h},device_scale_factor=d)
