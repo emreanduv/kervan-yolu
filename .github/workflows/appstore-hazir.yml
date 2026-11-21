@@ -33,7 +33,11 @@ jobs:
           fastlane deliver --api_key_path api_key.json --app_identifier com.anduv.kervanyolu \
             --app_version "$SURUM" --skip_binary_upload true --skip_app_version_update false \
             --screenshots_path fastlane/screenshots --metadata_path fastlane/metadata --overwrite_screenshots true \
-            --precheck_include_in_app_purchases false --force true --run_precheck_before_submit false --submit_for_review false
+            --precheck_include_in_app_purchases false --force true --run_precheck_before_submit false --submit_for_review false > $RUNNER_TEMP/deliver.log 2>&1 || {
+              grep -iE 'error|invalid|\[!\]|failed|must|exceed|could not' $RUNNER_TEMP/deliver.log | grep -v '^\s*$' | tail -25 | while IFS= read -r l; do echo "::error::$l"; done
+              tail -8 $RUNNER_TEMP/deliver.log | while IFS= read -r l; do echo "::warning::$l"; done
+              exit 1; }
+          tail -5 $RUNNER_TEMP/deliver.log
   ayarlar:
     needs: metin
     if: always()

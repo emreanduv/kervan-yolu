@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Görüş adresini yaz (repo değişkeni FEEDBACK_MAIL)
         env: { FM: "${{ vars.FEEDBACK_MAIL }}" }
-        run: printf "window.FEEDBACK_MAIL='%s';\n" "$FM" > www/iletisim.js
+        run: printf "window.FEEDBACK_MAIL='%s';\n" "${FM:-emreanduvart@gmail.com}" > www/iletisim.js
       - name: Yayın öncesi kontrol (main dalı, özellikler eksiksiz, sürüm geri gitmiyor)
         env: { SURUM: "${{ inputs.version_name || '1.0.0' }}" }
         run: bash araclar/yayin-kontrol.sh
