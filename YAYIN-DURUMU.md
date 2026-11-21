@@ -11,7 +11,7 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] Repo: emreanduv/kervan-yolu (Emre açtı, 21 Kas 2026)
 - [x] Emre: `ASC_KEY_P8` girildi (21 Kas 2026) · [ ] Android sırları Google çalışmasında · [ ] değişken `FEEDBACK_MAIL`
 - [x] Bundle ID kaydı tetiklendi (`asc-bundle-id.yml`, 21 Kas 2026)
-- [ ] Emre: App Store Connect → Uygulamalar → + Yeni Uygulama (ad Kervan Yolu, kimlik com.anduv.kervanyolu, SKU kervan-yolu). Uygulama kimliği (id) gelince iş akışlarındaki `ASC_APP_ID_BEKLIYOR` ve `www/index.html` → `APPSTORE_ID` doldurulur
+- [x] App Store Connect kaydı açıldı (id 6837800818, 21 Kas 2026)
 - [ ] iOS derleme (`store/TETIK-IOS`) → TestFlight → App Store metin/görsel/IAP (`store/TETIK-APPSTORE`) → incelemeye gönder
 - [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
 - [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra

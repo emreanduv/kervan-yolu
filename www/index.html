@@ -745,7 +745,7 @@ setTimeout(()=>{if(!SAVE.full&&IAP())restorePurchases(false)},2500);
 // ================= REHBER, AYARLAR, PUAN, PAYLAŞ, GÖRÜŞ =================
 const CAP=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
 const PLAT=()=>{try{return window.Capacitor?window.Capacitor.getPlatform():'web'}catch(e){return'web'}};
-const APPSTORE_ID='';
+const APPSTORE_ID='6837800818';
 const STORE_URL=()=>PLAT()==='android'?'https://play.google.com/store/apps/details?id=com.anduv.kervanyolu':(APPSTORE_ID?'https://apps.apple.com/app/id'+APPSTORE_ID:'https://emreanduv.github.io/');
 let coachCur=null,coachT=0;
 const COACH={gas:['c_gasT','c_gas'],fork:['c_forkT','c_fork'],strap:['c_strapT','c_strap'],drone:['c_droneT','c_drone'],cam:['c_camT','c_cam'],off:['c_offT','c_off'],kanat:['c_kanatT','c_kanat'],night:['c_nightT','c_night']};
