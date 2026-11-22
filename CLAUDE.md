@@ -73,5 +73,12 @@ FIFA nesli W-A-S-D'ye alışkın; bütün oyun ve uygulamalarda klavye bu alış
 - Klavyesiz oyun bırakılmaz: tıkla-gez oyunlarında da WASD ile yürüme, E/Boşluk ile yakındaki şeye dokunma olur (örnek: Kırmızı Yalı `www/js/motor.js` "Klavye (WASD + oklar)").
 - Yardım / "Nasıl Oynanır" ekranında tuşlar Türkçe ve İngilizce yazılır. Gelişim Defteri G43.
 
+### Ses koruyucu (Emre'nin kuralı, 22 Kasım 2026; bütün oyun ve uygulamalar)
+Uygulama arka plana gidip (başka uygulama, bildirim, kilit ekranı, arama) geri gelince ses kaybolmaz; kapatıp açmak gerekmez. Üç parça, her üründe ilk işte konur ve yayın kontrolünde aranır:
+- `www/ses-kurtar.js` (kaynak: emreanduv/kervan-yolu) `index.html`'de **bütün betiklerden önce** yüklenir: sayfadaki bütün AudioContext'leri kayda alır; görünürlük/odak/Capacitor appStateChange/ilk dokunuşta `resume()` + sessiz tampon, duran `<audio>/<video>`'yu sürdürür. Oyun kodu kendi bağlamını kurmaya devam eder, değişiklik gerekmez.
+- iOS `AppDelegate.swift`: `AVAudioSession` `.ambient` + `.mixWithOthers`, `setActive(true)` açılışta ve `applicationDidBecomeActive`'de; kesinti bitince (arama) yeniden; web'e `window.sesKurtar()` çağrısı.
+- Android `MainActivity`: `onResume`'da `webView.onResume()` + `window.sesKurtar()`.
+- Masaüstü (Electron) ve VR (Quest tarayıcı) aynı `ses-kurtar.js` ile.
+
 ### Ekran uyanık kalsın (Emre'nin kuralı, 17 Kasım 2026)
 Oyun/uygulama açıkken ekran, dokunulmadı diye kararmaz (CBM'de maç izlerken kapanıyordu). iOS `AppDelegate.swift`: `application.isIdleTimerDisabled = true` (açılışta ve `applicationDidBecomeActive`); Android `MainActivity`: `FLAG_KEEP_SCREEN_ON`; masaüstü (Electron): `powerSaveBlocker.start('prevent-display-sleep')`; web/VR: `navigator.wakeLock` (index.html sonundaki küçük betik); Godot: `keep_screen_on` varsayılan açık, kapatılmaz. Yeni her üründe ilk işte konur. Gelişim Defteri G75.

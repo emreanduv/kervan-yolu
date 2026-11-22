@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -8,6 +9,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         application.isIdleTimerDisabled = true // ekran uyanık kalsın (maç izlerken kararmasın)
+        sesOturumunuKur()
+        NotificationCenter.default.addObserver(self, selector: #selector(sesKesildi(_:)), name: AVAudioSession.interruptionNotification, object: nil)
         // Override point for customization after application launch.
         return true
     }
@@ -28,7 +31,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         application.isIdleTimerDisabled = true
+        sesOturumunuKur() // SES KORUYUCU: arka plandan dönünce ses geri gelsin
+        sesiWebeHaberVer()
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    }
+
+    // SES KORUYUCU (Mr. Anduv! standardı, 22 Kas 2026): iOS ses oturumunu yeniden aç, web sesini uyandır
+    func sesOturumunuKur() {
+        let o = AVAudioSession.sharedInstance()
+        try? o.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+        try? o.setActive(true)
+    }
+    func sesiWebeHaberVer() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            let vc = self.window?.rootViewController as? CAPBridgeViewController
+            vc?.bridge?.webView?.evaluateJavaScript("window.sesKurtar&&window.sesKurtar()", completionHandler: nil)
+        }
+    }
+    @objc func sesKesildi(_ n: Notification) {
+        guard let v = n.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let t = AVAudioSession.InterruptionType(rawValue: v), t == .ended else { return }
+        sesOturumunuKur(); sesiWebeHaberVer()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
