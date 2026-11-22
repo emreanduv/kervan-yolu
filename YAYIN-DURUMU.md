@@ -1,4 +1,4 @@
-# Kervan Yolu — Yayın durumu (21 Kasım 2026)
+# Kervan Yolu — Yayın durumu (22 Kasım 2026)
 
 Kimlik: `com.anduv.kervanyolu` (iOS + Android) · SKU `kervan-yolu` · Mağazada ücretsiz, Tam Sürüm 1,99 $ (`com.anduv.kervanyolu.tamsurum`, ilk 3 sefer açık) · Dikey + yatay
 Gizlilik: https://github.com/emreanduv/kervan-yolu/blob/main/docs/GIZLILIK.md · Mağaza metinleri: `store/magaza-metinleri.md`, `store/appstore-metadata/`
@@ -19,6 +19,8 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
 - [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra
 - [x] EN ekran görüntüleri yeniden üretildi (KM/H)
+- [x] 22 Kas 2026: takılma düzeltmeleri (derleme 2-4), ses koruyucu v3 (5-6), yük kayması uyarısı hedef hızla (7)
+- [x] 22 Kas 2026, derleme 8: Ege bölgesi (Aliağa Limanı → Bergama Tepeleri) + kanat kaldırıcı; bölge seçimi; 8 ekran görüntüsü TR/EN (ilk ikisi Ege), mağaza metinleri ve yenilikler güncellendi, appstore-hazir ile yüklendi, derleme 8 sürüme seçilir
 
 ## Android yükleme anahtarı — KAYBETME
 `kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)
