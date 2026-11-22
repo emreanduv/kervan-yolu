@@ -16,9 +16,6 @@ kontrol www/index.html 'id="setErase"' 'Verilerimi sil (Ayarlar)'
 kontrol www/index.html 'function coachTick' 'Rehber (ipucu kartları)'
 kontrol www/index.html 'InAppReview' 'Uygulama içi puan'
 kontrol www/index.html 'navigator.wakeLock' 'Ekran uyanık (web)'
-kontrol www/index.html 'ses-kurtar.js' 'Ses koruyucu (arka plandan dönünce ses)'
-kontrol www/ses-kurtar.js 'W.sesKurtar=' 'Ses koruyucu modülü'
-kontrol ios/App/App/AppDelegate.swift 'sesKurtar' 'Ses koruyucu (iOS yerel)'
 kontrol www/index.html 'PANOLAR' 'Mr. Anduv! ortak pano seti'
 kontrol www/index.html "'KeyD'" 'Klavye WASD'
 kontrol www/index.html 'const BOLUM_N=1923' '1923 bölüm'
@@ -36,4 +33,7 @@ if [ -n "${SURUM:-}" ] && [ -f store/SON-SURUM ]; then
   if [ "$(printf '%s\n%s\n' "$son" "$SURUM" | sort -V | head -1)" != "$son" ]; then echo "::error::Sürüm geri gidiyor: $SURUM < $son"; hata=1; else echo "✓ Sürüm $SURUM ≥ $son"; fi
 fi
 if python3 araclar/turkce-yazi-kontrol.py www; then :; else hata=1; fi
+# Ses koruyucu (CLAUDE.md "Ses koruyucu"): arka plandan dönünce ses geri gelsin
+if grep -q 'ses-kurtarici.js' www/index.html && grep -q 'W.sesKurtar = later' www/ses-kurtarici.js && grep -q 'SesKoruyucu.shared.baslat' ios/App/App/AppDelegate.swift && grep -q 'window.sesKurtar' android/app/src/main/java/com/anduv/kervanyolu/MainActivity.java; then echo "✓ ses koruyucu (JS + iOS + Android)"; else echo "::error::Ses koruyucu eksik (ses-kurtarici.js, AppDelegate SesKoruyucu, MainActivity onResume)"; HATA=1; hata=1; fi
+# ses koruyucu sonu
 [ $hata -eq 0 ] && echo "Yayın kontrolü geçti." || { echo "Yayın kontrolü BAŞARISIZ — derleme durduruldu."; exit 1; }

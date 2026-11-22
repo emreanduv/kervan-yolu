@@ -15,8 +15,11 @@ public class MainActivity extends BridgeActivity {
         super.onResume();
         try {
             if (getBridge() != null && getBridge().getWebView() != null) {
-                getBridge().getWebView().onResume();
-                getBridge().getWebView().postDelayed(() -> getBridge().getWebView().evaluateJavascript("window.sesKurtar&&window.sesKurtar()", null), 250);
+                final android.webkit.WebView w = getBridge().getWebView();
+                w.onResume();
+                w.resumeTimers();
+                w.postDelayed(() -> w.evaluateJavascript("window.sesKurtar&&window.sesKurtar()", null), 250);
+                w.postDelayed(() -> w.evaluateJavascript("window.sesKurtar&&window.sesKurtar()", null), 1000);
             }
         } catch (Exception e) { }
     }
