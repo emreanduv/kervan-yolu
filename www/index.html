@@ -185,7 +185,7 @@ const VERSION='1.0.0';
 // ================= METİNLER =================
 const STR={
 tr:{sub:"Uzun yolun ustası ol",free:"Serbest Sürüş",career:"Seferler",
-freeDesc:"Tırını al, limandan dağdaki rüzgâr sahasına uzanan yolda dilediğin gibi sür. Görev yok, süre yok: sadece yol, manzara ve motor sesi. Her kilometre puan kazandırır.",
+freeDesc:"Süre yok, ceza yok. Sarı halkada yükünü al, yeşil halkada boşalt: limandan rüzgâr sahasına kule, kanat ve yedek parça taşı, sahadan boş rafları geri getir. Her teslim ve her kilometre puan kazandırır.",fp_port:"Liman deposu",fp_site:"Rüzgâr sahası",fo_pick:"Yükünü al: {from} (sarı halka)",fo_drop:"{cargo} → {to} (yeşil halka)",fpick:"YÜKÜ AL",fdrop:"YÜKÜ BOŞALT",ft_loaded:"Yük vinçle yüklendi ve bağlandı",ft_done:"Teslim edildi! +{p} puan",fnext:"Sıradaki yük hazır",
 tod:"Günün saati",sabah:"Sabah",ogle:"Öğle",aksam:"Akşam",gece:"Gece",
 start:"Yola Çık",startJob:"Sefere Çık",share:"Arkadaşına öner",loading:"YÜKLENİYOR…",
 total:"Toplam kazanç",km:"Toplam yol",best:"En iyi sefer",done:"Tamamlanan sefer",
@@ -209,7 +209,7 @@ rateQ:"Kervan Yolu hoşuna gitti mi?",rateYes:"Puan ver",rateFeed:"Önerim var",
 c_gasT:"Yola çık",c_gas:"Sağdaki GAZ pedalına basılı tut; sol oklarla direksiyonu çevir.",c_forkT:"Forklift",c_fork:"Sarı ok hangi kasayı alacağını gösterir. Çatalı kasaya yanaştır ve KALDIR'a bas.",c_strapT:"Spanzet",c_strap:"Yük bağlanmadan yola çıkılmaz. Sarı düğmeyle yükü bağla.",c_droneT:"Drone kontrolü",c_drone:"Yükün üzerindeki işaretlere dokun. Ekranı sürükleyerek drone'u çevirebilirsin.",c_camT:"Kamera",c_cam:"Sağ üstteki kamera düğmesiyle dış kamera ve kabin içi arasında geçiş yap.",c_offT:"Yol dışı",c_off:"Yoldan çıkınca araç yavaşlar ve yük hasar alır. Asfalta dön.",c_kanatT:"Uzun yük",c_kanat:"Kanat dorsenin 30 m arkasına taşar. Virajları geniş al, kanadı şevlere sürtme.",c_nightT:"Gece sürüşü",c_night:"Farlar yolu aydınlatır; hızını görüşüne göre ayarla.",
 gas:"GAZ",brake:"FREN",late:"GEÇ"},
 en:{sub:"Master the long road",free:"Free Drive",career:"Jobs",
-freeDesc:"Take your truck and drive freely on the road from the port to the wind farm in the hills. No jobs, no clock: just the road, the views and the engine. Every kilometre earns points.",
+freeDesc:"No clock, no penalties. Pick up your load at the yellow ring and drop it at the green ring: haul towers, blades and spare parts from the port to the wind farm and bring the empty racks back. Every delivery and every kilometre earns points.",fp_port:"Port warehouse",fp_site:"Wind farm",fo_pick:"Pick up your load: {from} (yellow ring)",fo_drop:"{cargo} → {to} (green ring)",fpick:"PICK UP",fdrop:"UNLOAD",ft_loaded:"Crane loaded and strapped your cargo",ft_done:"Delivered! +{p} points",fnext:"Next load is ready",
 tod:"Time of day",sabah:"Morning",ogle:"Noon",aksam:"Evening",gece:"Night",
 start:"Hit the Road",startJob:"Start Job",share:"Recommend",loading:"LOADING…",
 total:"Total earnings",km:"Total distance",best:"Best job",done:"Jobs completed",
@@ -542,11 +542,12 @@ const input={left:0,right:0,gas:0,brake:0};
 function newVeh(x,z,h,p){return{x,z,h,speed:0,steer:0,p,slope:0,lat:0,off:false}}
 const TRUCKP={acc:2.0,vmax:24,vrev:4,brake:7,steer:.55,steerFall:.06,slopeK:.75,roll:.5,wb:4.6};
 const FORKP={acc:2.8,vmax:6,vrev:3,brake:6,steer:.75,steerFall:.03,slopeK:.5,roll:2.5,wb:1.6};
-let truck,trailer,fork,drone,crates=[],arrow,ring,ringBeam,CARGO={};
+let truck,trailer,fork,drone,crates=[],arrow,ring,ringBeam,pickRing,pickBeam,CARGO={};
 function setupVehicles(){truck=buildTruck();trailer=buildTrailer();fork=buildForklift();drone=buildDrone();crates=[0,1,2].map(()=>buildCrate());
  arrow=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.arrow,transparent:true,depthTest:false,depthWrite:false}));arrow.scale.set(1.6,1.6,1);arrow.renderOrder=10;scene.add(arrow);
  world.straps=[];for(let i=0;i<3;i++){const s=new THREE.Group();for(const dz of[-.45,.45]){addBox(2.62,.05,.09,MAT.strap,0,1.42,dz,s);for(const x of[-1.31,1.31])addBox(.05,1.42,.09,MAT.strap,x,.71,dz,s)}s.visible=false;trailer.g.add(s);s.position.copy(trailer.slots[i]);world.straps.push(s)}
  ring=new THREE.Mesh(new THREE.RingGeometry(8,9.2,48),new THREE.MeshBasicMaterial({color:0x6dff8c,transparent:true,opacity:.85,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;scene.add(ring);
+ pickRing=new THREE.Mesh(new THREE.RingGeometry(8,9.2,48),new THREE.MeshBasicMaterial({color:0xffc93c,transparent:true,opacity:.9,side:THREE.DoubleSide}));pickRing.rotation.x=-Math.PI/2;scene.add(pickRing);pickBeam=new THREE.Mesh(new THREE.CylinderGeometry(8.6,8.6,26,40,1,true),new THREE.MeshBasicMaterial({color:0xffc93c,transparent:true,opacity:.14,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));scene.add(pickBeam);pickRing.visible=pickBeam.visible=false;
  ringBeam=new THREE.Mesh(new THREE.CylinderGeometry(8.6,8.6,26,40,1,true),new THREE.MeshBasicMaterial({color:0x6dff8c,transparent:true,opacity:.12,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));scene.add(ringBeam);
  // yük modelleri
  const kule=new THREE.Group();const seg=addCyl(2.1,2.25,11,28,MAT.turb,0,0,0,kule);seg.rotation.x=Math.PI/2;for(const z of[-5.5,5.5]){const f=new THREE.Mesh(new THREE.TorusGeometry(2.12,.12,8,28),MAT.flange);f.position.z=z;kule.add(f)}
@@ -571,8 +572,8 @@ function resetGame(m,n){mode=m;coachHide();const job=m==='career'?sefer(n):{type
  G.target=start==='site'?{x:DEPOT.x,z:DEPOT.z}:{x:SITE.x,z:SITE.z};
  if(start==='site'){const i=NS-14;const a=RS[i+1],b=RS[i];truck.v=newVeh(RS[i].x,RS[i].z,Math.atan2(-(b.x-a.x),-(b.z-a.z)),TRUCKP);const a2=RS[i-3];truck.v.h=Math.atan2(-(a2.x-RS[i].x),-(a2.z-RS[i].z))}else truck.v=newVeh(0,2,0,TRUCKP);
  trailer.th=truck.v.h;fork.v=newVeh(10,22,0,FORKP);fork.car.position.y=.12;
- const showRing=m==='career';ring.visible=ringBeam.visible=showRing;const ty=getH(G.target.x,G.target.z);ring.position.set(G.target.x,ty+.35,G.target.z);ringBeam.position.set(G.target.x,ty+13,G.target.z);
- if(m==='career'){if(t==='kasa'){phase='fork';setObj(T('o_fork')+' (0/3)')}else{phase='drive';setObj(T('o_prep'))}}else{phase='drive';G.strapped=false;setObj(T('o_free'))}
+ pickRing.visible=pickBeam.visible=false;const showRing=m==='career';ring.visible=ringBeam.visible=showRing;const ty=getH(G.target.x,G.target.z);ring.position.set(G.target.x,ty+.35,G.target.z);ringBeam.position.set(G.target.x,ty+13,G.target.z);
+ if(m==='career'){if(t==='kasa'){phase='fork';setObj(T('o_fork')+' (0/3)')}else{phase='drive';setObj(T('o_prep'))}}else{phase='drive';G.strapped=false;G.fj=0;freeJob()}
  camYaw=0;placeVehicles(0);snapCam();state='play';hudLabels();
 }
 function setObj(s){$('obj').innerHTML=s}
@@ -645,10 +646,25 @@ function doStrap(){const t=G.job.type;const sc=t==='kule'?[1.8,3.15]:t==='kanat'
  G.strapped=true;toast(T('t_strap'),'#8ff0a4');blip(400,700,.2);setAct(null);if(phase==='drive'){G.t0=G.t;setObj(G.job.type==='donus'?T('o_back'):T('o_drive'))}else setObj(T('o_board'))}
 function rescue(){const v=truck.v;let bi=0,bd=1e9;for(let i=0;i<NS;i++){const d=Math.hypot(RS[i].x-v.x,RS[i].z-v.z);if(d<bd){bd=d;bi=i}}
  const back=mode==='career'&&G.job.type==='donus';const i=clamp(bi,2,NS-3),j=back?i-1:i+1;v.x=RS[i].x;v.z=RS[i].z;v.h=Math.atan2(-(RS[j].x-RS[i].x),-(RS[j].z-RS[i].z));v.speed=0;v.steer=0;trailer.th=v.h;G.stuckT=0;setAct(null);snapCam();toast(T('t_rescued'),'#8ff0a4')}
+const FPTS={port:{x:-18,z:-12},site:null};
+function placeRing(r,b,p){const y=getH(p.x,p.z);r.position.set(p.x,y+.35,p.z);b.position.set(p.x,y+13,p.z);r.visible=b.visible=true}
+function freeJob(){FPTS.site={x:SITE.x-6,z:SITE.z+4};const back=G.fj%2===1;const types=back?['raf']:['kule','kanat','kasa'];const cg=types[G.fj%2===1?0:Math.floor(G.fj/2)%3];
+ G.fr={from:back?'site':'port',to:back?'port':'site',cargo:cg,loaded:false};for(const k in CARGO)CARGO[k].visible=false;crates.forEach(c=>{if(c.parent===trailer.g){scene.add(c)}c.visible=false});world.straps.forEach(s=>s.visible=false);
+ placeRing(pickRing,pickBeam,FPTS[G.fr.from]);ring.visible=ringBeam.visible=false;G.target=FPTS[G.fr.from];
+ setObj(T('fo_pick').replace('{from}',T(G.fr.from==='port'?'fp_port':'fp_site')))}
+function freeCargoName(c){return c==='kule'?T('j_kule'):c==='kanat'?T('j_kanat'):c==='raf'?T('j_donus'):T('j_kasa')}
+function freeLogic(){const v=truck.v,sp=Math.abs(v.speed),f=G.fr;if(!f){if(actFn&&actFn!==rescue)setAct(null);return}const p=f.loaded?FPTS[f.to]:FPTS[f.from];const d=Math.hypot(v.x-p.x,v.z-p.z);
+ if(d<12&&sp<.8){if(!f.loaded)setAct(T('fpick'),()=>{f.loaded=true;const c=f.cargo;if(c==='kasa'){crates.forEach((cr,i)=>{trailer.g.add(cr);cr.position.copy(trailer.slots[i]);cr.rotation.set(0,0,0);labelCrate(cr,T(['cr1','cr2','cr3'][i]));cr.visible=true})}else CARGO[c==='raf'?'raf':c].visible=true;
+   G.job={type:c==='raf'?'donus':c};doStrapFree();pickRing.visible=pickBeam.visible=false;placeRing(ring,ringBeam,FPTS[f.to]);G.target=FPTS[f.to];setAct(null);toast(T('ft_loaded'),'#ffe08a',2);blip(400,700,.2);
+   setObj(T('fo_drop').replace('{cargo}',freeCargoName(c)).replace('{to}',T(f.to==='port'?'fp_port':'fp_site')))});
+  else setAct(T('fdrop'),()=>{const pts=150+Math.round(ROADLEN/20);G.bonus=(G.bonus||0)+pts;for(const k in CARGO)CARGO[k].visible=false;crates.forEach(c=>{scene.add(c);c.visible=false});world.straps.forEach(s=>s.visible=false);
+   setAct(null);toast(T('ft_done').replace('{p}',pts),'#8ff0a4',2.2);blip(523,784,.3);G.job={type:'free'};G.fj++;const gg=G;setTimeout(()=>{if(mode==='free'&&G===gg&&!G.fr){freeJob();toast(T('fnext'),'#ffe08a',1.6)}},1600);G.fr=null})}
+ else if(actFn&&actFn!==rescue)setAct(null)}
+function doStrapFree(){const t=G.job.type;const sc=t==='kule'?[1.8,3.15]:t==='kanat'?[1,1.75]:t==='donus'?[1,1.65]:[1,1];world.straps.forEach((s,i)=>{s.scale.set(sc[0],sc[1],1);s.visible=(t==='kasa'||t==='kule'||i!==1)})}
 function driveLogic(dt){const v=truck.v;const sp=Math.abs(v.speed);G.dist+=sp*dt;
  if((mode==='free'||G.strapped)&&(input.gas||input.brake)&&sp<.3)G.stuckT=(G.stuckT||0)+dt;else if(sp>1)G.stuckT=0;if(G.stuckT===0&&actFn===rescue)setAct(null);
  if(G.stuckT>2.5&&!actFn){setAct(T('rescue'),rescue);return}
- if(mode==='free'){G.score=Math.floor(G.dist/100);return}
+ if(mode==='free'){G.score=Math.floor(G.dist/100)+(G.bonus||0);freeLogic();return}
  if(!G.strapped){if(sp<.5&&G.job.type!=='kasa'){setAct(T('strap'),doStrap);coach('strap')}if(input.gas&&G.warnT<=0){toast(T('t_strapFirst'),'#ffe08a');G.warnT=2}return}
  let add=0;if(v.off&&sp>2){add+=sp*.045*dt;coach('off');if(G.warnT<=0){toast(T('t_off'),'#ffb36b');G.warnT=2.5}}
  const lat=Math.abs(v.lat),lim=G.job.type==='kule'?2.2:2.6;if(lat>lim){add+=(lat-lim)*1.8*dt;if(G.warnT<=0){toast(T('t_hard'),'#ffb36b');G.warnT=2.5}}
@@ -809,7 +825,7 @@ const mctx=$('mini').getContext('2d');
 function drawMini(){if(!RS.length)return;const v=phase==='fork'?fork.v:truck.v;const S=224,sc=.11;mctx.clearRect(0,0,S,S);mctx.save();mctx.translate(S/2,S/2);mctx.rotate(v.h);
  mctx.fillStyle='rgba(31,95,122,.55)';mctx.beginPath();for(let z=-500;z<=500;z+=50){mctx.lineTo((coastX(v.z+z)-v.x)*sc,z*sc)}mctx.lineTo(-400,400);mctx.lineTo(-400,-400);mctx.fill();
  mctx.strokeStyle='#d8d2c0';mctx.lineWidth=5;mctx.beginPath();for(let i=0;i<NS;i+=3){const x=(RS[i].x-v.x)*sc,z=(RS[i].z-v.z)*sc;i?mctx.lineTo(x,z):mctx.moveTo(x,z)}mctx.stroke();
- if(mode==='career'){mctx.fillStyle='#6dff8c';mctx.beginPath();mctx.arc((G.target.x-v.x)*sc,(G.target.z-v.z)*sc,6,0,7);mctx.fill()}
+ if(G.target){let tx=(G.target.x-v.x)*sc,tz=(G.target.z-v.z)*sc;const L2=Math.hypot(tx,tz),lim=S/2-10;if(L2>lim){tx*=lim/L2;tz*=lim/L2}mctx.fillStyle=(mode==='free'&&G.fr&&!G.fr.loaded)?'#ffc93c':'#6dff8c';mctx.beginPath();mctx.arc(tx,tz,7,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=2;mctx.stroke()}
  mctx.fillStyle='#f2b632';for(const p of world.turbines)mctx.fillRect((p.x-v.x)*sc-1.5,(p.z-v.z)*sc-1.5,3,3);
  mctx.restore();mctx.fillStyle='#ff5a3c';mctx.beginPath();mctx.moveTo(S/2,S/2-10);mctx.lineTo(S/2+7,S/2+8);mctx.lineTo(S/2-7,S/2+8);mctx.fill()}
 
@@ -827,6 +843,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last
  if(G&&(run||phase==='drone'))placeVehicles(run?dt:0);
  for(const r of world.rotors)r.r.rotation.z+=dt*r.s;
  const blink=Math.sin(now*.004)>.6;for(const l of world.lights)l.visible=blink;
+ if(pickRing&&pickRing.visible){const s2=1+Math.sin(now*.005)*.05;pickRing.scale.set(s2,s2,1);pickBeam.material.opacity=.11+Math.sin(now*.004)*.05}
  if(ring&&ring.visible){const s=1+Math.sin(now*.004)*.04;ring.scale.set(s,s,1);ringBeam.material.opacity=.09+Math.sin(now*.003)*.04}
  if(world.flag)world.flag.rotation.y=Math.sin(now*.003)*.25;
  for(const m of world.markers)if(!m.userData.scanned){const s=(G&&G.job.type==='kanat'?1.8:.95)*(.88+Math.sin(now*.008)*.12);m.scale.set(s,s,1)}
@@ -835,7 +852,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last
  if(arrow&&phase!=='fork')arrow.visible=false;
  updParticles(dt);updAudio();
  hudT+=dt;if(G&&hudT>.1&&run&&(phase==='fork'||phase==='drive')){hudT=0;const v=phase==='fork'?fork.v:truck.v;$('spV').textContent=Math.round(Math.abs(v.speed)*3.6);
-  if(mode==='free'){$('r1b').textContent=G.score;$('r2b').textContent=(G.dist/1000).toFixed(1);$('r3b').textContent=(Math.hypot(truck.v.x-SITE.x,truck.v.z-SITE.z)/1000).toFixed(1)+' km'}
+  if(mode==='free'){$('r1b').textContent=G.score;$('r2b').textContent=(G.dist/1000).toFixed(1);$('r3b').textContent=(Math.hypot(truck.v.x-(G.target?G.target.x:SITE.x),truck.v.z-(G.target?G.target.z:SITE.z))/1000).toFixed(1)+' km'}
   else{$('r1b').textContent=G.job.type==='kasa'&&!G.strapped?G.loaded+'/3':Math.round(100-G.dmg)+'%';$('r1b').style.color=G.dmg>20?'#ff8a7f':G.dmg>4?'#ffcf6b':'';
    const rem=G.t0!=null?G.deadline-(G.t-G.t0):G.deadline;$('r2b').textContent=mmss(rem);$('r2b').style.color=rem<0?'#ff8a7f':'';$('r3b').textContent=(Math.hypot(truck.v.x-G.target.x,truck.v.z-G.target.z)/1000).toFixed(1)+' km'}
   drawMini()}
