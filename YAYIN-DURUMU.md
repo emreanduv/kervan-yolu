@@ -15,7 +15,7 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] 21 Kas 2026: iOS 1.0.0 (1) TestFlight'ta, Mr. Anduv! Testçileri grubuna bağlı, beta incelemesi bekleniyor
 - [x] App Store 1.0.0: metin + görseller TR/EN, fiyat ücretsiz, Tam Sürüm IAP (Prepare for Submission), inceleme notu, derleme 1 seçili
 - [x] App Privacy "Data Not Collected" yayınlandı; gizlilik URL'si GitHub'daki docs/GIZLILIK.md
-- [x] 22 Kas 2026, derleme 9: İç Anadolu bölgesi (Samsun Limanı → Sivas Yaylası): kar çizgisi, tipi, buzlu yol (patinaj, zayıf fren), kar zinciri (zincir takma alanı, en çok 40 km/sa), ağıl ve Kangal köpekleri; 9 ekran görüntüsü, metinler güncellendi
+- [x] 22 Kas 2026, derleme 9: İç Anadolu bölgesi (Samsun Limanı → Sivas Yaylası): kar çizgisi, tipi, buzlu yol (patinaj, zayıf fren), kar zinciri (zincir takma alanı, en çok 40 km/sa), ağıl ve Kangal köpekleri; 9 ekran görüntüsü ve metinler yüklendi, derleme 9 sürüme seçili (taslaktaki sürüm düzenleme için çıkarıldı, gönderim sürüm sayfasından yapılacak)
 - [x] 22 Kas 2026: Emre derleme 8'i denedi, sorun yok dedi → gönderim başlatıldı; sürüm taslak gönderime (reviewSubmission) eklendi
 - [ ] **Kalan tek adım:** Apple, ilk tek seferlik ürünün (Tam Sürüm) API'yle gönderilmesine izin vermiyor (`FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION`). Emre App Store Connect'e girince: sürüm 1.0.0 sayfası → "In-App Purchases" bölümünde Tam Sürüm'ü seç → "Add for Review" → "Submit for Review" (Claude yerleşik tarayıcıda yapar)
 - Ders (bütün yeni ürünler): ilk Tam Sürüm ürünü her zaman sürüm sayfasından elle eklenir; sonraki sürümlerde `araclar/appstore-gonder.py` kendisi gönderir
