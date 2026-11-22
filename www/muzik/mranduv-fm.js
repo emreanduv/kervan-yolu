@@ -27,7 +27,7 @@
 
   var cfg = { taban: 'muzik/', dil: 'tr', ekran: null };
   var liste = null, sira = [], idx = -1, mod = 'yok'; // yok | acilis | radyo
-  var a = new Audio(); a.preload = 'auto'; a.setAttribute('playsinline', ''); a.crossOrigin = 'anonymous';
+  var a = new Audio(); a.preload = 'auto'; a.setAttribute('playsinline', '');
   var duck = 1, muted = false, dokunuldu = false, bekleyen = null, ac = null;
 
   function hedefSes() { return muted ? 0 : st.vol * duck * (mod === 'acilis' ? 0.8 : 1); }
