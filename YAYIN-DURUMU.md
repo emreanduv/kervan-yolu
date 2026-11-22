@@ -31,3 +31,8 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 ## Android yükleme anahtarı — KAYBETME
 `kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)
 SHA-256: 06:D1:CD:D6:E7:08:75:1E:29:FE:20:CC:54:BD:38:3D:B3:CB:63:A9:D5:C0:A0:B7:08:57:A1:75:85:5F:75:5C
+
+## 23 Kasım 2026, 00:10: App Store incelemesine gönderildi
+- iOS 1.0.0 (13), Mr. Anduv! FM dahil, ve Tam Sürüm IAP (com.anduv.kervanyolu.tamsurum) aynı başvuruda.
+- Yayın: elle (Manually release). Onay gelince store/SON-SURUM = 1.0.0 yapılır.
+- İnceleme sürerken bu sürüme dokunulmaz; sıradaki işler: Google Play, Steam, VR (Quest).
