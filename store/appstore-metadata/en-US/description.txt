@@ -1,4 +1,4 @@
-Wind turbine logistics simulator: drive a truck from the port to a wind farm in the hills hauling tower sections, blades, SCADA panels and spare parts. Three regions (Marmara, the Aegean and Central Anatolia), a blade lifter, snow chains, 1923 jobs, forklift loading, drone damage inspection and realistic freight pay.
+Wind turbine logistics simulator: drive a truck from the port to a wind farm in the hills hauling tower sections, blades, SCADA panels and spare parts. Four regions (Marmara, the Aegean, Central Anatolia and Thrace), a blade lifter, snow chains, crosswinds, 1923 jobs, forklift loading, drone damage inspection and realistic freight pay.
 
 JOBS
 • Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
@@ -16,6 +16,7 @@ REGIONS
 • Marmara: from Bandırma Port to the Balıkesir Uplands. Container crane, cargo ship, a coastal road and a caravanserai by the roadside.
 • Aegean: from Aliağa Port to the Bergama Hills. Mountain roads, olive groves, red pines and narrow village streets lined with cypresses.
 • Central Anatolia: from Samsun Port to the snowy Sivas Plateau. Icy roads above the snow line, blizzards, snow-covered pines and Kangal dogs guarding a sheepfold by the road.
+• Thrace: from Tekirdağ Port to the turbine ridges of Mount Ganos. Sunflower and wheat fields, rows of poplars, windsocks and gusting crosswinds.
 Morning, noon, evening and night drives; at night, drive by your headlights.
 
 BLADE LIFTER
@@ -23,6 +24,9 @@ In the narrow Aegean village street a 40 metre blade hits the houses. Stop, tilt
 
 SNOW CHAINS
 On the icy climbs to Sivas the truck spins and the brakes weaken. Stop at the chain-up area, fit the chains and climb at up to 40 km/h.
+
+CROSSWINDS
+In Thrace, watch the wind gauge: as the wind gusts, a blade or tower pulls like a sail and the truck drifts. The game tells you which speed to slow down to.
 
 THE CAB
 Live gauges, steering wheel, tachograph, prayer beads hanging from the windscreen and a tulip tea glass on the dashboard.
