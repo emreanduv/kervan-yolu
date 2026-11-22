@@ -26,6 +26,15 @@ else:
     sid=r.json()['data']['id']
 r=send('POST','/v1/reviewSubmissionItems',{'data':{'type':'reviewSubmissionItems','relationships':{'reviewSubmission':{'data':{'type':'reviewSubmissions','id':sid}},'appStoreVersion':{'data':{'type':'appStoreVersions','id':vid}}}}})
 if r.status_code>=400 and 'already' not in r.text.lower(): raise SystemExit(1)
+# Tam Sürüm (ilk uygulama içi ürün) sürümle birlikte incelemeye gider; eklenemezse gönderilmez
+eksik=[]
+for x in get(f'/v1/apps/{APP}/inAppPurchasesV2',limit=50)['data']:
+    stx=x['attributes'].get('state');print('ürün',x['attributes']['productId'],stx)
+    if stx in ('READY_TO_SUBMIT','DEVELOPER_ACTION_NEEDED','REJECTED'):
+        rr=send('POST','/v1/inAppPurchaseSubmissions',{'data':{'type':'inAppPurchaseSubmissions','relationships':{'inAppPurchaseV2':{'data':{'type':'inAppPurchases','id':x['id']}}}}})
+        if rr.status_code>=400 and 'already' not in rr.text.lower(): eksik.append(x['attributes']['productId'])
+    elif stx in ('MISSING_METADATA',): eksik.append(x['attributes']['productId'])
+if eksik: raise SystemExit('Tam Sürüm eklenemedi, GÖNDERİLMEDİ: '+', '.join(eksik))
 r=send('PATCH',f'/v1/reviewSubmissions/{sid}',{'data':{'type':'reviewSubmissions','id':sid,'attributes':{'submitted':True}}})
 if r.status_code>=400: raise SystemExit(1)
 time.sleep(10)
