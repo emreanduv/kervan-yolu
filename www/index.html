@@ -392,15 +392,23 @@ function buildPort(){
 }
 function buildSite(){
  const s=new THREE.Group();s.position.set(SITE.x,SITE_Y,SITE.z);scene.add(s);world.site=s;const SX=SITE.x,SZ=SITE.z;
- obsC(SX+34,SZ-18,5);obsC(SX+50,SZ-20,6);for(let x=-37;x<=-15;x+=3.5)for(const z of[-6,1,8])obsC(SX+x,SZ+z,2.6);for(let x=-30;x<=12;x+=3)obsC(SX+x,SZ+24,1.6);obsR(SX+24.6,SX+30.4,SZ+15,SZ+21);
- const tb=new THREE.Group();tb.position.set(34,0,-18);s.add(tb);addCyl(4.2,4.4,1.2,24,MAT.concrete,0,.6,0,tb);addCyl(2.3,2.5,24,24,MAT.turb,0,13,0,tb);
- const cg=new THREE.Group();cg.position.set(16,0,-2);tb.add(cg);addBox(6,2.4,9,MAT.yellow,0,2.2,0,cg);addBox(7,1,11,MAT.dark,0,.5,0,cg);addBox(3,2.6,3,MAT.yellowD,1.2,4.6,-2.8,cg);
+ // saha yerleşimi yola göre: u = gelen yol yönü, w = yanı. Ortada 34 m yarıçaplı boş dönüş alanı bırakılır.
+ const ap=RS[NS-40];let ax=ap.x-SX,az=ap.z-SZ;const al=Math.hypot(ax,az);ax/=al;az/=al;const px=-az,pz=ax;
+ const L=(u,w)=>[u*ax+w*px,u*az+w*pz];const RY=Math.atan2(ax,az);
+ const put=(g,u,w,ry=0)=>{const[x,z]=L(u,w);g.position.set(x,g.position.y,z);g.rotation.y=RY+ry;s.add(g);return g};
+ const OC=(u,w,r)=>{const[x,z]=L(u,w);obsC(SX+x,SZ+z,r)};
+ // yarım kule + paletli vinç (dönüş alanının arkasında)
+ const tb=new THREE.Group();addCyl(4.2,4.4,1.2,24,MAT.concrete,0,.6,0,tb);addCyl(2.3,2.5,24,24,MAT.turb,0,13,0,tb);put(tb,-46,-10);OC(-46,-10,5);
+ const cg=new THREE.Group();addBox(6,2.4,9,MAT.yellow,0,2.2,0,cg);addBox(7,1,11,MAT.dark,0,.5,0,cg);addBox(3,2.6,3,MAT.yellowD,1.2,4.6,-2.8,cg);
  const bm=new THREE.Group();bm.position.set(0,3.6,0);cg.add(bm);addBox(1.4,90,1.4,MAT.yellow,0,45,0,bm);bm.rotation.z=.22;for(let y=4;y<90;y+=6)addBox(1.6,.15,1.6,MAT.yellowD,0,y,0,bm);
- addCyl(.05,.05,58,4,MAT.dark,-19.8,58,0,cg);
- for(let k=0;k<3;k++){const c=addCyl(2.2,2.4,22,24,MAT.turb,-26,2.6,-6+k*7,s);c.rotation.z=Math.PI/2;addBox(1,1.2,4,MAT.wood,-34,.6,-6+k*7,s);addBox(1,1.2,4,MAT.wood,-18,.6,-6+k*7,s)}
- const bg=bladeGeom();for(let k=0;k<2;k++){const b=new THREE.Mesh(bg,MAT.turb);b.castShadow=true;b.rotation.set(-Math.PI/2,0,Math.PI/2);b.position.set(-10,2.2+k*1.6,24+k*.3);s.add(b);addBox(1.2,2.2+k*1.6,1.2,MAT.steel,-8,1.1,24,s);addBox(1.2,2.2+k*1.6,1.2,MAT.steel,22,1.1,24,s)}
- const om=new THREE.MeshPhongMaterial({map:contTex('#e7e3d8')});addBox(2.44,2.59,6.06,om,26,1.3,18,s);addBox(2.44,2.59,6.06,om,29,1.3,18,s);
- addBox(.1,3,.1,MAT.steel,22,1.5,12,s);const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.07),new THREE.MeshBasicMaterial({map:ctex(120,80,(g)=>{g.fillStyle='#e30a17';g.fillRect(0,0,120,80);g.fillStyle='#fff';g.beginPath();g.arc(42,40,20,0,7);g.fill();g.fillStyle='#e30a17';g.beginPath();g.arc(47,40,16,0,7);g.fill();g.fillStyle='#fff';g.save();g.translate(70,40);g.rotate(-.3);g.beginPath();for(let i=0;i<5;i++){const a=i*4*Math.PI/5;g.lineTo(Math.cos(a)*9,Math.sin(a)*9)}g.fill();g.restore()}),side:THREE.DoubleSide}));flag.position.set(22.8,2.5,12);s.add(flag);world.flag=flag;
+ addCyl(.05,.05,58,4,MAT.dark,-19.8,58,0,cg);put(cg,-44,12,Math.PI/2);OC(-44,12,6);
+ // yerde yatan kule segmentleri (sol yanda)
+ for(let k=0;k<3;k++){const g=new THREE.Group();const c=addCyl(2.2,2.4,22,24,MAT.turb,0,2.6,0,g);c.rotation.x=Math.PI/2;addBox(4,1.2,1,MAT.wood,0,.6,-8,g);addBox(4,1.2,1,MAT.wood,0,.6,8,g);put(g,-6+k*0,38+k*7);for(let u=-10;u<=10;u+=4)OC(-6+u,38+k*7,2.7)}
+ // kanat rafları (sağ yanda)
+ const bg=bladeGeom();for(let k=0;k<2;k++){const g=new THREE.Group();const b=new THREE.Mesh(bg,MAT.turb);b.castShadow=true;b.rotation.set(-Math.PI/2,0,0);b.position.set(0,2.2+k*1.6,-20);g.add(b);addBox(1.2,2.2+k*1.6,1.2,MAT.steel,0,1.1,-18,g);addBox(1.2,2.2+k*1.6,1.2,MAT.steel,0,1.1,12,g);put(g,-8,-40-k*3);for(let u=-28;u<=20;u+=4)OC(-8+u,-40-k*3,1.8)}
+ // saha ofisi konteynerleri ve bayrak (yolun yanında, 20 m uzakta)
+ const om=new THREE.MeshPhongMaterial({map:contTex('#e7e3d8')});for(const w of[22,25]){const g=new THREE.Group();addBox(2.44,2.59,6.06,om,0,1.3,0,g);put(g,30,w);OC(30,w,4)}
+ const fg=new THREE.Group();addBox(.1,3,.1,MAT.steel,0,1.5,0,fg);const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.07),new THREE.MeshBasicMaterial({map:ctex(120,80,(g)=>{g.fillStyle='#e30a17';g.fillRect(0,0,120,80);g.fillStyle='#fff';g.beginPath();g.arc(42,40,20,0,7);g.fill();g.fillStyle='#e30a17';g.beginPath();g.arc(47,40,16,0,7);g.fill();g.fillStyle='#fff';g.save();g.translate(70,40);g.rotate(-.3);g.beginPath();for(let i=0;i<5;i++){const a=i*4*Math.PI/5;g.lineTo(Math.cos(a)*9,Math.sin(a)*9)}g.fill();g.restore()}),side:THREE.DoubleSide}));flag.position.set(.8,2.5,0);fg.add(flag);put(fg,26,18);world.flag=flag;
 }
 function bladeGeom(){const sh=new THREE.Shape();sh.moveTo(-.9,0);sh.bezierCurveTo(-1.6,6,-1.4,10,-1,18);sh.lineTo(-.25,40);sh.lineTo(.2,40);sh.bezierCurveTo(.6,24,1.5,8,.9,0);sh.lineTo(-.9,0);
  const g=new THREE.ExtrudeGeometry(sh,{depth:.45,bevelEnabled:true,bevelThickness:.15,bevelSize:.12,bevelSegments:2,curveSegments:8});g.translate(0,1.8,-.22);return g}
@@ -594,7 +602,7 @@ function vehStep(v,dt,inp,load){const p=v.p;let acc=0;const af=load||1;
  else if(collides(v,nx,nz)&&!collides(v,v.x,v.z)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
  else{v.x=nx;v.z=nz}}
 function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h);if(v===fork.v)return hitObs(nx+fx*1.2,nz+fz*1.2)||hitObs(nx-fx*2.1,nz-fz*2.1);
- if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'?[4,8,12,20,28,36]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
+ if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;if(mode!=='career')return false;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'?[4,8,12,20,28,36]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
 function orient(obj,v,fz,rz,half){const fx=-Math.sin(v.h),fzz=-Math.cos(v.h),rx=Math.cos(v.h),rzz=-Math.sin(v.h);
  const hF=getH(v.x-fx*fz,v.z-fzz*fz),hR=getH(v.x-fx*rz,v.z-fzz*rz),mc=-(fz+rz)/2,mx=v.x+fx*mc,mz=v.z+fzz*mc,hL=getH(mx-rx*half,mz-rzz*half),hRi=getH(mx+rx*half,mz+rzz*half);
  const Ln=rz-fz;v.slope=(hF-hR)/Ln;const pitch=Math.atan2(hF-hR,Ln),roll=Math.atan2(hRi-hL,half*2);const hO=hR+(hF-hR)*(0-rz)/(fz-rz);obj.position.set(v.x,hO+.2,v.z);obj.rotation.set(pitch,v.h,roll)}
@@ -648,7 +656,7 @@ function rescue(){const v=truck.v;let bi=0,bd=1e9;for(let i=0;i<NS;i++){const d=
  const back=mode==='career'&&G.job.type==='donus';const i=clamp(bi,2,NS-3),j=back?i-1:i+1;v.x=RS[i].x;v.z=RS[i].z;v.h=Math.atan2(-(RS[j].x-RS[i].x),-(RS[j].z-RS[i].z));v.speed=0;v.steer=0;trailer.th=v.h;G.stuckT=0;setAct(null);snapCam();toast(T('t_rescued'),'#8ff0a4')}
 const FPTS={port:{x:-18,z:-12},site:null};
 function placeRing(r,b,p){const y=getH(p.x,p.z);r.position.set(p.x,y+.35,p.z);b.position.set(p.x,y+13,p.z);r.visible=b.visible=true}
-function freeJob(){FPTS.site={x:SITE.x-6,z:SITE.z+4};const back=G.fj%2===1;const types=back?['raf']:['kule','kanat','kasa'];const cg=types[G.fj%2===1?0:Math.floor(G.fj/2)%3];
+function freeJob(){FPTS.site={x:SITE.x,z:SITE.z};const back=G.fj%2===1;const types=back?['raf']:['kule','kanat','kasa'];const cg=types[G.fj%2===1?0:Math.floor(G.fj/2)%3];
  G.fr={from:back?'site':'port',to:back?'port':'site',cargo:cg,loaded:false};for(const k in CARGO)CARGO[k].visible=false;crates.forEach(c=>{if(c.parent===trailer.g){scene.add(c)}c.visible=false});world.straps.forEach(s=>s.visible=false);
  placeRing(pickRing,pickBeam,FPTS[G.fr.from]);ring.visible=ringBeam.visible=false;G.target=FPTS[G.fr.from];
  setObj(T('fo_pick').replace('{from}',T(G.fr.from==='port'?'fp_port':'fp_site')))}
