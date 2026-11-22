@@ -9,6 +9,12 @@ SEFERLER
 • Acil yedek parça: arızalı türbin bekliyor; süre kısa, navlun yüksek.
 • Dönüş seferi: boş kanat raflarını limana geri götür.
 
+TRAFİK KURALLARI
+• Tır için açık yolda 80, köyde 50, liman ve şantiyede 30 km/sa; özel izinli ağır ve geniş yükte en çok 60, zincirle 40. Sınır hız göstergesinin yanındaki levhada.
+• EDS hız kameraları: sınırı aşarsan sefer raporuna trafik cezası yazılır.
+• Sağ şeritte kal: karşıdan otomobil, dolmuş, otobüs, pikap ve traktör gelir. Geniş yükte önünde GENİŞ YÜK levhalı eskort aracı gider, karşı trafik kenara çekilir.
+• Her sefer gerçek bir sahaya: yükler türbin üreticisinin etiketiyle gelir, saha girişinde yatırımcının ve santralin tabelası seni karşılar.
+
 TESLİM VE HASAR
 • Teslimde drone'u uçur, yükü tara: çizik, ezik ve kaplama hasarı rapora geçer.
 • Yol dışına çıkmak, virajı hızlı almak, sert fren ve çarpışma yüke hasar verir; uyarı hangi hıza inmen gerektiğini söyler.

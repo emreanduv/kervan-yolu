@@ -73,6 +73,9 @@ FIFA nesli W-A-S-D'ye alışkın; bütün oyun ve uygulamalarda klavye bu alış
 - Klavyesiz oyun bırakılmaz: tıkla-gez oyunlarında da WASD ile yürüme, E/Boşluk ile yakındaki şeye dokunma olur (örnek: Kırmızı Yalı `www/js/motor.js` "Klavye (WASD + oklar)").
 - Yardım / "Nasıl Oynanır" ekranında tuşlar Türkçe ve İngilizce yazılır. Gelişim Defteri G43.
 
+### Gerçek isim, türetilmiş ad: şirketler (Emre'nin kuralı, 22 Kasım 2026)
+Oyundaki türbin üreticileri ve saha yatırımcıları gerçek şirketlerden **isim bozma yöntemiyle** gelir; gerçek ad, logo ya da renk düzeni birebir kullanılmaz. Kervan Yolu listesi (`www/index.html` → `OEMS`, `INV`, `RES`): üreticiler NURDAKS, EMERKAN, KESXAS, SIMENZ GAMAZA, JE VERNAVA, GALDWIND; yatırımcılar Sinerjika, Akfan Enerji, Alemdar Enerji, Zarlu Enerji, Kalyan Enerji, Bilgen Enerji, Borasan EnBaW, Eksin Enerji. Yükün üstünde üretici etiketi, saha girişinde yatırımcı + santral tabelası. Reklam panosu kuralı ayrıdır: panolarda yalnız Mr. Anduv! seti.
+
 ### Ses koruyucu (Emre'nin kuralı, 22 Kasım 2026; bütün oyun ve uygulamalar)
 Uygulama arka plana gidip (başka uygulama, bildirim, kilit ekranı, arama) geri gelince ses kaybolmaz; kapatıp açmak gerekmez. Üç parça, her üründe ilk işte konur ve yayın kontrolünde aranır (kaynak hep emreanduv/kervan-yolu, dosyalar birebir kopyalanır):
 - `ses-kurtarici.js` (v3) web kökünde, `index.html` `<head>`'inde **bütün betiklerden önce**: sayfadaki bütün AudioContext'leri (Phaser, Howler dahil) kayda alır; görünürlük/odak/Capacitor appStateChange/ilk dokunuşta birkaç kez `resume()` + sessiz dürtme, duran `<audio>/<video>`'yu sürdürür, `window.sesKurtar()` verir. İsteğe bağlı `SesKurtarici.yenidenKur(fn)`.

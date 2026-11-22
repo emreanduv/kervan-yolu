@@ -9,6 +9,12 @@ JOBS
 • Urgent spare part: a turbine is down; short deadline, high pay.
 • Return job: take the empty blade racks back to the port.
 
+TRAFFIC RULES
+• Trucks: 80 km/h on open roads, 50 in villages, 30 at the port and on site; special-permit heavy and wide loads max 60, with chains 40. The limit is on the sign next to the speed.
+• Speed cameras: go over the limit and a traffic fine goes into the job report.
+• Keep right: cars, shared taxis, coaches, pickups and tractors come the other way. With a wide load a WIDE LOAD escort vehicle drives ahead and oncoming traffic pulls over.
+• Every job goes to a real-style site: loads carry the turbine manufacturer's label and the site sign shows the investor and the wind farm.
+
 DELIVERY AND DAMAGE
 • Fly the drone at delivery and scan the cargo: scratches, dents and coating damage go into the report.
 • Going off road, taking bends too fast, hard braking and collisions damage the cargo; the warning tells you which speed to slow down to.
