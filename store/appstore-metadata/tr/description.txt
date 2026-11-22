@@ -1,4 +1,4 @@
-Rüzgâr türbini lojistiği simülasyonu: tırla limandan dağdaki rüzgâr sahasına kule, kanat, SCADA panosu ve yedek parça taşı. İki bölge (Marmara ve Ege), kanat kaldırıcı, 1923 sefer, forklift, drone ile hasar tespiti ve gerçekçi navlun hesabı.
+Rüzgâr türbini lojistiği simülasyonu: tırla limandan dağdaki rüzgâr sahasına kule, kanat, SCADA panosu ve yedek parça taşı. Üç bölge (Marmara, Ege ve İç Anadolu), kanat kaldırıcı, kar zinciri, 1923 sefer, forklift, drone ile hasar tespiti ve gerçekçi navlun hesabı.
 
 SEFERLER
 • Kasa seferi: depoda forkliftle SCADA panosunu, kesiciyi ve yedek parça kasalarını dorseye diz, spanzetle bağla.
@@ -15,10 +15,14 @@ TESLİM VE HASAR
 BÖLGELER
 • Marmara: Bandırma Limanı'ndan Balıkesir Yaylası'na. Konteyner vinci, yük gemisi, kıyı yolu ve yol kenarında kervansaray.
 • Ege: Aliağa Limanı'ndan Bergama Tepeleri'ne. Dağ yolları, zeytinlikler, kızılçamlar ve servilerle çevrili dar köy sokakları.
+• İç Anadolu: Samsun Limanı'ndan karlı Sivas Yaylası'na. Kar çizgisinin üstünde buz tutan yol, tipi, karlı çamlar ve yol kenarında koyun ağılını bekleyen Kangal köpekleri.
 Sabah, öğle, akşam ve gece yolculukları; gece farlarla sür.
 
 KANAT KALDIRICI
 Ege'nin dar köy sokağında 40 metrelik kanat evlere çarpar. Dur, kanadı kökünden havaya dik ve evlerin üstünden geçir. Köyden sonra enerji hattı var: önünde dur ve kanadı indir.
+
+KAR ZİNCİRİ
+Sivas yolunda buzlu yokuşta tır patinaj yapar, fren zayıflar. Zincir takma alanında dur, zincirleri tak, 40 km/sa ile tırman.
 
 KABİN
 Kabin içi kamerada canlı göstergeler, direksiyon, takograf, cama asılı tesbih ve torpidoda ince belli çay bardağı.
