@@ -4,6 +4,8 @@ SEFERLER
 • Kasa seferi: depoda forkliftle SCADA panosunu, kesiciyi ve yedek parça kasalarını dorseye diz, spanzetle bağla.
 • Kule segmenti: lowbed dorsede ağır yük; yokuşlarda vites ve fren yönetimi.
 • Türbin kanadı: dorsenin 30 metre arkasına taşan 40 metrelik kanat. Virajları geniş al, şevlere sürtme.
+• Nasel: 90 tonluk makine dairesi, en ağır yük; yokuşta yavaş, virajdan önce hız kes.
+• Hub, güç aktarma (ana mil ve dişli kutusu), ankraj kafesi ve malzeme konteyneri: her biri farklı ağırlık, genişlik ve rüzgâr yüzeyi.
 • Acil yedek parça: arızalı türbin bekliyor; süre kısa, navlun yüksek.
 • Dönüş seferi: boş kanat raflarını limana geri götür.
 

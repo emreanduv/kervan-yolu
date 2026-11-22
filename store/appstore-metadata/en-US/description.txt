@@ -4,6 +4,8 @@ JOBS
 • Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
 • Tower section: a heavy load on a lowbed trailer; manage gears and brakes on the climbs.
 • Turbine blade: a 40 metre blade sticking out 30 metres behind the trailer. Take corners wide and keep it off the slopes.
+• Nacelle: a 90 ton machine house, the heaviest load; slow on the climbs and brake before the bends.
+• Hub, drive train (main shaft and gearbox), anchor cage and material container: each with its own weight, width and wind area.
 • Urgent spare part: a turbine is down; short deadline, high pay.
 • Return job: take the empty blade racks back to the port.
 

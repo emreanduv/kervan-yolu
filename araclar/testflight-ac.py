@@ -47,12 +47,12 @@ if src:
         sl=get(f"/apps/{src[0]['id']}/betaAppLocalizations")['data']
         ml={x['attributes']['locale']:x for x in get(f'/apps/{APP}/betaAppLocalizations')['data']}
         for s in sl:
-            loc=s['attributes']['locale']; a={'feedbackEmail':s['attributes'].get('feedbackEmail'),'description':'Kervan Yolu: tırla limandan rüzgâr sahasına kule, kanat ve yedek parça taşı; forklift, drone ile hasar tespiti, 1923 sefer.'}
+            loc=s['attributes']['locale']; a={'feedbackEmail':s['attributes'].get('feedbackEmail'),'description':'Kervan Yolu: tırla limandan rüzgâr sahasına kule, kanat, nasel ve yedek parça taşı; dört bölge, kanat kaldırıcı, kar zinciri, yan rüzgâr, forklift, drone ile hasar tespiti, 1923 sefer.'}
             if loc in ml: patch(f"/betaAppLocalizations/{ml[loc]['id']}",{'data':{'type':'betaAppLocalizations','id':ml[loc]['id'],'attributes':a}})
             else: post('/betaAppLocalizations',{'data':{'type':'betaAppLocalizations','attributes':dict(a,locale=loc),'relationships':{'app':{'data':{'type':'apps','id':APP}}}}})
     except Exception as e: print('yerelleştirme kopyalanamadı:',e)
 # 4) "Neyi test etmeli"
-for loc,txt in [('tr','İlk sürüm: Serbest Sürüş ve 1923 sefer (kasa/forklift, kule, kanat, acil yedek parça, dönüş), drone ile hasar tespiti, gece sürüşü, kabin içi kamera. Lütfen dil seçimi, forklift yükleme, sürüş, teslim, ipucu kartları, Ayarlar ve iPad görünümünü deneyin.'),('en-US','First release: Free Drive and 1923 jobs (crates/forklift, tower, blade, urgent spare part, return), drone inspection, night driving, cab view. Please try language choice, forklift loading, driving, delivery, tip cards, Settings and the iPad layout.')]:
+for loc,txt in [('tr','Dört bölge: Marmara, Ege (dar köy sokağında kanat kaldırıcı, ardından enerji hattı), İç Anadolu/Sivas (buzlu yol, mavi halkada kar zinciri), Trakya (yan rüzgâr ve rüzgâr göstergesi). Yeni yükler: nasel, hub, güç aktarma, ankraj kafesi, malzeme konteyneri. Serbest Sürüş\'te bölge seç; uyarıların ne yapacağını söyleyip söylemediğine, yatay ve dikey ekrana bakın.'),('en-US','Four regions: Marmara, Aegean (blade lifter in a narrow village street, then a power line), Central Anatolia/Sivas (icy road, snow chains in the blue ring), Thrace (crosswind and wind gauge). New loads: nacelle, hub, drive train, anchor cage, material container. Pick a region in Free Drive; check that every warning tells you what to do, in landscape and portrait.')]:
     ex=[x for x in get(f'/builds/{bid}/betaBuildLocalizations')['data'] if x['attributes']['locale']==loc]
     if ex: patch(f"/betaBuildLocalizations/{ex[0]['id']}",{'data':{'type':'betaBuildLocalizations','id':ex[0]['id'],'attributes':{'whatsNew':txt}}})
     else: post('/betaBuildLocalizations',{'data':{'type':'betaBuildLocalizations','attributes':{'locale':loc,'whatsNew':txt},'relationships':{'build':{'data':{'type':'builds','id':bid}}}}})

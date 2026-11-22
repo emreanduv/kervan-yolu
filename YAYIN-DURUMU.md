@@ -15,6 +15,7 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] 21 Kas 2026: iOS 1.0.0 (1) TestFlight'ta, Mr. Anduv! Testçileri grubuna bağlı, beta incelemesi bekleniyor
 - [x] App Store 1.0.0: metin + görseller TR/EN, fiyat ücretsiz, Tam Sürüm IAP (Prepare for Submission), inceleme notu, derleme 1 seçili
 - [x] App Privacy "Data Not Collected" yayınlandı; gizlilik URL'si GitHub'daki docs/GIZLILIK.md
+- [x] 22 Kas 2026, derleme 11: yeni yükler (nasel 90 t, hub, güç aktarma, ankraj kafesi, malzeme konteyneri; Emre'nin ilk listesinden); yatay ekranda menü, mola ve sefer raporu tek ekrana sığar; zincir alanı buzsuz; G91 deftere
 - [x] 22 Kas 2026, derleme 10: Trakya bölgesi (Tekirdağ Limanı → Ganos Dağı): ayçiçeği/buğday tarlaları, kavak sıraları, rüzgâr tulumları, hamle yapan yan rüzgâr ve rüzgâr göstergesi, yük uyarısı hedef hızla; rüzgâr/tipi sesi; zincir alanı belirgin (yol üstü köprü tabela, mavi halka, dubalar, mini haritada nokta, mesafeli uyarı; Emre: 'göremedim'); Ege ve Trakya serbest sürüşte ilk yük kanat; 10 ekran görüntüsü
 - [x] 22 Kas 2026, derleme 9: İç Anadolu bölgesi (Samsun Limanı → Sivas Yaylası): kar çizgisi, tipi, buzlu yol (patinaj, zayıf fren), kar zinciri (zincir takma alanı, en çok 40 km/sa), ağıl ve Kangal köpekleri; 9 ekran görüntüsü ve metinler yüklendi, derleme 9 sürüme seçili (taslaktaki sürüm düzenleme için çıkarıldı, gönderim sürüm sayfasından yapılacak)
 - [x] 22 Kas 2026: Emre derleme 8'i denedi, sorun yok dedi → gönderim başlatıldı; sürüm taslak gönderime (reviewSubmission) eklendi
