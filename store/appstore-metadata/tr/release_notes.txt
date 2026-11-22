@@ -1,1 +1,1 @@
-İlk sürüm: 1923 sefer, beş sefer türü (kasa, kule, kanat, acil yedek parça, dönüş), forklift, drone ile hasar tespiti, sigorta, gece sürüşü ve kabin içi kamera.
+İlk sürüm: iki bölge (Marmara ve Ege), kanat kaldırıcı, 1923 sefer, beş sefer türü (kasa, kule, kanat, acil yedek parça, dönüş), forklift, drone ile hasar tespiti, sigorta, gece sürüşü ve kabin içi kamera. Yük kayınca oyun hangi hıza inmen gerektiğini söyler.
