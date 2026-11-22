@@ -13,7 +13,8 @@ def send(m,p,body=None):
     ok=r.status_code<400; print(('✓' if ok else '✗'),m,p,r.status_code,'' if ok else r.text[:800]); return r
 for st in ('READY_FOR_REVIEW',):
     for x in get('/v1/reviewSubmissions',**{'filter[app]':APP,'filter[platform]':'IOS','filter[state]':st})['data']:
-        send('PATCH',f"/v1/reviewSubmissions/{x['id']}",{'data':{'type':'reviewSubmissions','id':x['id'],'attributes':{'canceled':True}}})
+        for it in get(f"/v1/reviewSubmissions/{x['id']}/items")['data']:
+            send('DELETE',f"/v1/reviewSubmissionItems/{it['id']}")
 time.sleep(8)
 v=get(f'/v1/apps/{APP}/appStoreVersions',**{'filter[platform]':'IOS','filter[versionString]':SURUM})['data']
 print('sürüm',SURUM,v and v[0]['attributes']['appStoreState'])
