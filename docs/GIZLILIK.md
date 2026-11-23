@@ -1,12 +1,16 @@
 # Kervan Yolu — Gizlilik Politikası
 
-*Son güncelleme: 21 Kasım 2026 · Geliştirici: Mr. Anduv!*
+*Son güncelleme: 24 Kasım 2026 · Geliştirici: Mr. Anduv!*
 
 Kervan Yolu çevrim dışı çalışan, tek oyunculu bir tır simülasyonu oyunudur. Hesap, giriş, reklam ya da analiz aracı yoktur.
 
 ## Toplanan veriler
 
 Oyun hiçbir kişisel veri toplamaz, sunucuya göndermez ve üçüncü taraflarla paylaşmaz. Dil seçimin, ses ayarın, sefer ilerlemen, kazancın ve ipucu durumların yalnızca cihazında (yerel depolama) saklanır.
+
+## Cihazlar arası kayıt
+
+iPhone, iPad ve Mac'te ilerlemen kendi iCloud hesabında (Apple'ın anahtar-değer deposu) saklanır; telefon değiştirince ya da cihazlar arasında geçince kaldığın yerden devam edersin. Bu kopyayı yalnızca sen görürsün, bize ulaşmaz. "Verilerimi sil" iCloud'daki kopyayı da siler. Android'de Google yedeği kullanılır.
 
 ## Satın alma
 
@@ -33,6 +37,10 @@ Kervan Yolu is an offline, single-player truck simulator. There is no account, l
 ## Data collected
 
 The game collects no personal data, sends nothing to a server and shares nothing with third parties. Your language, sound setting, job progress, earnings and tip states are stored only on your device (local storage).
+
+## Cross-device save
+
+On iPhone, iPad and Mac your progress is kept in your own iCloud account (Apple's key-value store), so you can continue where you left off on a new phone or another device. Only you can see this copy; it never reaches us. "Delete my data" also deletes the iCloud copy. On Android, Google backup is used.
 
 ## Purchases
 

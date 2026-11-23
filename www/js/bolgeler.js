@@ -39,4 +39,27 @@ function narenciye(root){const yap=P('#2e5a24',{shininess:20}),por=new THREE.Mes
 const _br=buildRegion;buildRegion=function(r){_br(r);try{const R=REGIONS[r];if(!R||!(R.peri||R.tea||R.citrus))return;const root=new THREE.Group();scene.add(root);if(typeof WOBJ!=='undefined')WOBJ.push(root);if(R.peri)peri(root);if(R.tea)cay(root);if(R.citrus)narenciye(root)}catch(e){console.log(e)}};
 // Karadeniz sisi
 const _sT=setTOD;setTOD=function(k){_sT(k);if(REGIONS[REG]&&REGIONS[REG].fog&&scene.fog){scene.fog.near*=.6;scene.fog.far*=.62;scene.fog.color.lerp(new THREE.Color(0xb9c4c8),.35)}};
+
+// Malaklı (Aksaray-Niğde çoban köpeği): yol kenarında koyun sürüsü; tır geçerken bir süre yanında koşar (evren G81)
+let MK=null;window._MK=()=>MK;
+function malakli(root){const i0=Math.floor(NS*.45),side=1;const ap=sideAt(i0,side*30);const ay=getH(ap.x,ap.z);const ag=new THREE.Group();ag.position.set(ap.x,ay,ap.z);ag.rotation.y=ap.ang;root.add(ag);
+ const wool=P('#e9e2d4',{shininess:4}),dark=P('#2b2622');for(let k=0;k<16;k++){const sh=new THREE.Group();sh.position.set((Math.random()-.5)*20,0,(Math.random()-.5)*16);sh.rotation.y=Math.random()*6;ag.add(sh);
+  const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.72,1),wool);b.scale.set(1.25,.85,.9);b.position.y=.92;b.castShadow=true;sh.add(b);addBox(.34,.38,.44,dark,.92,1.06,0,sh);for(const[a,c]of[[.5,.3],[.5,-.3],[-.5,.3],[-.5,-.3]])addBox(.12,.52,.12,dark,a,.27,c,sh)}
+ const kurk=P('#a8824f',{shininess:8}),mask=P('#1f1a16'),dg=new THREE.Group();scene.add(dg);if(typeof WOBJ!=='undefined')WOBJ.push(dg);
+ const gv=new THREE.Mesh(new THREE.CylinderGeometry(.42,.4,1.4,10),kurk);gv.rotation.z=Math.PI/2;gv.position.y=.98;gv.castShadow=true;dg.add(gv);const kc=new THREE.Mesh(new THREE.SphereGeometry(.41,10,8),kurk);kc.position.set(-.7,.98,0);dg.add(kc);
+ const gs=new THREE.Mesh(new THREE.SphereGeometry(.4,10,8),kurk);gs.scale.set(1,.95,1.05);gs.position.set(.9,1.12,0);dg.add(gs);// göğüs
+ const bas=new THREE.Group();bas.position.set(1.22,1.38,0);dg.add(bas);const kf=new THREE.Mesh(new THREE.SphereGeometry(.33,10,8),kurk);kf.scale.set(1.05,.95,1.05);bas.add(kf);
+ const ag2=new THREE.Mesh(new THREE.BoxGeometry(.36,.3,.34),mask);ag2.position.set(.3,-.1,0);bas.add(ag2);const bu=new THREE.Mesh(new THREE.SphereGeometry(.07,6,5),mask);bu.position.set(.5,-.04,0);bas.add(bu);
+ for(const z of[.28,-.28]){const k=new THREE.Mesh(new THREE.BoxGeometry(.12,.32,.2),mask);k.position.set(-.02,-.06,z);k.rotation.x=z>0?.25:-.25;bas.add(k)}// sarkık kulak
+ const sb=new THREE.Mesh(new THREE.CylinderGeometry(.07,.04,.6,6),kurk);sb.position.set(-1.0,1.15,0);sb.rotation.z=-1.0;dg.add(sb);
+ const legs=[];for(const[a,c]of[[.62,.24],[.62,-.24],[-.6,.24],[-.6,-.24]]){const l=new THREE.Group();l.position.set(a,.8,c);dg.add(l);const m=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.78,6),kurk);m.position.y=-.39;l.add(m);const pa=new THREE.Mesh(new THREE.BoxGeometry(.18,.08,.16),mask);pa.position.set(.03,-.78,0);l.add(pa);legs.push(l)}
+ dg.scale.setScalar(1.08);const p0=sideAt(i0,side*9);dg.position.set(p0.x,getH(p0.x,p0.z),p0.z);dg.rotation.y=p0.ang;
+ MK={dg,legs,i0,side,ci:i0,run:false,done:false,ph:0}}
+const _br2=buildRegion;buildRegion=function(r){MK=null;_br2(r);try{if(r==='kapadokya'){const root=new THREE.Group();scene.add(root);if(typeof WOBJ!=='undefined')WOBJ.push(root);malakli(root)}}catch(e){console.log(e)}};
+addEventListener('load',()=>{if(!window.EXT)return;const _st=EXT.step;EXT.step=function(dt,run){const r=_st?_st(dt,run):false;try{if(MK&&truck&&G&&run){const v=truck.v,ti=roadIdx(v);
+ if(!MK.run&&!MK.done&&Math.abs(ti-MK.i0)<10&&Math.abs(v.speed)>1.5){MK.run=true;MK.ci=MK.i0;blip(260,200,.12);setTimeout(()=>blip(240,190,.12),180);if(G.warnT<=0){toast(L==='tr'?'Malaklı çoban köpeği bir süre tırın yanında koşuyor':'A Malaklı shepherd dog runs alongside for a while','#ffe08a',2.4);G.warnT=2.5}}
+ if(MK.run){const sp=Math.min(Math.abs(v.speed),9);const tgt=ti+(ti>=MK.ci?1:-1)*0;const di=dt*sp/(ROADLEN/(NS-1));MK.ci+=clamp(tgt+1-MK.ci,-di,di);const dir=ti>=MK.i0?1:-1;
+  const i=Math.round(MK.ci),p=sideAt(clamp(i,1,NS-2),MK.side*7.5),q=sideAt(clamp(i+dir,1,NS-2),MK.side*7.5);MK.dg.position.set(p.x,getH(p.x,p.z),p.z);MK.dg.rotation.y=Math.atan2(q.x-p.x,q.z-p.z)-Math.PI/2;
+  MK.ph+=dt*(4+sp*1.2);MK.legs.forEach((l,k)=>l.rotation.z=Math.sin(MK.ph+(k<2?0:Math.PI)+(k%2?.6:0))*.55);MK.dg.position.y+=Math.abs(Math.sin(MK.ph))*.12;
+  if(Math.abs(MK.ci-MK.i0)>45||Math.abs(ti-MK.ci)>12){MK.run=false;MK.done=true;MK.legs.forEach(l=>l.rotation.z=0)}}}}catch(e){}return r}});
 })();

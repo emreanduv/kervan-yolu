@@ -1,52 +1,48 @@
-Wind turbine logistics simulator: haul tower sections, blades, SCADA panels and spare parts by truck from the port to a hilltop wind farm. Four regions (Marmara, the Aegean, Central Anatolia and Thrace), a blade lifter, snow chains, crosswinds, 1923 jobs, forklift, drone inspection and realistic freight pay.
+Wind turbine logistics simulator: haul tower sections, blades, nacelles and spare parts by truck from the port to a hilltop wind farm. Eight regions, a blade lifter, snow chains, crosswinds, rain and mud, your own haulage company, a 10 turbine wind farm project and 1923 jobs.
 
 JOBS
-• Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
-• Tower section: a heavy load on a lowbed trailer; manage gears and brakes on the climbs.
-• Turbine blade: a 72 m blade on an extendable trailer, root frame up front, tip frame at the back, self-steering rear bogie. Take bends wide and keep off the banks.
-• Nacelle: a 90 ton machine house, the heaviest load; slow on the climbs and brake before the bends.
-• Hub, drive train (main shaft and gearbox), anchor cage and material container: each with its own weight, width and wind area.
-• Urgent spare part: a turbine is down; short deadline, high pay.
-• Return job: bring the empty blade racks back to port.
+• Turbine blade: a 72 m blade on an extendable trailer with a self-steering rear bogie. Take bends wide.
+• Tower section and 90 ton nacelle: manage gears and brakes on the climbs, slow down before the bends.
+• Hub, drive train, anchor cage, container: each with its own weight, width and wind area.
+• Crate job: load the SCADA panel and spare parts with a forklift and strap them down.
+• Urgent spare parts and empty rack returns.
 
-PORT, CUSTOMS AND PERMITS
-• Imported cargo comes off the ship by port crane and goes through customs inspection in the bonded area.
-• Heavy and oversize loads need an abnormal load road permit, a road use fee and, where needed, a road modification protocol; papers are checked at the port exit gate.
+PORT, PAPERS AND PERMITS
+• Ship discharge by port crane, customs inspection, and a paper check at the gate for every load leaving the port.
+• Abnormal load permit, road use fee, road modification protocol.
+• Blades and towers move only at night in Marmara and Thrace; police or gendarmerie lead blade and nacelle convoys.
+• Survey the route by drone before you leave: bends, villages, power lines, weigh station and fuel are marked on the map.
 
-TRAFFIC RULES
-• Tachograph: a 45 min break at the rest area after 4.5 hours; blades wait at port in winds over 15 m/s.
-• Trucks: 80 km/h on open roads, 50 in villages, 30 at the port and on site; special-permit heavy and wide loads max 60, with chains 40. The limit is on the sign next to the speed.
-• Speed cameras: speeding adds a fine to the job report.
-• Keep right: oncoming cars, minibuses, coaches and tractors. Wide loads get escort vehicles front and rear; oncoming traffic pulls over.
-• Loads carry the turbine maker's label; the site sign shows the investor and wind farm.
+ROAD RULES
+• Tachograph: a 45 min break at the rest area every 4.5 hours. Refuel at the fuel station; heavy loads must cross the weigh station.
+• Trucks: 80 km/h on open roads, 50 in villages; abnormal loads 30 in built-up areas, 50 outside, 40 with chains. Speed cameras issue fines.
+• Keep right: oncoming sedans, SUVs, pickups, minibuses, coaches, trucks and tractors light their brake lamps and put on hazards when they yield. Escorts front and rear; the radio calls out real traffic.
 
 DELIVERY AND DAMAGE
-• Fly the drone at delivery and scan the cargo: scratches, dents and coating damage go into the report.
-• Going off road, taking bends too fast, hard braking and collisions damage the cargo; the warning tells you which speed to slow down to.
-• Job report: freight fee, damage deduction, insurance payout (after the deductible), late penalty and damage-free bonus.
+• Scan the cargo by drone at delivery: scratches, dents and coating damage go into the report.
+• Fast bends, hard braking, going off road and collisions damage the cargo; warnings tell you which speed to slow down to.
+• Job report: freight, itemised costs, damage, insurance, late penalty and damage-free bonus.
 
 REGIONS
-• Marmara: from Bandırma Port to the Balıkesir Uplands. Container crane, cargo ship, a coastal road and a caravanserai by the roadside.
-• Aegean: from Aliağa Port to the Bergama Hills. Mountain roads, olive groves, red pines and narrow village streets lined with cypresses.
-• Central Anatolia: from Samsun Port to the snowy Sivas Plateau. Icy roads above the snow line, blizzards, snow-covered pines and Kangal dogs guarding a sheepfold by the road.
-• Thrace: from Tekirdağ Port to the turbine ridges of Mount Ganos. Sunflower and wheat fields, rows of poplars, windsocks and gusting crosswinds.
-Morning, noon, evening and night drives; at night, use your headlights.
+• Marmara: Bandırma Port to the Balıkesir Uplands; coastal road and caravanserai.
+• Aegean: Aliağa to the Bergama Hills; blade lifter in a narrow village street and a power line.
+• Central Anatolia: Samsun to the snowy Sivas Plateau; icy road, snow chains and Kangal dogs.
+• Thrace: Tekirdağ to Mount Ganos; sunflower fields and gusting crosswinds.
+• Çanakkale: Karabiga Port to the Biga Hills through olive groves.
+• Hatay: İskenderun to the Belen Pass; citrus orchards and strong winds.
+• Black Sea: Trabzon to the Çaykara highland; tea gardens, granaries, fog and snow.
+• Cappadocia: Mersin to the fairy chimneys and the foothills of Mount Erciyes.
+Morning, noon, evening and night; roads get slippery in the rain, and a dozer tows you out of the mud on site. Village elders wave from their tea table.
 
-BLADE LIFTER
-On the Aegean route the 72 metre blade cannot enter the narrow village street on the long trailer. At the transfer yard a mobile crane moves it to the blade lifter; in the village tilt the blade up and lower it before the power line. Costs and surcharge show in the report.
+COMPANY AND PROJECT
+Build your own haulage company: buy a telescopic trailer, blade lifter, SPMT and new trucks, take loans, hire drivers, unlock skills. In the 10 turbine wind farm project, bring every part on time so the crane never waits.
 
-SNOW CHAINS
-On the icy climbs to Sivas the truck spins and the brakes weaken. Stop at the chain-up area, fit the chains and climb at up to 40 km/h.
-
-CROSSWINDS
-In Thrace, watch the wind gauge: as the wind gusts, a blade or tower pulls like a sail and the truck drifts. The game tells you which speed to slow down to.
-
-THE CAB
-Live gauges, steering wheel, tachograph, prayer beads hanging from the windscreen and a tulip tea glass on the dashboard.
+CAB AND PHOTOS
+Live gauges, horn, hazards, prayer beads on the mirror and a tulip tea glass in the cab; Mr. Anduv! FM radio. Shoot your convoy in photo mode and share it.
 
 GAMEPLAY
-• Free Drive: no jobs and no clock; pick the time of day and enjoy the road.
-• The first 3 jobs are free. The Full Version (one-time purchase) unlocks all 1923 jobs.
+• Free drive has no tasks or timer; pick the region, time of day and weather.
+• First 3 jobs free. Full Version (one-time purchase) unlocks all 1923 jobs.
 • Turkish and English, no ads, works offline, collects no data.
 
 A Mr. Anduv! production.

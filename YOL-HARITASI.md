@@ -17,15 +17,17 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - ✓ Yakıt ve kantar istasyonu — 1.0'a girdi (motorin 89 ₺/L, gerçek güzergâh km'si)
 - ✓ Gece izni (Marmara/Trakya kanat-kule), özel yük hız sınırı 30/50, polis/jandarma refakati (kanat, nasel) — 1.0'a girdi
 
-## 1.2 "Kendi Firman ve RES Projesi"
-- Firma: kazandıkça ekipman satın alma (lowbed → teleskopik kanat dorsesi → blade lifter → SPMT), kredi ve faiz
-- Garaj ve şoförler (arka planda sefer)
-- Beceri ağacı: ağır yük, gabari dışı, gece, kar zinciri
-- Proje modu: 10 türbinlik RES; montaj vinci bekleme ücreti (LD mantığı), türbinler dikilince rotorların döndüğü final
-- Saha yolu: stabilize yol, yağmurdan sonra çamur, greyder/dozer çekmesi
-- Güzergâh keşfi: sefer öncesi drone ile köprü, viraj, hat işaretleme
+## 1.2 "Kendi Firman ve RES Projesi" — hepsi 1.0'a girdi (derleme 28–31)
+- ✓ Firma: kazandıkça ekipman satın alma (lowbed → teleskopik kanat dorsesi → blade lifter → SPMT), kredi ve faiz
+- ✓ Garaj ve şoförler (arka planda sefer)
+- ✓ Beceri ağacı: ağır yük, gabari dışı, gece, kar zinciri
+- ✓ Proje modu: 10 türbinlik RES; montaj vinci bekleme ücreti (LD mantığı), türbinler dikilince rotorların döndüğü final
+- ✓ Saha yolu: stabilize yol, yağmurdan sonra çamur, greyder/dozer çekmesi
+- ✓ Güzergâh keşfi: sefer öncesi drone ile köprü, viraj, hat işaretleme
 
 ## Sonra
-- Yeni bölgeler: Karadeniz yaylası, Hatay-İskenderun, Çanakkale, Kapadokya; gemi bağlantısı
-- Köy hayatı (el sallayan köylüler), mevsim ve yağmur
+- ✓ Yeni bölgeler: Karadeniz yaylası, Hatay-İskenderun, Çanakkale, Kapadokya (derleme 32); gemi bağlantısı sonra
+- ✓ Köy hayatı (el sallayan köylüler, çay masası), yağmur; mevsimler sonra
+- ✓ Trafik araçları yeniden çizildi (derleme 29), eskort ve polis LED lamba (derleme 33)
+- Gerçek harita bölgeleri: bölge bölge
 - Google Play, Steam, Meta Horizon (VR)
