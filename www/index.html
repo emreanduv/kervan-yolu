@@ -702,17 +702,17 @@ function makeVeh(type){const g=new THREE.Group();g.rotation.order='YXZ';const W=
  else{const rd=P('#b52417',{shininess:50});addBox(1.2,.9,2.6,rd,0,1.3,-.4,g);addBox(1.1,1.4,1.2,rd,0,2.3,.5,g);addBox(1.12,1,1.1,MAT.glass,0,2.4,.5,g);wheel(.85,.45,.95,.85,.7,g,W);wheel(.85,.45,-.95,.85,.7,g,W);wheel(.45,.25,.7,.45,-1.4,g,W);wheel(.45,.25,-.7,.45,-1.4,g,W);addCyl(.06,.06,1.2,6,MAT.dark,.4,2.6,-1.2,g);len=3.6;wid=2.1;spd=7}
  g.traverse(o=>{if(o.isMesh)o.castShadow=true});g.visible=false;scene.add(g);return{g,W,type,len,wid,spd0:spd,spd:spd,i:0,dir:1,off:0,on:false,brake:false,honk:0,crashT:0}}
 let ESC=null,ESC2=null;
-function setupTraffic(){if(TRAF.length)return;for(const t of['oto','dolmus','otobus','pikap','oto','traktor'])TRAF.push(makeVeh(t));
+function setupTraffic(){if(TRAF.length)return;for(const t of['oto','dolmus','otobus','pikap','oto','tir','oto','traktor'])TRAF.push(makeVeh(t));
  // eskort aracı: geniş/ağır yükün önünde, tepe lambası ve GENİŞ YÜK levhası
 ESC=mkEsc();ESC2=mkEsc();POL=mkPol()}
 // eskort aracı: tepe lambası ve GENİŞ YÜK levhası (önde; uzun yükte arkada da bir tane)
 let POL=null;
-function mkPol(){const P2=makeVeh('oto');P2.g.children.forEach(o=>{if(o.material&&o.material.color&&o.material!==MAT.glass&&o.material!==MAT.head&&o.material!==MAT.tail&&o.material!==MAT.tyre&&o.material!==MAT.rim)o.material=P('#f4f5f6',{shininess:90})});
+function mkPol(){const P2=makeVeh('oto');P2.g.children.forEach(o=>{if(o.userData.paint)o.material=P('#f4f5f6',{shininess:90})});
  P2.band=[];for(const s of[1,-1]){const b=addBox(.04,.32,3.6,P('#1d4fa3'),s*.91,.72,0,P2.g);P2.band.push(b)}addBox(1.2,.14,.32,MAT.dark,0,1.75,.2,P2.g);P2.lb=[];for(const [x,c] of [[-.38,0x1e5bff],[.38,0xff2a2a]]){const m=new THREE.Mesh(new THREE.BoxGeometry(.42,.18,.28),new THREE.MeshBasicMaterial({color:c}));m.position.set(x,1.88,.2);P2.g.add(m);P2.lb.push(m)}
  const mk=(txt,bg)=>ctex(256,64,(q,w,hh)=>{q.fillStyle=bg;q.fillRect(0,0,w,hh);q.fillStyle='#fff';q.font='800 44px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(txt,w/2,48)});P2.tx={polis:mk('POLİS','#1d4fa3'),jandarma:mk('JANDARMA','#2f5a37')};P2.sides=[];for(const s of[1,-1]){const m=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.5),new THREE.MeshBasicMaterial({map:P2.tx.polis,side:THREE.DoubleSide}));m.position.set(s*.915,.95,.1);m.rotation.y=s*Math.PI/2;P2.g.add(m);P2.sides.push(m)}
  P2.g.visible=false;return P2}
 function polKur(kind){if(!POL)return;const jd=kind==='jandarma';for(const b of POL.band)b.material.color.set(jd?'#2f5a37':'#1d4fa3');for(const m of POL.sides){m.material.map=POL.tx[kind]||POL.tx.polis;m.material.needsUpdate=true}POL.kind=kind}
-function mkEsc(){const ESC=makeVeh('pikap');ESC.g.children.forEach(o=>{if(o.material&&o.material.color&&o.material!==MAT.glass&&o.material!==MAT.head&&o.material!==MAT.tail&&o.material!==MAT.tyre&&o.material!==MAT.rim)o.material=P('#f4f4f0',{shininess:80})});
+function mkEsc(){const ESC=makeVeh('pikap');ESC.g.children.forEach(o=>{if(o.userData.paint)o.material=P('#f4f4f0',{shininess:80})});
  const bar=addBox(1.4,.18,.3,MAT.dark,0,2.05,-.9,ESC.g);ESC.beac=[];for(const x of[-.5,.5]){const m=new THREE.Mesh(new THREE.BoxGeometry(.35,.22,.25),new THREE.MeshBasicMaterial({color:0xff9a1a}));m.position.set(x,2.25,-.9);ESC.g.add(m);ESC.beac.push(m)}
  const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.6,.55),new THREE.MeshBasicMaterial({map:ctex(256,88,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.strokeStyle='#d0141a';q.lineWidth=8;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#111';q.font='800 40px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'GENİŞ YÜK':'WIDE LOAD',w/2,58)}),side:THREE.DoubleSide}));sg.position.set(0,2.3,.6);ESC.g.add(sg);signBacks([ESC.g]);ESC.g.visible=false;return ESC}
 function laneOf(i,x,z){const a=RS[Math.max(0,i-1)],b=RS[Math.min(NS-1,i+1)];let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz)||1;tx/=l;tz/=l;return (x-RS[i].x)*(-tz)+(z-RS[i].z)*tx}
@@ -733,10 +733,10 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
   if(c.i<40||c.i>NS-40||ahead<-60){c.on=false;c.g.visible=false;continue}
   const i0=Math.floor(c.i),f=c.i-i0;const p0=sideAt(i0,c.off),p1=sideAt(Math.min(NS-1,i0+1),c.off);const x=lerp(p0.x,p1.x,f),z=lerp(p0.z,p1.z,f);
   const tx=RS[Math.min(NS-1,i0+1)].x-RS[i0].x,tz=RS[Math.min(NS-1,i0+1)].z-RS[i0].z;const h=Math.atan2(-tx*c.dir,-tz*c.dir);
-  c.g.position.set(x,getH(x,z)+.05,z);c.g.rotation.set(0,h,0);for(const w of c.W)w.g.rotation.x-=c.cur/0.4*dt;
+  c.g.position.set(x,getH(x,z)+.05,z);c.g.rotation.set(0,h,0);if(window.vehAnim)vehAnim(c,dt,h);for(const w of c.W)w.g.rotation.x-=c.cur/0.4*dt;
   // çarpışma: çekici ya da dorse/yük
   const hitCab=Math.hypot(x-(v.x-Math.sin(v.h)*3.5),z-(v.z-Math.cos(v.h)*3.5))<(c.len/2+1.6)&&inLane;
-  let hitTr=false;if(!hitCab){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?[6,14,24,34,44,54,62,70]:G.job.type==='kule'?[3,8,13,18,22]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+1.3){hitTr=true;break}}}
+  let hitTr=false;if(!hitCab){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?[6,14,24,34,44,54,62,70]:G.job.type==='kule'?[3,8,13,18,22]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='tir'?4:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+1.3){hitTr=true;break}}}
   if(hitCab||hitTr){c.crashT=2.5;c.cur=0;const imp=Math.abs(v.speed)+c.spd*.5;v.speed*=-.15;if(mode==='career'){G.dmg=Math.min(100,G.dmg+6+imp*.6);G.fines=(G.fines||0)+(hitCab?4000:0);G.tickets=(G.tickets||0)+(hitCab?1:0)}toast(T(hitCab?'t_crashCar':'t_sweep'),'#ff8a7f',2.6);G.warnT=3;blip(120,60,.4)}}
  if(ESC){const on=HEAVY.includes(G.job.type);ESC.g.visible=on;if(on){const raw=ti+sgn*26,ei=clamp(raw,46,NS-46);const park=raw!==ei;const p=sideAt(Math.round(ei),(park?5.2:LANE)*sgn);const i1=Math.round(ei),i2=clamp(i1+sgn,0,NS-1);
    const tx=RS[i2].x-RS[i1].x,tz=RS[i2].z-RS[i1].z;ESC.g.position.set(p.x,getH(p.x,p.z)+.05,p.z);ESC.g.rotation.set(0,Math.atan2(-tx,-tz),0);for(const w of ESC.W)w.g.rotation.x-=(park?0:v.speed)/.38*dt;const bl=Math.sin(G.t*9)>0;ESC.beac[0].visible=bl;ESC.beac[1].visible=!bl}}
@@ -1509,5 +1509,6 @@ function fmSet(){const F=window.MrAnduvFM;if(!F)return;$('rowFM').hidden=!F.hazi
 })();
 </script>
 <script src="js/genis.js"></script>
+<script src="js/araclar.js"></script>
 </body>
 </html>
