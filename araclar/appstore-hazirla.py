@@ -22,6 +22,7 @@ if not v:
 if not v: raise SystemExit('Düzenlenebilir sürüm yok')
 vid=v[0]['id']; print('sürüm',v[0]['attributes']['versionString'],vid)
 a={'copyright':'2026 Mr. Anduv!','releaseType':'AFTER_APPROVAL'}
+if os.path.exists('store/YAYIN-TARIHI') and open('store/YAYIN-TARIHI').read().strip(): a.update(releaseType='SCHEDULED',earliestReleaseDate=open('store/YAYIN-TARIHI').read().strip())
 if v[0]['attributes']['versionString']!=SURUM: a['versionString']=SURUM
 send('PATCH',f'/v1/appStoreVersions/{vid}',{'data':{'type':'appStoreVersions','id':vid,'attributes':a}})
 # --- içerik hakları
