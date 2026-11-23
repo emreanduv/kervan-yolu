@@ -384,7 +384,7 @@ let PLAN={},PADS=[];
 function onPad(x,z){for(const pd of PADS)if(Math.hypot(x-pd.x,z-pd.z)<pd.r0+4)return true;return false}
 function stPlan(){const avoid=[];if(RG().village){let best=-1,bi=300;for(let i=230;i<470;i++){const a=RS[i-12],b=RS[i],c=RS[i+12];const a1=Math.atan2(b.x-a.x,b.z-a.z),a2=Math.atan2(c.x-b.x,c.z-b.z);const k=Math.abs(angDiff(a2,a1));if(k>best){best=k;bi=i}}avoid.push(bi-26,bi,bi+26,bi+72,Math.max(60,bi-74))}
  if(RG().snow){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}const c=Math.max(60,ci-18);avoid.push(c,Math.min(NS-80,c+120))}
- const free=(i,m)=>avoid.every(a=>Math.abs(a-i)>m)&&i>70&&i<NS-70;const pick=(f,m)=>{const c=Math.round(NS*f);for(let k=0;k<160;k+=6){if(free(c+k,m))return c+k;if(free(c-k,m))return c-k}return c};
+ const free=(i,m)=>avoid.every(a=>Math.abs(a-i)>m)&&i>70&&i<NS-70&&Math.abs(RY[Math.min(NS-1,i+25)]-RY[Math.max(0,i-25)])<4;const pick=(f,m)=>{const c=Math.round(NS*f);for(let k=0;k<160;k+=6){if(free(c+k,m))return c+k;if(free(c-k,m))return c-k}return c};
  const ri=pick(.5,48);avoid.push(ri);const ki=pick(.22,36);PLAN={ri,ki};PADS=[];
  const pm=sideAt(ri,26);PADS.push({x:pm.x,z:pm.z,y:RY[ri]+.02,r0:36,r1:56});const pk=sideAt(ki,10.5);PADS.push({x:pk.x,z:pk.z,y:RY[ki]+.02,r0:17,r1:30})}
 function buildWorld(){
@@ -404,7 +404,7 @@ function buildWorld(){
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const x=TX0+i*SEG,z=TZ0+j*SEG,id=j*(NX+1)+i;
   let best=1e9,bk=0;for(let k=0;k<NS;k+=6){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
   for(let k=Math.max(0,bk-6);k<=Math.min(NS-1,bk+6);k++){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
-  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(6,32,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));for(const pd of PADS){const dd=Math.hypot(x-pd.x,z-pd.z);if(dd<pd.r1)h=lerp(h,pd.y,1-sstep(pd.r0,pd.r1,dd))}
+  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(6,32,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));for(const pd of PADS){const dd=Math.hypot(x-pd.x,z-pd.z);if(dd<pd.r1)h=lerp(h,pd.y,(1-sstep(pd.r0,pd.r1,dd))*sstep(5.5,12,rd))}
   HG[id]=h;pos[id*3]=x;pos[id*3+1]=h;pos[id*3+2]=z}
  const cSun=new THREE.Color('#d9b52a'),cWheat=new THREE.Color('#cfb26a'),cPlow=new THREE.Color('#6f5639'),cSnow=new THREE.Color('#dfe6ed'),cSlush=new THREE.Color('#b9bcbf'),RC=RG().cols,cG1=new THREE.Color(RC.g1),cG2=new THREE.Color(RC.g2),cDry=new THREE.Color(RC.dry),cRock=new THREE.Color(RC.rock),cSand=new THREE.Color('#d6c597'),cDirt=new THREE.Color('#97805c'),cCon=new THREE.Color('#8f8d86'),cGrav=new THREE.Color('#a39883'),cUW=new THREE.Color('#5d6b5a'),tc=new THREE.Color();
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const id=j*(NX+1)+i,x=TX0+i*SEG,z=TZ0+j*SEG,h=HG[id];
@@ -561,7 +561,7 @@ const TAKO_MAX=270,TAKO_RATE=1,KANAT_WIND=15;
 function windHoldOf(j){if(j.type!=='kanat')return 0;const h=hash2(j.n,913);return (j.reg==='trakya'?h<.45:h<.12)?Math.round(16+hash2(j.n,57)*5):0}
 function buildMola(){const ri=PLAN.ri||Math.round(NS*.5);const pd=PADS[0];const p=sideAt(ri,26),y=pd?pd.y:getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang;scene.add(g);
  // Akaryakıt ve dinlenme tesisi (markasız): asfalt saha, kanopi + pompa adaları, market/lokanta, tır parkı, yüksek fiyat direği, yol üstü yön levhaları
- const asf=new THREE.Mesh(new THREE.PlaneGeometry(40,66),new THREE.MeshStandardMaterial({color:0x4a4c4e,roughness:.92}));asf.rotation.x=-Math.PI/2;asf.position.set(2,.05,0);asf.receiveShadow=true;g.add(asf);
+ const asf=new THREE.Mesh(new THREE.PlaneGeometry(34,66),new THREE.MeshStandardMaterial({color:0x4a4c4e,roughness:.92}));asf.rotation.x=-Math.PI/2;asf.position.set(-1,.05,0);asf.receiveShadow=true;g.add(asf);
  const lineM=new THREE.MeshBasicMaterial({color:0xe9e6d8});for(let k=0;k<6;k++){const l=new THREE.Mesh(new THREE.PlaneGeometry(.18,15),lineM);l.rotation.x=-Math.PI/2;l.position.set(-14+k*0,.07,-26+k*4.6);l.rotation.z=Math.PI/2;g.add(l)}
  for(let k=0;k<5;k++){const l=new THREE.Mesh(new THREE.PlaneGeometry(.18,16),lineM);l.rotation.x=-Math.PI/2;l.position.set(-10,.07,6+k*5.2);l.rotation.z=Math.PI/2;g.add(l)}
  // kanopi
@@ -622,9 +622,9 @@ function yakitLogic(dt){if(!G||!G.job||phase!=='drive'||(G.pst!=='yolda'&&G.pst!
  if(!G.fuelW&&G.fuel<need*1.05&&M&&i<M.ri-10){G.fuelW=1;toast(T('t_yakitAz').replace('{l}',Math.round(G.fuel)).replace('{m}',Math.round((M.ri-i)*ROADLEN/(NS-1)/10)*10),'#ffe08a',3.6);G.warnT=4}
  if(!G.fuelW2&&G.fuel<35&&G.fuel<need){G.fuelW2=1;toast(T('t_yakitRez'),'#ffb36b',3)}
  // akaryakıt pompası (dinlenme tesisi)
- const canF=G.fuel<TANK_L-20;if(M&&M.ring)M.ring.visible=canF&&Math.abs(i-M.ri)<160;
+ if(M&&Math.abs(i-M.ri)>30)G.fuelDone=0;const canF=G.fuel<TANK_L-20&&!G.fuelDone;if(M&&M.ring)M.ring.visible=canF&&Math.abs(i-M.ri)<160;
  if(M&&canF&&!G.fuelHint&&M.ri-i>20&&M.ri-i<110){G.fuelHint=1;toast(T('t_yakitHint').replace('{m}',Math.round((M.ri-i)*ROADLEN/(NS-1)/10)*10),'#ffd08a',3.6)}
- const nearM=M&&(Math.abs(i-M.ri)<9||Math.hypot(v.x-M.g.position.x,v.z-M.g.position.z)<24);if(nearM&&sp<.6&&canF&&!G.fuelT){if(!(actFn&&actFn.yakit)){const fn=()=>{const add=Math.max(10,Math.round(Math.min(TANK_L,Math.max(need*1.3+60,G.fuel+120))-G.fuel));G.fuel+=add;G.fuelLast=add;G.fuelTL+=add*DIZEL_TL;G.fuelT=0;setAct(null);$('fade').classList.add('on');toast(T('t_yakitAl'),'#bfe4ff',2.2);blip(260,330,.4)};fn.yakit=1;fn.blade=1;setAct(T('a_yakit'),fn)}return false}
+ const nearM=M&&(Math.abs(i-M.ri)<9||Math.hypot(v.x-M.g.position.x,v.z-M.g.position.z)<24);if(nearM&&sp<.6&&canF&&!G.fuelT){if(!(actFn&&actFn.yakit)){const fn=()=>{const add=Math.max(10,Math.round(Math.min(TANK_L,Math.max(need*1.3+60,G.fuel+120))-G.fuel));G.fuel+=add;G.fuelLast=add;G.fuelTL+=add*DIZEL_TL;G.fuelT=0;G.fuelDone=1;setAct(null);$('fade').classList.add('on');toast(T('t_yakitAl'),'#bfe4ff',2.2);blip(260,330,.4)};fn.yakit=1;fn.blade=1;setAct(T('a_yakit'),fn)}return false}
  else if(actFn&&actFn.yakit)setAct(null);
  // kantar
  const K=PORTOPS.kantar;if(K&&K.ring)K.ring.visible=HEAVY.includes(G.job.type)&&!G.kantarOk&&Math.abs(i-K.ki)<160;if(K&&HEAVY.includes(G.job.type)){const d=i-K.ki;
