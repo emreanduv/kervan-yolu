@@ -430,7 +430,7 @@ function buildWorld(){
   const lx=RS[i].x+nx*HW,lz=RS[i].z+nz*HW,rx=RS[i].x-nx*HW,rz=RS[i].z-nz*HW;rp.push(lx,getH(lx,lz)+.2,lz,rx,getH(rx,rz)+.2,rz);ru.push(0,acc/14,1,acc/14);
   if(i<NS-1){const k=i*2;ri.push(k,k+2,k+1,k+1,k+2,k+3)}}
  const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));rg.setAttribute('uv',new THREE.Float32BufferAttribute(ru,2));rg.setIndex(ri);rg.computeVertexNormals();
- const road=new THREE.Mesh(rg,new THREE.MeshLambertMaterial({map:TEX.road,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4}));road.receiveShadow=true;scene.add(road);
+ const road=new THREE.Mesh(rg,new THREE.MeshLambertMaterial({map:TEX.road,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4}));road.receiveShadow=true;scene.add(road);world.roadMesh=road;
  const posts=new THREE.InstancedMesh(new THREE.BoxGeometry(.18,1,.18),P('#f4f4f0'),NS);let pc=0;const dm=new THREE.Object3D();
  const reflM=new THREE.MeshBasicMaterial({color:0xff9a1a});const refl=new THREE.InstancedMesh(new THREE.BoxGeometry(.2,.14,.2),reflM,NS);
  for(let i=4;i<NS-4;i+=4){if(yardMask(RS[i].x,RS[i].z)>.1||siteMask(RS[i].x,RS[i].z)>.1)continue;const a=RS[i-1],b=RS[i+1];let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz);const nx=-tz/l,nz=tx/l;for(const s of[1,-1]){if(pc>=NS)break;const x=RS[i].x+nx*s*6,z=RS[i].z+nz*s*6;const y=getH(x,z);dm.position.set(x,y+.5,z);dm.updateMatrix();posts.setMatrixAt(pc,dm.matrix);dm.position.y=y+.85;dm.updateMatrix();refl.setMatrixAt(pc,dm.matrix);pc++}}
@@ -1157,6 +1157,7 @@ function toast(s,col='#fff',dur=1.6){if(window.MrAnduvFM){MrAnduvFM.kis(true);cl
 function vehStep(v,dt,inp,load){const p=v.p;let acc=0;const af=load||1;
  if(inp.gas){acc=v.speed>=-.2?p.acc*af*(1-Math.max(0,v.speed)/p.vmax):p.brake}
  if(inp.brake){acc=v.speed>.3?-p.brake:-p.acc*.7*(1-Math.min(1,-v.speed/p.vrev))}
+ if(window.EXT&&v===truck.v){if(inp.brake&&v.speed>.3)acc*=EXT.wet();if(inp.gas&&EXT.inMud(v))acc*=.4}
  if(!inp.gas&&!inp.brake){const r=p.roll+Math.abs(v.speed)*.02;acc=-Math.sign(v.speed)*Math.min(Math.abs(v.speed)/Math.max(dt,1e-3),r)}
  acc-=9.8*v.slope*p.slopeK*(af<.8?1.25:1);
  if(v===truck.v&&G&&RG().snow){const ice=getH(v.x,v.z)>RG().snowLine-2&&!(CZ&&CZ.x!==undefined&&Math.hypot(v.x-CZ.x,v.z-CZ.z)<30);v.ice=ice&&!G.chain;
@@ -1235,7 +1236,7 @@ function freeJob(){FPTS.site={x:SITE.x,z:SITE.z};if(G.fj%2===0){G.oem=OEMS[Math.
  placeRing(pickRing,pickBeam,FPTS[G.fr.from]);ring.visible=ringBeam.visible=false;G.target=FPTS[G.fr.from];
  setObj(T('fo_pick').replace('{from}',T(G.fr.from==='port'?'fp_port':'fp_site')))}
 function freeCargoName(c){return c==='raf'?T('j_donus'):T('j_'+c)}
-function freeLogic(){const v=truck.v,sp=Math.abs(v.speed),f=G.fr;if(!f){if(actFn&&actFn!==rescue&&!actFn.kantar&&!actFn.yakit)setAct(null);return}const p=f.loaded?FPTS[f.to]:FPTS[f.from];const d=Math.hypot(v.x-p.x,v.z-p.z);
+function freeLogic(){const v=truck.v,sp=Math.abs(v.speed),f=G.fr;if(!f){if(actFn&&actFn!==rescue&&!actFn.kantar&&!actFn.yakit&&!actFn.dozer)setAct(null);return}const p=f.loaded?FPTS[f.to]:FPTS[f.from];const d=Math.hypot(v.x-p.x,v.z-p.z);
  if(d<12&&sp<.8){if(!f.loaded)setAct(T('fpick'),()=>{f.loaded=true;const c=f.cargo;if(c==='kasa'){crates.forEach((cr,i)=>{trailer.g.add(cr);cr.position.copy(trailer.slots[i]);cr.rotation.set(0,0,0);labelCrate(cr,G.oem+'|'+T(['cr1','cr2','cr3'][i]));cr.visible=true})}else CARGO[c==='raf'?'raf':c].visible=true;
    G.job={type:c==='raf'?'donus':c};doStrapFree();if(f.from==='port')freePortExit(G.job.type);pickRing.visible=pickBeam.visible=false;placeRing(ring,ringBeam,FPTS[f.to]);G.target=FPTS[f.to];setAct(null);toast(T('ft_loaded'),'#ffe08a',2);blip(400,700,.2);
    G.frObj=T('fo_drop').replace('{cargo}',freeCargoName(c)).replace('{to}',T(f.to==='port'?'fp_port':'fp_site'));setObj(G.frObj)});
@@ -1252,7 +1253,7 @@ function bladeOn(){return CARGO.kanat&&CARGO.kanat.visible&&(mode==='free'||G.st
 function roadIdx(v){let bi=G.ri||0,bd=1e9;const a=Math.max(0,bi-40),b=Math.min(NS-1,bi+40);for(let i=a;i<=b;i++){const d=(RS[i].x-v.x)**2+(RS[i].z-v.z)**2;if(d<bd){bd=d;bi=i}}if(bd>900){for(let i=0;i<NS;i+=2){const d=(RS[i].x-v.x)**2+(RS[i].z-v.z)**2;if(d<bd){bd=d;bi=i}}}G.ri=bi;return bi}
 const BLZ=[12,20,28,36,44,52,60,68];
 function bladeHit(dx,dz){if(!bladeOn()||!HOBS.length)return null;CARGO.kanat.updateMatrixWorld(true);for(const z of BLZ)for(const bx of[-1.3,0,1.3]){_v.set(bx,0,z).applyMatrix4(CARGO.kanat.matrixWorld);const x=_v.x+dx,zz=_v.z+dz,y=_v.y;for(const o of HOBS){if((x-o.x)**2+(zz-o.z)**2<o.r*o.r&&y>o.lo&&y<o.hi)return o.k}}return null}
-function bladeAct(){if(actFn===rescue||actFn&&(actFn.port||actFn.akt||actFn.mola||actFn.kantar||actFn.yakit))return;const v=truck.v,sp=Math.abs(v.speed);
+function bladeAct(){if(actFn===rescue||actFn&&(actFn.port||actFn.akt||actFn.mola||actFn.kantar||actFn.yakit||actFn.dozer))return;const v=truck.v,sp=Math.abs(v.speed);
  const near=VZ&&(()=>{const i=roadIdx(v);return i>VZ.v0-70&&i<VZ.wi+6})();
  if(bladeOn()&&(!needLift()||G.lifter)&&(near||G.blT>.5)&&sp<1.4&&Math.abs(G.blT-G.bl)<.01){const up=G.blT<.5;const lb=up?T('bl_up'):T('bl_down');if(actFn&&actFn.blade&&$('act').textContent===lb)return;const fn=()=>{G.blT=up?1:0;setAct(null);blip(up?300:500,up?520:260,.5);toast(T(up?'t_blUp':'t_blDown'),'#ffe08a',1.6);coachHide()};fn.blade=1;setAct(lb,fn)}
  else if(CZ&&!G.chain&&!(G.chT>0)&&sp<1.4&&(Math.hypot(v.x-CZ.x,v.z-CZ.z)<12||(()=>{const i=roadIdx(v);return i>CZ.ci-4})())){const lb=T('ch_on');if(actFn&&actFn.chain&&$('act').textContent===lb)return;const fn=()=>{G.chT=4;setAct(null);toast(T('t_chFit'),'#ffe08a',3.6);blip(260,330,.6);coachHide()};fn.chain=1;fn.blade=1;setAct(lb,fn)}
@@ -1303,7 +1304,7 @@ function tapScene(cx,cy){if(phase!=='drone')return;ndc.set(cx/innerWidth*2-1,-(c
 // ---- rapor
 function showReport(){phase='report';state='over';showHud(false);$('toast').style.opacity=0;clearTimeout(toast._t);const job=G.job,F=job.fee;const nd=G.nbad;
  const dmgCut=nd?F*(.06*nd+G.dmg/100*.35):0;const ded=Math.round(F*.12/50)*50;const ins=dmgCut>ded?Math.round((dmgCut-ded)*.6):0;
- const late=Math.max(0,G.deliverT-G.deadline);const lateCut=Math.min(F*.3,Math.ceil(late/10)*F*.02);const bonus=nd===0&&!G.tickets?F*.1:0;const fines=G.fines||0;const ck=(G.costs||[]).filter(c=>G.lifter||!['k_lifterGelir','k_vinc','k_lifter'].includes(c[0])).concat(G.fuelTL?[['k_yakit',-Math.round(G.fuelTL/50)*50]]:[]);const csum=ck.reduce((a,c)=>a+c[1],0);const net=Math.max(0,F-dmgCut+ins-lateCut+bonus-fines+csum);
+ const late=Math.max(0,G.deliverT-G.deadline);const lateCut=Math.min(F*.3,Math.ceil(late/10)*F*.02);const bonus=nd===0&&!G.tickets?F*.1:0;const fines=G.fines||0;const ck=(G.costs||[]).filter(c=>G.lifter||!['k_lifterGelir','k_vinc','k_lifter'].includes(c[0])).concat(G.fuelTL?[['k_yakit',-Math.round(G.fuelTL/50)*50]]:[]).concat(G.ext||[]);const csum=ck.reduce((a,c)=>a+c[1],0);const net=Math.max(0,F-dmgCut+ins-lateCut+bonus-fines+csum);
  $('rTitle').textContent=T('rTitle');$('rSefer').textContent=T('seferN').replace('{n}',job.n);
  const rows=[[T('r_time'),mmss(G.deliverT)+' / '+mmss(G.deadline),late>0?'neg':''],[T('r_cond'),Math.round(100-G.dmg)+'%',G.dmg>4?'neg':'pos'],[T('r_freight'),fmt(F),''],...ck.map(c=>[T(c[0]),(c[1]>0?'+':'−')+fmt(Math.abs(c[1])),c[1]>0?'pos':'neg']),[T('r_dmg'),dmgCut?'−'+fmt(dmgCut):'0 ₺',dmgCut?'neg':''],[T('r_ins'),ins?'+'+fmt(ins):'—',ins?'pos':''],[T('r_late'),lateCut?'−'+fmt(lateCut):'0 ₺',lateCut?'neg':''],[T('r_fine'),fines?'−'+fmt(fines)+' ('+G.tickets+')':'0 ₺',fines?'neg':''],[T('r_bonus'),bonus?'+'+fmt(bonus):'—',bonus?'pos':''],[T('r_net'),fmt(net),'pos']];
  $('rRows').innerHTML=rows.map(r=>`<div class="kv"><span>${r[0]}</span><b class="${r[2]}">${r[1]}</b></div>`).join('');
@@ -1481,7 +1482,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last
  if(ring&&ring.visible){const s=1+Math.sin(now*.004)*.04;ring.scale.set(s,s,1);ringBeam.material.opacity=.09+Math.sin(now*.003)*.04}
  if(world.flag)world.flag.rotation.y=Math.sin(now*.003)*.25;if(CZ&&CZ.ring&&CZ.ring.visible){const s3=1+Math.sin(now*.005)*.05;CZ.ring.scale.set(s3,s3,1);CZ.beam.material.opacity=.1+Math.sin(now*.004)*.05}
  for(const m of world.markers)if(!m.userData.scanned){const s=(G&&G.job.type==='kanat'?1.8:.95)*(.88+Math.sin(now*.008)*.12);m.scale.set(s,s,1)}
- updBoards(now/1000);sinyalStep(dt,now);if(run){telsizLogic(dt);bultenLogic(dt)}
+ updBoards(now/1000);sinyalStep(dt,now);if(window.EXT)EXT.step(dt,run);if(run){telsizLogic(dt);bultenLogic(dt)}
  if(G){updCamera(dt);const tg=phase==='fork'?fork.g.position:truck.g.position;sun.position.copy(tg).addScaledVector(SUN,220);sun.target.position.copy(tg);world.sky.position.copy(camera.position)}
  if(arrow&&phase!=='fork')arrow.visible=false;
  updParticles(dt);updAudio();if(world.snow)updSnow(dt);
@@ -1507,5 +1508,6 @@ function fmSet(){const F=window.MrAnduvFM;if(!F)return;$('rowFM').hidden=!F.hazi
  addEventListener('keydown',e=>{if(e.code==='KeyR'&&phase!=='menu'){F.degistir()}if(e.code==='KeyN'&&phase!=='menu')F.sonraki()});
 })();
 </script>
+<script src="js/genis.js"></script>
 </body>
 </html>

@@ -37,7 +37,7 @@ if python3 araclar/turkce-yazi-kontrol.py www; then :; else hata=1; fi
 if grep -q 'ses-kurtarici.js' www/index.html && grep -q 'W.sesKurtar = later' www/ses-kurtarici.js && grep -q 'SesKoruyucu.shared.baslat' ios/App/App/AppDelegate.swift && grep -q 'window.sesKurtar' android/app/src/main/java/com/anduv/kervanyolu/MainActivity.java; then echo "✓ ses koruyucu (JS + iOS + Android)"; else echo "::error::Ses koruyucu eksik (ses-kurtarici.js, AppDelegate SesKoruyucu, MainActivity onResume)"; HATA=1; hata=1; fi
 # ses koruyucu sonu
 # Betik söz dizimi: index.html içindeki ana betik node ile denetlenir (bozuk derleme mağazaya gitmesin)
-if command -v node >/dev/null 2>&1; then python3 - <<'PY' && node --check /tmp/ky-ana.js && echo "✓ betik söz dizimi" || { echo "::error::index.html betiğinde söz dizimi hatası"; hata=1; }
+if command -v node >/dev/null 2>&1; then python3 - <<'PY' && node --check /tmp/ky-ana.js && for f in www/js/*.js; do node --check "$f" || exit 1; done && echo "✓ betik söz dizimi" || { echo "::error::index.html betiğinde söz dizimi hatası"; hata=1; }
 import re;h=open('www/index.html',encoding='utf-8').read();open('/tmp/ky-ana.js','w',encoding='utf-8').write(max(re.findall(r'<script>(.*?)</script>',h,re.S),key=len))
 PY
 fi
