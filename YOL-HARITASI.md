@@ -15,7 +15,7 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - ✓ Mr. Anduv! FM'de yol ve hava bülteni (yazılı) — 1.0'a girdi; Emre'nin sesiyle kayıt sonra
 - ✓ Sinyal, dörtlü, korna; eskort telsiz anonsları — 1.0'a girdi (silecek: yağmur gelince)
 - ✓ Yakıt ve kantar istasyonu — 1.0'a girdi (motorin 89 ₺/L, gerçek güzergâh km'si)
-- Gece seferi kuralı ve polis eskortu (bazı özel yükler)
+- ✓ Gece izni (Marmara/Trakya kanat-kule), özel yük hız sınırı 30/50, polis/jandarma refakati (kanat, nasel) — 1.0'a girdi
 
 ## 1.2 "Kendi Firman ve RES Projesi"
 - Firma: kazandıkça ekipman satın alma (lowbed → teleskopik kanat dorsesi → blade lifter → SPMT), kredi ve faiz
