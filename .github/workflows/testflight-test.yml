@@ -26,5 +26,5 @@ jobs:
       - uses: actions/checkout@v4
       - run: pip install pyjwt cryptography requests
       - name: Test ekibine aç
-        env: { P8: "${{ secrets.ASC_KEY_P8 }}", MIN_BUILD: "${{ github.event.workflow_run.run_number }}" }
+        env: { P8: "${{ secrets.ASC_KEY_P8 }}" }
         run: python3 araclar/testflight-ac.py
