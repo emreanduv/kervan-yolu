@@ -475,12 +475,14 @@ function buildAktarma(){if(!VZ)return;const ai=Math.max(60,VZ.v0-48);const p=sid
  // mobil vinç (lastikli, 4 destek ayağı), bom kanadı kaldırır
  const cr=new THREE.Group();cr.position.set(8,0,4);g.add(cr);const ye=MAT.yellow;addBox(3,1.6,12,ye,0,1.6,0,cr);for(const z of[-4,-1.5,1.5,4])for(const s of[-1,1])addCyl(.65,.65,.6,14,MAT.tyre||MAT.dark,s*1.6,.65,z,cr).rotation.z=Math.PI/2;
  for(const s of[-1,1])for(const z of[-5,5]){addBox(3.2,.3,.4,MAT.steel,s*2.9,1,z,cr);addBox(.8,.2,.8,MAT.dark,s*4.5,.12,z,cr)}
- const tur=new THREE.Group();tur.position.set(0,2.6,1);cr.add(tur);addBox(3,1.8,5,ye,0,.9,0,tur);addBox(1.8,1.6,1.8,MAT.glass,-.6,1.6,1.8,tur);
- const bm=new THREE.Group();bm.position.set(0,1.6,-1);tur.add(bm);addBox(1,1,30,ye,0,0,-15,bm);bm.rotation.x=.62;bm.rotation.y=0;const hook=addBox(.5,.7,.5,MAT.dark,0,0,0,scene);hook.visible=false;
+ rbox(2.9,1.7,2.2,.3,ye,0,2.3,-5.6,cr);addBox(2.4,.9,.06,MAT.glass,0,2.6,-6.72,cr);addBox(2.2,.1,.5,MAT.dark,0,3.2,-6.5,cr);for(const s of[-1,1])addBox(.5,.6,2,MAT.dark2,s*1.3,1.1,5.4,cr);addBox(3.1,.25,12.2,MAT.dark2,0,.85,0,cr);
+ const tur=new THREE.Group();tur.position.set(0,2.6,1);cr.add(tur);rbox(3,1.8,5,.25,ye,0,.9,0,tur);rbox(1.3,1.9,2,.25,ye,-1.1,1.7,-1.6,tur);addBox(1.2,1.2,.06,MAT.glass,-1.1,2,-2.62,tur);addBox(.06,1.1,1.3,MAT.glass,-1.76,2,-1.5,tur);addBox(3.2,1.5,1.6,P('#2a2d30',{shininess:40}),0,.8,2.9,tur);for(let k=0;k<4;k++)addBox(3.22,.06,1.62,MAT.yellow,0,.2+k*.38,2.9,tur);
+ const bm=new THREE.Group();bm.position.set(0,1.6,-1);tur.add(bm);[[1.3,1.15,11,-5.5],[1.08,.95,10,-14.5],[.86,.76,9,-23],[.66,.58,6,-29.5]].forEach(([w,hh,l,z],k)=>{rbox(w,hh,l,.12,k%2?P('#f0c419',{shininess:70}):ye,0,0,z,bm)});addBox(.9,.9,.6,MAT.dark2,0,0,-32.5,bm);for(const s of[-1,1])addCyl(.36,.36,.25,14,MAT.dark,s*.2,.1,-32.6,bm).rotation.z=Math.PI/2;const lc=addCyl(.22,.22,3.2,10,MAT.steel,0,-1.3,-2,tur);lc.rotation.x=-.55;
+ const tip=new THREE.Group();tip.position.set(0,0,-32.6);bm.add(tip);for(const s of[-.12,.12])addBox(.04,9,.04,MAT.dark,s,-4.5,0,tip);addBox(.7,.9,.5,P('#d3261d',{shininess:50}),0,-9.3,0,tip);addCyl(.06,.04,.8,8,MAT.steel,0,-10.1,0,tip);bm.rotation.x=.62;tip.rotation.x=-.62;bm.rotation.y=0;const hook=addBox(.5,.7,.5,MAT.dark,0,0,0,scene);hook.visible=false;
  const sg=new THREE.Mesh(new THREE.PlaneGeometry(6,1.2),new THREE.MeshBasicMaterial({map:ctex(384,76,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.fillStyle='#111';q.font='800 44px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'AKTARMA SAHASI':'TRANSFER YARD',w/2,54)}),side:THREE.DoubleSide}));
  const sp=sideAt(ai-14,7),sy=getH(sp.x,sp.z);const sgg=new THREE.Group();sgg.position.set(sp.x,sy,sp.z);sgg.rotation.y=sp.ang+Math.PI;scene.add(sgg);addBox(.15,3.6,.15,MAT.steel,-2.6,1.8,0,sgg);addBox(.15,3.6,.15,MAT.steel,2.6,1.8,0,sgg);sg.position.set(0,3.4,0);sgg.add(sg);
  for(const k of[-8,-3,3,8])worker(g,k>0?-4:-6,k,Math.PI/2);for(let z=-18;z<=18;z+=6)coneAt(g,-10,0,z);
- const rgP=sideAt(ai,LANE);PORTOPS.ak={ai,g,tur,bm,hook,x:rgP.x,z:rgP.z,cr}}
+ const rgP=sideAt(ai,LANE);PORTOPS.ak={ai,g,tur,bm,hook,tip,x:rgP.x,z:rgP.z,cr}}
 function buildDuzenleme(){const f=DUZ_REG[REG];if(f==null){PORTOPS.dz=null;return}let i=Math.round(NS*f);if(VZ&&Math.abs(i-VZ.v0)<40)i=VZ.v0-90;
  // en keskin viraj (yakın çevrede)
  let best=i,bk=0;for(let k=i-30;k<=i+30;k++){const a=sideAt(k-6,0).ang,b=sideAt(k+6,0).ang;const d=Math.abs(angDiff(a,b));if(d>bk){bk=d;best=k}}i=best;
@@ -490,7 +492,7 @@ function buildDuzenleme(){const f=DUZ_REG[REG];if(f==null){PORTOPS.dz=null;retur
  const m=new THREE.Mesh(new THREE.PlaneGeometry(5,1.5),new THREE.MeshBasicMaterial({map:ctex(320,96,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.strokeStyle='#111';q.lineWidth=6;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#111';q.textAlign='center';q.font='800 34px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'GEÇİCİ YOL DÜZENLEMESİ':'TEMPORARY ROAD WORKS',w/2,42);q.font='600 26px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'Özel yük geçişi':'Abnormal load route',w/2,76)}),side:THREE.DoubleSide}));m.position.set(0,3.2,0);sg.add(m);
  PORTOPS.dz={i,g}}
 // ---- sefer akışı ----
-function portSetup(){if(PORTOPS.arm){PORTOPS.armA=0;PORTOPS.arm.rotation.z=0}if(PORTOPS.ak){PORTOPS.ak.bm.rotation.x=.62;PORTOPS.ak.hook.visible=false}
+function portSetup(){if(PORTOPS.arm){PORTOPS.armA=0;PORTOPS.arm.rotation.z=0}if(PORTOPS.ak){PORTOPS.ak.bm.rotation.x=.62;if(PORTOPS.ak.tip)PORTOPS.ak.tip.rotation.x=-.62;PORTOPS.ak.hook.visible=false}
  const t=G.job.type;G.lifter=false;G.lifterAdp=false;CARGO.kanat&&CARGO.kanat.adapter&&(CARGO.kanat.adapter.visible=false);
  G.pst=mode==='career'&&t!=='donus'&&t!=='kasa'?(IMPORT.includes(t)?'tahliye':'kapiBekle'):'serbest';
  G.costs=mode==='career'?jobCosts(G.job):[];G.drv=0;G.molaT=null;G.molaOk=false;G.molaHint=0;G.takoW=0;G.takoF=0;G.windOk=false;G.wT=null;$('fade').classList.remove('on');G.docs=!(mode==='career'&&HEAVY.includes(t));G.gumruk=!(mode==='career'&&IMPORT.includes(t));G.gateOk=false;
@@ -525,7 +527,7 @@ function openDocs(){const it=G.costs.filter(c=>['k_izin','k_kgm','k_prot','k_ant
 function docsPay(){$('docs').classList.remove('on');G.docs=true;G.pst='kapi';setObj(T('o_kapi'));toast(T('t_docsOk'),'#8ff0a4',2.6);blip(523,784,.3)}
 // ---- blade lifter aktarması ----
 function aktarmaLogic(dt){const A=PORTOPS.ak;if(!A||!needLift()||!bladeOn())return false;const v=truck.v,sp=Math.abs(v.speed),i=roadIdx(v);
- if(G.akT!=null){G.akT+=dt;v.speed=0;const k=Math.min(1,G.akT/7);const up=Math.sin(Math.min(1,k)*Math.PI);CARGO.kanat.position.y=3.75+up*2.4;A.bm.rotation.x=.62-up*.12;
+ if(G.akT!=null){G.akT+=dt;v.speed=0;const k=Math.min(1,G.akT/7);const up=Math.sin(Math.min(1,k)*Math.PI);CARGO.kanat.position.y=3.75+up*2.4;A.bm.rotation.x=.62-up*.12;if(A.tip)A.tip.rotation.x=-A.bm.rotation.x;
   if(k>.45&&!G.lifterAdp){G.lifterAdp=true;G.lifter=true;CARGO.kanat.adapter&&(CARGO.kanat.adapter.visible=true)}
   if(G.akT>7.4){G.akT=null;CARGO.kanat.position.y=3.75;toast(T('t_aktarOk'),'#8ff0a4',3.2);blip(523,784,.3);coach('lifter')}return true}
  if(G.lifter)return false;
@@ -970,13 +972,16 @@ function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;set
  const rf=new THREE.Group();kanat.add(rf);rf.position.set(0,0,.9);for(const x of[-1.85,1.85])for(const z of[-.7,.7])addBox(.24,4.6,.24,MAT.frame,x,-.1,z,rf);for(const y of[-2.3,2.1])addBox(3.94,.24,1.64,MAT.frame,0,y,0,rf);for(const x of[-1.85,1.85]){const d=addBox(.16,4.6,.16,MAT.frame,x,-.1,0,rf);d.rotation.x=.33}{const ad=new THREE.Group();kanat.add(ad);ad.position.set(0,-1.2,1.2);addBox(3.6,1.4,2.6,MAT.yellow,0,-.4,0,ad);addBox(3.9,.4,3,MAT.yellowD,0,-1.2,0,ad);for(const x of[-1.2,1.2]){const c=addCyl(.28,.28,3.4,12,MAT.steel,x,.6,2.2,ad);c.rotation.x=.9;addCyl(.36,.36,1.6,12,MAT.yellowD,x,-.2,1.2,ad).rotation.x=.9}ad.visible=false;kanat.adapter=ad}kanat.position.set(0,3.75,-.2);trailer.cargo.add(kanat);
  const raf=new THREE.Group();for(const z of[2.5,8.5]){for(const x of[-1,1])addBox(.18,2.2,.18,MAT.steel,x,1.1,z,raf);addBox(2.2,.18,.18,MAT.steel,0,2.2,z,raf);addBox(2.2,.18,3,MAT.steel,0,.1,z,raf)}raf.position.set(0,1.63,0);trailer.cargo.add(raf);
  // nasel: makine dairesi gövdesi, üstte soğutucu, taşıma kızağı
- const nasel=new THREE.Group();addBox(3.9,3.9,10.4,MAT.turb,0,2.15,0,nasel);addBox(3.92,.32,10.42,P('#3e7f4f'),0,.55,0,nasel);addBox(2.4,.9,3,P('#cfd3d0',{shininess:50}),0,4.55,2.4,nasel);for(const z of[-4.2,4.2])addBox(4.1,.5,1,MAT.steel,0,.05,z,nasel);
-  addBox(2.2,2.2,.3,MAT.flange,0,2.2,-5.3,nasel);const lg=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.7),new THREE.MeshBasicMaterial({map:ctex(256,64,(g,w,h)=>{g.fillStyle='#f4f5f3';g.fillRect(0,0,w,h);g.fillStyle='#2b5d3a';g.font='700 34px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText('MR. ANDUV!',w/2,44)})}));lg.position.set(1.96,3.4,0);lg.rotation.y=Math.PI/2;nasel.add(lg);const lg2=lg.clone();lg2.position.x=-1.96;lg2.rotation.y=-Math.PI/2;nasel.add(lg2);
+ const nasel=new THREE.Group();rbox(3.9,3.9,10.4,.6,MAT.turb,0,2.15,0,nasel);rbox(3.94,.34,10.3,.12,P('#3e7f4f'),0,.62,0,nasel);
+  const cool=new THREE.Group();cool.position.set(0,4.1,3.6);nasel.add(cool);for(const s of[-1,1])addBox(.14,1.4,2.4,MAT.steel,s*1.15,.7,0,cool);const fin=P('#c6cbcd',{shininess:70});for(let k=0;k<12;k++)addBox(2.2,1.2,.05,fin,0,.7,-1.1+k*.2,cool);addBox(2.44,.1,2.5,MAT.steel,0,1.42,0,cool);
+  addBox(1.4,.12,1.6,P('#cfd3d0'),0,4.16,-2.2,nasel);for(const s of[-1,1]){addBox(.06,.5,8.6,MAT.yellow,s*1.7,4.38,-.2,nasel);for(let z=-4;z<=4;z+=2)addBox(.06,.5,.06,MAT.yellow,s*1.7,4.12,z,nasel)}addCyl(.06,.06,1.4,6,MAT.steel,1.2,4.8,-3.6,nasel);addBox(.5,.25,.08,MAT.steel,1.2,5.4,-3.6,nasel);
+  const tf=P('#d7a21c',{shininess:30});for(const z of[-4.2,4.2]){addBox(4.3,.5,1.1,tf,0,.05,z,nasel);for(const s of[-1,1])addBox(.3,1.3,1.1,tf,s*2.1,.6,z,nasel)}
+  const nf=new THREE.Mesh(new THREE.TorusGeometry(1.35,.18,10,40),MAT.flange);nf.position.set(0,2.2,-5.25);nasel.add(nf);const nc=new THREE.Mesh(new THREE.CircleGeometry(1.25,40),P('#eef1f2',{shininess:20}));nc.position.set(0,2.2,-5.28);nc.rotation.y=Math.PI;nasel.add(nc);const lg=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.7),new THREE.MeshBasicMaterial({map:ctex(256,64,(g,w,h)=>{g.fillStyle='#f4f5f3';g.fillRect(0,0,w,h);g.fillStyle='#2b5d3a';g.font='700 34px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText('MR. ANDUV!',w/2,44)})}));lg.position.set(1.96,3.4,0);lg.rotation.y=Math.PI/2;nasel.add(lg);const lg2=lg.clone();lg2.position.x=-1.96;lg2.rotation.y=-Math.PI/2;nasel.add(lg2);
   nasel.position.set(0,1.63,6);trailer.cargo.add(nasel);
  // hub: göbek, üç kanat flanşı, burun konisi
  const hub=new THREE.Group();const hb=new THREE.Mesh(new THREE.SphereGeometry(2,24,16),MAT.turb);hb.scale.set(1,1,1.15);hb.position.y=2.4;hb.castShadow=true;hub.add(hb);
-  for(let k=0;k<3;k++){const a=k*Math.PI*2/3;const f=new THREE.Mesh(new THREE.TorusGeometry(.95,.14,8,24),MAT.flange);f.position.set(Math.sin(a)*1.95,2.4+Math.cos(a)*1.95,0);f.rotation.set(0,Math.PI/2,0);f.lookAt(f.position.x*2,(f.position.y-2.4)*2+2.4,0);hub.add(f)}
-  const nose=new THREE.Mesh(new THREE.ConeGeometry(1.6,2.4,20),MAT.turb);nose.rotation.x=-Math.PI/2;nose.position.set(0,2.4,-2.7);hub.add(nose);addBox(3.4,.5,3.6,MAT.steel,0,.25,0,hub);hub.position.set(0,1.63,5.5);trailer.cargo.add(hub);
+  for(let k=0;k<3;k++){const a=k*Math.PI*2/3;const f=new THREE.Group();const fr=new THREE.Mesh(new THREE.TorusGeometry(.95,.16,10,32),MAT.flange);f.add(fr);const fc=new THREE.Mesh(new THREE.CircleGeometry(.85,28),P('#e9ecec',{shininess:20,side:THREE.DoubleSide}));f.add(fc);f.position.set(Math.sin(a)*1.95,2.4+Math.cos(a)*1.95,0);f.rotation.set(0,Math.PI/2,0);f.lookAt(f.position.x*2,(f.position.y-2.4)*2+2.4,0);hub.add(f)}
+  const nose=new THREE.Mesh(new THREE.ConeGeometry(1.6,2.4,20),MAT.turb);nose.rotation.x=-Math.PI/2;nose.position.set(0,2.4,-2.7);hub.add(nose);{const tf=P('#d7a21c',{shininess:30});addBox(3.8,.45,3.8,tf,0,.22,0,hub);for(const s of[-1,1]){addBox(.3,1.1,3.8,tf,s*1.75,.75,0,hub)}}hub.position.set(0,1.63,5.5);trailer.cargo.add(hub);
  // güç aktarma (drive train): ana mil + dişli kutusu
  const akt=new THREE.Group();const gb=addCyl(1.5,1.7,3.4,20,P('#5a6a74',{shininess:70}),0,2.1,2,akt);gb.rotation.x=Math.PI/2;const sh=addCyl(.6,.75,5.2,16,P('#8a949a',{shininess:90}),0,2.1,-2.3,akt);sh.rotation.x=Math.PI/2;
   addBox(2.6,.9,1.4,P('#5a6a74',{shininess:60}),0,1.1,-4,akt);const fl=new THREE.Mesh(new THREE.TorusGeometry(.78,.12,8,20),MAT.flange);fl.position.set(0,2.1,-4.9);akt.add(fl);for(const z of[-3.5,0,3])addBox(3,.6,.8,MAT.wood,0,.3,z,akt);akt.position.set(0,1.63,6);trailer.cargo.add(akt);
@@ -986,6 +991,15 @@ function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;set
   for(const z of[-1.6,1.6])addBox(4.6,.3,.6,MAT.wood,0,.15,z,ank);ank.position.set(0,1.63,6);trailer.cargo.add(ank);
  // malzeme konteyneri (20 ft)
  const kon=new THREE.Group();const km=new THREE.MeshPhongMaterial({map:contTex('#2f6db5'),shininess:30});addBox(2.44,2.59,6.06,km,0,1.3,0,kon);const kl=new THREE.Mesh(new THREE.PlaneGeometry(2,.5),new THREE.MeshBasicMaterial({map:ctex(256,64,(g,w,h)=>{g.fillStyle='#2f6db5';g.fillRect(0,0,w,h);g.fillStyle='#fff';g.font='700 30px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText('MATERIAL · 1923',w/2,42)})}));kl.position.set(1.23,2.1,0);kl.rotation.y=Math.PI/2;kon.add(kl);kon.position.set(0,1.63,6);trailer.cargo.add(kon);
+ // gerçekçi bağlama: kutu yüklere sarılan spanzet + güverteye zincir; yuvarlak yüklere çapraz zincir
+ const LSM=P('#ff8c1a',{shininess:30,emissive:0x2a1000}),CHM=P('#3a3d40',{shininess:90});
+ function chain(gp,a,b){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),L=A.distanceTo(B);const m=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,L,6),CHM);m.position.copy(A).add(B).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());gp.add(m);const bx=addBox(.12,.32,.1,MAT.yellow,b[0],b[1]+.16,b[2],gp);return m}
+ function lash(cg,items){const gp=new THREE.Group();gp.visible=false;cg.add(gp);cg.straps=gp;for(const it of items){if(it[0]==='band'){const[,w,hh,z,y0]=it;addBox(w+.06,.04,.12,LSM,0,y0+hh+.02,z,gp);for(const s of[-1,1]){addBox(.04,hh,.12,LSM,s*(w/2+.02),y0+hh/2,z,gp);chain(gp,[s*(w/2+.02),y0+.05,z],[s*1.22,-.02,z+(z>0?.9:-.9)])}addBox(.1,.22,.16,MAT.dark,w/2+.05,y0+hh*.55,z,gp)}else chain(gp,it.slice(1,4),it.slice(4,7))}}
+ lash(nasel,[['band',3.9,3.9,-3.4,.2],['band',3.9,3.9,-.4,.2],['band',3.9,3.9,2.2,.2]]);
+ lash(hub,[['c',1.4,3.6,1.2,1.22,-.02,2.6],['c',-1.4,3.6,1.2,-1.22,-.02,2.6],['c',1.4,3.6,-1.2,1.22,-.02,-2.6],['c',-1.4,3.6,-1.2,-1.22,-.02,-2.6]]);
+ lash(akt,[['band',3.0,3.0,1.4,.55],['band',3.0,3.0,2.8,.55],['c',.7,2.4,-3.6,1.22,-.02,-4.8],['c',-.7,2.4,-3.6,-1.22,-.02,-4.8]]);
+ lash(ank,[['c',2,3.1,0,1.22,-.02,2.4],['c',-2,3.1,0,-1.22,-.02,2.4],['c',2,3.1,0,1.22,-.02,-2.4],['c',-2,3.1,0,-1.22,-.02,-2.4],['c',0,3.1,2,1.22,-.02,3.2],['c',0,3.1,-2,-1.22,-.02,-3.2]]);
+ lash(kon,[['c',1.15,.15,2.9,1.22,-.02,3.4],['c',-1.15,.15,2.9,-1.22,-.02,3.4],['c',1.15,.15,-2.9,1.22,-.02,-3.4],['c',-1.15,.15,-2.9,-1.22,-.02,-3.4]]);
  for(const m of[nasel,hub,akt,ank,kon])m.traverse(o=>{if(o.isMesh)o.castShadow=true});
  // üretici logosu: bütün yüklerde ortak tuval
  OEMC=document.createElement('canvas');OEMC.width=512;OEMC.height=128;OEMT=new THREE.CanvasTexture(OEMC);const om=new THREE.MeshBasicMaterial({map:OEMT,side:THREE.DoubleSide});
@@ -1004,7 +1018,7 @@ function resetGame(m,n){if(trailer){trailer.ext=0;trailer.steer=0}mode=m;coachHi
  G={t:0,dmg:0,loaded:0,carry:-1,strapped:false,warnT:0,score:0,dist:0,scanned:0,toastT:0,bl:0,blT:0,chain:0,chT:0,fines:0,tickets:0,camDone:{},job,deadline:m==='career'?Math.round(ROADLEN/JT[job.type].v+50+(IMPORT.includes(job.type)?60:HEAVY.includes(job.type)?25:10)+(job.type==='kanat'&&REG==='ege'?40:0)+(REG==='ege'&&job.type==='kanat'?70:0)+(REG==='sivas'?90:0)+(REG==='trakya'?40:0)):0,deliverT:0,t0:null,arr:false,lift:null};
  setTOD(job.tod);
  crates.forEach(c=>{if(c.parent!==scene)scene.add(c);c.visible=false;c.userData.dmg=false});
- world.straps.forEach(s=>s.visible=false);if(CARGO.kule&&CARGO.kule.straps)CARGO.kule.straps.visible=false;for(const k in CARGO)CARGO[k].visible=false;CARGO.kanat.rotation.x=0;
+ world.straps.forEach(s=>s.visible=false);ownStraps('');for(const k in CARGO)CARGO[k].visible=false;CARGO.kanat.rotation.x=0;
  for(const mk of world.markers)scene.remove(mk);world.markers=[];drone.g.visible=false;fork.g.visible=false;
  const t=job.type;let start='yard';
  if(t==='kasa'){fork.g.visible=true;crates.forEach((c,i)=>{c.visible=true;labelCrate(c,(job.oem||'NURDAKS')+'|'+T(['cr1','cr2','cr3'][i]));c.position.set(17.2,YARD_Y,-1+i*5.2);c.rotation.set(0,0,0)})}
@@ -1093,7 +1107,7 @@ function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);
  else{setAct(T('board'),()=>{phase='drive';G.t0=G.t;setObj(T('o_drive'));setAct(null);arrow.visible=false;fork.v.speed=0;snapCam()})}
  if(G.lift!=null)fork.car.position.y=lerp(fork.car.position.y,G.lift,.08)}
 const STRAP_SC={kule:[1.8,3.15],kanat:[1,1.75],donus:[1,1.65],nasel:[1.62,3.05],hub:[1.72,2.75],aktarma:[1.45,2.25],ankraj:[1.78,2.4],konteyner:[1,1.9]};
-function doStrap(){const t=G.job.type;const sc=STRAP_SC[t]||[1,1];world.straps.forEach(s=>s.scale.set(sc[0],sc[1],1));if(CARGO.kule&&CARGO.kule.straps)CARGO.kule.straps.visible=t==='kule';if(t==='kasa'||t==='yedek')world.straps.forEach((s,i)=>s.visible=(t==='kasa'||i===1));else{world.straps[0].visible=world.straps[2].visible=true;if(t!=='kanat'&&t!=='donus')world.straps[1].visible=true}if(t==='kule')world.straps.forEach(s=>s.visible=false);
+function doStrap(){const t=G.job.type;const sc=STRAP_SC[t]||[1,1];world.straps.forEach(s=>s.scale.set(sc[0],sc[1],1));ownStraps(t);if(t==='kasa'||t==='yedek')world.straps.forEach((s,i)=>s.visible=(t==='kasa'||i===1));else{world.straps[0].visible=world.straps[2].visible=true;if(t!=='kanat'&&t!=='donus')world.straps[1].visible=true}if(CARGO[t]&&CARGO[t].straps)world.straps.forEach(s=>s.visible=false);
  G.strapped=true;toast(T('t_strap'),'#8ff0a4');blip(400,700,.2);setAct(null);if(phase==='drive'){G.t0=G.t;setObj(G.job.type==='donus'?T('o_back'):T('o_drive'))}else setObj(T('o_board'))}
 function rescue(){const v=truck.v;let bi=0,bd=1e9;for(let i=0;i<NS;i++){const d=Math.hypot(RS[i].x-v.x,RS[i].z-v.z);if(d<bd){bd=d;bi=i}}
  const back=mode==='career'&&G.job.type==='donus';const i=clamp(bi,2,NS-3),j=back?i-1:i+1;const rp=sideAt(i,(back?-1:1)*LANE);v.x=rp.x;v.z=rp.z;v.h=Math.atan2(-(RS[j].x-RS[i].x),-(RS[j].z-RS[i].z));v.speed=0;v.steer=0;trailer.th=v.h;G.stuckT=0;setAct(null);snapCam();toast(T('t_rescued'),'#8ff0a4')}
@@ -1111,7 +1125,8 @@ function freeLogic(){const v=truck.v,sp=Math.abs(v.speed),f=G.fr;if(!f){if(actFn
   else setAct(T('fdrop'),()=>{G.bl=G.blT=0;CARGO.kanat.rotation.x=0;const pts=150+Math.round(ROADLEN/20);G.bonus=(G.bonus||0)+pts;for(const k in CARGO)CARGO[k].visible=false;crates.forEach(c=>{scene.add(c);c.visible=false});world.straps.forEach(s=>s.visible=false);
    setAct(null);toast(T('ft_done').replace('{p}',pts),'#8ff0a4',2.2);blip(523,784,.3);G.job={type:'free'};G.fj++;const gg=G;setTimeout(()=>{if(mode==='free'&&G===gg&&!G.fr){freeJob();toast(T('fnext'),'#ffe08a',1.6)}},1600);G.fr=null})}
  else bladeAct()}
-function doStrapFree(){const t=G.job.type;const sc=STRAP_SC[t]||[1,1];world.straps.forEach((s,i)=>{s.scale.set(sc[0],sc[1],1);s.visible=t!=='kule'&&(t!=='kanat'&&t!=='donus'||i!==1)});if(CARGO.kule&&CARGO.kule.straps)CARGO.kule.straps.visible=t==='kule'}
+function doStrapFree(){const t=G.job.type;const sc=STRAP_SC[t]||[1,1];world.straps.forEach((s,i)=>{s.scale.set(sc[0],sc[1],1);s.visible=!(CARGO[t]&&CARGO[t].straps)&&(t!=='kanat'&&t!=='donus'||i!==1)});ownStraps(t)}
+function ownStraps(t){for(const k in CARGO)if(CARGO[k].straps)CARGO[k].straps.visible=k===t}
 // ================= KANAT KALDIRICI (blade lifter) =================
 // Kanat kökünden 40°'ye kadar dikilir: dar köy sokağında evlerin üstünden geçer; enerji hattından önce indirilmelidir.
 const BL_ANG=1.0,BL_VMAX=5;
