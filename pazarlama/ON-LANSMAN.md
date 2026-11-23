@@ -1,6 +1,6 @@
 # Kervan Yolu ön lansman (23–28 Kasım 2026)
 
-Çıkış: **Cumartesi 28 Kasım 2026, 09:00 (TSİ)**. App Store'da "onaydan sonra, en erken bu tarihte" ayarlı (`store/YAYIN-TARIHI`). Apple onayı 28'inden sonra gelirse oyun onay anında çıkar; çıkış paylaşımı ancak oyun mağazada görünce yapılır.
+Çıkış: **Cumartesi 5 Aralık 2026, 09:00 (TSİ)**. App Store'da "onaydan sonra, en erken bu tarihte" ayarlı (`store/YAYIN-TARIHI`). Apple onayı 28'inden sonra gelirse oyun onay anında çıkar; çıkış paylaşımı ancak oyun mağazada görünce yapılır.
 
 Kural: her paylaşım önce LinkedIn, sonra Instagram, X ve öteki hesaplar. Görseller yalnız oyundan; gerçek saha, proje ya da işyeri bilgisi/görseli yok, işveren adı geçmez.
 Görseller: `pazarlama/*-4x5.png` (akış), `*-9x16.png` (hikâye). Üretici: `araclar/merak-gorselleri.py`.
