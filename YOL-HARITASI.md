@@ -11,10 +11,10 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - ✓ Mr. Anduv! FM (açılış teması, radyo, 123 şarkı)
 
 ## 1.1
-- Fotoğraf modu (paylaşım = reklam)
+- ✓ Fotoğraf modu (paylaşım = reklam) — 1.0'a girdi
 - Mr. Anduv! FM'de trafik ve hava anonsları (Emre'nin sesiyle de olabilir)
 - Kabinde sinyal, dörtlü, korna, silecek; telsiz anonsları ("Eskort 1, viraj temiz")
-- Yakıt ve kantar istasyonu
+- ✓ Yakıt ve kantar istasyonu — 1.0'a girdi (motorin 89 ₺/L, gerçek güzergâh km'si)
 - Gece seferi kuralı ve polis eskortu (bazı özel yükler)
 
 ## 1.2 "Kendi Firman ve RES Projesi"
