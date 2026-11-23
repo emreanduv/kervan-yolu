@@ -379,6 +379,14 @@ const OBS=[];const obsC=(x,z,r)=>OBS.push({c:1,x,z,r});const obsR=(x0,x1,z0,z1)=
 function hitObs(x,z){for(const o of OBS){if(o.c){if((x-o.x)**2+(z-o.z)**2<o.r*o.r)return true}else if(x>o.x0&&x<o.x1&&z>o.z0&&z<o.z1)return true}return false}
 const DEPOT={x:8,z:16};
 
+// ---- Tesis planı: dinlenme tesisi (akaryakıt) ve kantar, köy/aktarma/zincir alanıyla çakışmayacak yerde; zemini düzlenir
+let PLAN={},PADS=[];
+function onPad(x,z){for(const pd of PADS)if(Math.hypot(x-pd.x,z-pd.z)<pd.r0+4)return true;return false}
+function stPlan(){const avoid=[];if(RG().village){let best=-1,bi=300;for(let i=230;i<470;i++){const a=RS[i-12],b=RS[i],c=RS[i+12];const a1=Math.atan2(b.x-a.x,b.z-a.z),a2=Math.atan2(c.x-b.x,c.z-b.z);const k=Math.abs(angDiff(a2,a1));if(k>best){best=k;bi=i}}avoid.push(bi-26,bi,bi+26,bi+72,Math.max(60,bi-74))}
+ if(RG().snow){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}const c=Math.max(60,ci-18);avoid.push(c,Math.min(NS-80,c+120))}
+ const free=(i,m)=>avoid.every(a=>Math.abs(a-i)>m)&&i>70&&i<NS-70;const pick=(f,m)=>{const c=Math.round(NS*f);for(let k=0;k<160;k+=6){if(free(c+k,m))return c+k;if(free(c-k,m))return c-k}return c};
+ const ri=pick(.5,48);avoid.push(ri);const ki=pick(.22,36);PLAN={ri,ki};PADS=[];
+ const pm=sideAt(ri,26);PADS.push({x:pm.x,z:pm.z,y:RY[ri]+.02,r0:36,r1:56});const pk=sideAt(ki,10.5);PADS.push({x:pk.x,z:pk.z,y:RY[ki]+.02,r0:17,r1:30})}
 function buildWorld(){
  const curve=new THREE.CatmullRomCurve3(RPTS.map(p=>new THREE.Vector3(p[0],0,p[1])),false,'catmullrom',0.5);
  RS=curve.getSpacedPoints(NS-1);ROADLEN=curve.getLength();ROADLENS[REG]=ROADLEN;SITE=RS[NS-1];
@@ -390,12 +398,13 @@ function buildWorld(){
  for(let i=NS-2;i>=0;i--)RY[i]=clamp(RY[i],RY[i+1]-gmax,RY[i+1]+gmax);
  for(let i=0;i<NS;i++)RY[i]=Math.max(RY[i],2.2);
  SITE_Y=RY[NS-1];for(let i=0;i<NS;i++){const m=siteMask(RS[i].x,RS[i].z);RY[i]=lerp(RY[i],SITE_Y,m)}
+ stPlan();
  const SX=new Float32Array(NS),SZ=new Float32Array(NS);for(let i=0;i<NS;i++){SX[i]=RS[i].x;SZ[i]=RS[i].z}
  const cols=new Float32Array(NV*3),pos=new Float32Array(NV*3);
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const x=TX0+i*SEG,z=TZ0+j*SEG,id=j*(NX+1)+i;
   let best=1e9,bk=0;for(let k=0;k<NS;k+=6){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
   for(let k=Math.max(0,bk-6);k<=Math.min(NS-1,bk+6);k++){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
-  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(6,32,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));
+  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(6,32,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));for(const pd of PADS){const dd=Math.hypot(x-pd.x,z-pd.z);if(dd<pd.r1)h=lerp(h,pd.y,1-sstep(pd.r0,pd.r1,dd))}
   HG[id]=h;pos[id*3]=x;pos[id*3+1]=h;pos[id*3+2]=z}
  const cSun=new THREE.Color('#d9b52a'),cWheat=new THREE.Color('#cfb26a'),cPlow=new THREE.Color('#6f5639'),cSnow=new THREE.Color('#dfe6ed'),cSlush=new THREE.Color('#b9bcbf'),RC=RG().cols,cG1=new THREE.Color(RC.g1),cG2=new THREE.Color(RC.g2),cDry=new THREE.Color(RC.dry),cRock=new THREE.Color(RC.rock),cSand=new THREE.Color('#d6c597'),cDirt=new THREE.Color('#97805c'),cCon=new THREE.Color('#8f8d86'),cGrav=new THREE.Color('#a39883'),cUW=new THREE.Color('#5d6b5a'),tc=new THREE.Color();
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const id=j*(NX+1)+i,x=TX0+i*SEG,z=TZ0+j*SEG,h=HG[id];
@@ -550,15 +559,39 @@ function aktarmaLogic(dt){const A=PORTOPS.ak;if(!A||!needLift()||!bladeOn())retu
 // Kanat taşımasında rüzgâr sınırı (oyun kuralı): 15 m/s üstünde kanat yola çıkmaz, rüzgârın dinmesi beklenir.
 const TAKO_MAX=270,TAKO_RATE=1,KANAT_WIND=15;
 function windHoldOf(j){if(j.type!=='kanat')return 0;const h=hash2(j.n,913);return (j.reg==='trakya'?h<.45:h<.12)?Math.round(16+hash2(j.n,57)*5):0}
-function buildMola(){const ri=Math.round(NS*.5);const p=sideAt(ri,20),y=getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang;scene.add(g);
- const pad=new THREE.Mesh(new THREE.PlaneGeometry(26,44),new THREE.MeshLambertMaterial({color:0x6f6f68}));pad.rotation.x=-Math.PI/2;pad.position.y=.06;pad.receiveShadow=true;g.add(pad);
- addBox(10,4.2,8,P('#e8e1d2'),-8,2.1,4,g);addBox(11,.5,9,P('#a8432f'),-8,4.45,4,g);addBox(4,2.2,.1,MAT.glass,-8,1.9,-.06,g);
- // çay ocağı ve masalar, akaryakıt pompası
- for(const z of[-8,-12])for(const x of[-10,-6]){addCyl(.6,.6,.08,12,P('#7a5a3a'),x,.85,z,g);addCyl(.06,.06,.85,6,MAT.dark,x,.42,z,g)}
- const cn=new THREE.Group();cn.position.set(6,0,10);g.add(cn);addBox(6,.3,4,MAT.white,0,5.2,0,cn);for(const x of[-2.6,2.6])addBox(.3,5.2,.3,MAT.steel,x,2.6,0,cn);addBox(1,1.8,.8,P('#c0392b'),-1.2,.9,0,cn);addBox(1,1.8,.8,P('#c0392b'),1.2,.9,0,cn);
- worker(g,-5,-10,0.4);
- const sg=new THREE.Mesh(new THREE.PlaneGeometry(6,1.4),new THREE.MeshBasicMaterial({map:ctex(384,90,(q,w,h)=>{q.fillStyle='#1d6b3a';q.fillRect(0,0,w,h);q.fillStyle='#fff';q.font='800 44px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'DİNLENME TESİSİ':'REST AREA',w/2,50);q.font='600 26px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'Çay · Yakıt · Tır parkı':'Tea · Fuel · Truck parking',w/2,80)}),side:THREE.DoubleSide}));
- const sp=sideAt(ri-22,7.5),sy=getH(sp.x,sp.z);const sgg=new THREE.Group();sgg.position.set(sp.x,sy,sp.z);sgg.rotation.y=sp.ang+Math.PI;scene.add(sgg);addBox(.15,3.8,.15,MAT.steel,-2.6,1.9,0,sgg);addBox(.15,3.8,.15,MAT.steel,2.6,1.9,0,sgg);sg.position.set(0,3.5,0);sgg.add(sg);
+function buildMola(){const ri=PLAN.ri||Math.round(NS*.5);const pd=PADS[0];const p=sideAt(ri,26),y=pd?pd.y:getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang;scene.add(g);
+ // Akaryakıt ve dinlenme tesisi (markasız): asfalt saha, kanopi + pompa adaları, market/lokanta, tır parkı, yüksek fiyat direği, yol üstü yön levhaları
+ const asf=new THREE.Mesh(new THREE.PlaneGeometry(40,66),new THREE.MeshStandardMaterial({color:0x4a4c4e,roughness:.92}));asf.rotation.x=-Math.PI/2;asf.position.set(2,.05,0);asf.receiveShadow=true;g.add(asf);
+ const lineM=new THREE.MeshBasicMaterial({color:0xe9e6d8});for(let k=0;k<6;k++){const l=new THREE.Mesh(new THREE.PlaneGeometry(.18,15),lineM);l.rotation.x=-Math.PI/2;l.position.set(-14+k*0,.07,-26+k*4.6);l.rotation.z=Math.PI/2;g.add(l)}
+ for(let k=0;k<5;k++){const l=new THREE.Mesh(new THREE.PlaneGeometry(.18,16),lineM);l.rotation.x=-Math.PI/2;l.position.set(-10,.07,6+k*5.2);l.rotation.z=Math.PI/2;g.add(l)}
+ // kanopi
+ const cw=P('#f4f5f3',{shininess:40}),red=P('#d8322a',{shininess:50});const cy=6.2;
+ rbox(13,.7,24,.2,cw,9,cy,-6,g);for(const s of[-1,1]){addBox(.06,.9,24.2,red,9+s*6.55,cy,-6,g);addBox(13.2,.9,.06,red,9,cy,-6+s*12.08,g)}
+ const lp=new THREE.MeshBasicMaterial({color:0xfff6dc});for(const z of[-14,-9,-3,2])for(const x of[6,12]){const m=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.9),lp);m.rotation.x=Math.PI/2;m.position.set(x,cy-.36,z);g.add(m)}
+ const ftx=ctex(1024,96,(q,w,hh)=>{q.fillStyle='#d8322a';q.fillRect(0,0,w,hh);q.fillStyle='#fff';q.font='800 64px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'AKARYAKIT · DİNLENME TESİSİ':'FUEL · REST AREA',w/2,70)});
+ const fb=new THREE.Mesh(new THREE.PlaneGeometry(22,.85),new THREE.MeshBasicMaterial({map:ftx}));fb.position.set(15.59,cy,-6);fb.rotation.y=Math.PI/2;g.add(fb);
+ for(const z of[-14.5,-6,2.5]){for(const x of[6.5,11.5])addCyl(.22,.22,cy-.35,10,MAT.steel,x,(cy-.35)/2,z,g)}
+ // pompa adaları
+ const pb=P('#ffffff',{shininess:60}),pr=P('#d8322a',{shininess:50}),scr=new THREE.MeshBasicMaterial({color:0x103a1e}),dig=ctex(128,64,(q,w,hh)=>{q.fillStyle='#0c2614';q.fillRect(0,0,w,hh);q.fillStyle='#6dff8c';q.font='700 30px monospace';q.textAlign='center';q.fillText('89,00',w/2,42)});
+ for(const z of[-13,-6,1]){addBox(1.6,.25,5,P('#b9bab5'),9,.12,z,g);addBox(1.7,.3,.4,MAT.yellow,9,.2,z-2.6,g);addBox(1.7,.3,.4,MAT.yellow,9,.2,z+2.6,g);
+  for(const dz of[-1.2,1.2]){const pg=new THREE.Group();pg.position.set(9,.25,z+dz);g.add(pg);rbox(.9,1.9,.6,.08,pb,0,.95,0,pg);addBox(.92,.35,.62,pr,0,1.75,0,pg);for(const s of[-1,1]){const d=new THREE.Mesh(new THREE.PlaneGeometry(.6,.3),new THREE.MeshBasicMaterial({map:dig}));d.position.set(s*.461,1.3,0);d.rotation.y=s*Math.PI/2;pg.add(d);addCyl(.03,.03,.9,6,MAT.dark,s*.5,.9,.18,pg)}}}
+ // market / lokanta
+ const mk=new THREE.Group();mk.position.set(-11,0,-4);g.add(mk);rbox(12,4.6,20,.25,P('#efe7d6',{shininess:20}),0,2.3,0,mk);addBox(12.6,.5,20.6,P('#3c3f42'),0,4.75,0,mk);addBox(.08,2.6,14,MAT.glass,6.02,1.7,0,mk);
+ const mtx=ctex(1024,128,(q,w,hh)=>{q.fillStyle='#1d5aa6';q.fillRect(0,0,w,hh);q.fillStyle='#fff';q.font='800 76px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'MARKET · LOKANTA · ÇAY OCAĞI':'MARKET · DINER · TEA HOUSE',w/2,92)});
+ const ms=new THREE.Mesh(new THREE.PlaneGeometry(14,1.2),new THREE.MeshBasicMaterial({map:mtx}));ms.position.set(6.05,3.65,0);ms.rotation.y=Math.PI/2;mk.add(ms);
+ for(const z of[13,17])for(const x of[-9,-5]){addCyl(.6,.6,.08,12,P('#7a5a3a'),x,.85,z,g);addCyl(.06,.06,.85,6,MAT.dark,x,.42,z,g)}addBox(9,.12,8,P('#c8423a'),-7,3.1,15,g);for(const x of[-11,-3])for(const z of[11.5,18.5])addCyl(.06,.06,3.1,6,MAT.steel,x,1.55,z,g);
+ worker(g,-6,-10,0.4);worker(g,10.4,-6,1.5);
+ // park etmiş tırlar
+ for(const z of[8,13.2]){const pt=new THREE.Group();pt.position.set(-11,0,z);pt.rotation.y=Math.PI/2;g.add(pt);rbox(2.4,2.6,2.2,.2,P(z>10?'#2f62b3':'#e9e9e6',{shininess:60}),0,2.2,-5.2,pt);addBox(2.5,1.2,12,P('#7c8288'),0,1.6,1.8,pt);rbox(2.5,2.6,11.5,.1,P(z>10?'#d9dbd6':'#3d7d4a',{shininess:30}),0,3.4,2,pt);for(const zz of[-5.2,0,4,5.4])for(const s of[-1,1]){const w=addCyl(.5,.5,.35,12,MAT.tyre,s*1.05,.5,zz,pt);w.rotation.z=Math.PI/2}}
+ // yüksek fiyat direği (uzaktan görünür, gece ışıklı)
+ const pl=new THREE.Group();pl.position.set(18,0,-26);g.add(pl);addBox(.7,13,.7,MAT.steel,0,6.5,0,pl);
+ const ptx=ctex(256,512,(q,w,hh)=>{q.fillStyle='#d8322a';q.fillRect(0,0,w,hh);q.fillStyle='#fff';q.fillRect(14,170,w-28,320);q.fillStyle='#fff';q.font='800 54px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'AKARYAKIT':'FUEL',w/2,70);q.font='700 40px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'24 SAAT':'24 H',w/2,128);
+  q.fillStyle='#222';q.font='700 34px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'MOTORİN':'DIESEL',w/2,220);q.fillStyle='#0c2614';q.fillRect(34,236,w-68,74);q.fillStyle='#6dff8c';q.font='700 56px monospace';q.fillText('89,00',w/2,294);q.fillStyle='#222';q.font='700 32px "Barlow Condensed",sans-serif';q.fillText(L==='tr'?'TIR PARKI':'TRUCK PARK',w/2,370);q.fillText(L==='tr'?'LOKANTA · DUŞ':'DINER · SHOWER',w/2,420)});
+ for(const s of[-1,1]){const pm=new THREE.Mesh(new THREE.PlaneGeometry(3.2,6.4),new THREE.MeshBasicMaterial({map:ptx}));pm.position.set(0,12.2,s*.36);pm.rotation.y=s>0?0:Math.PI;pl.add(pm)}addBox(3.3,6.5,.66,P('#a51f18'),0,12.2,0,pl);
+ // yol üstü yön levhaları (mavi hizmet levhası): 500 m ve 200 m önce
+ const st=(m)=>ctex(256,256,(q,w,hh)=>{q.fillStyle='#1f5aa6';q.fillRect(0,0,w,hh);q.strokeStyle='#fff';q.lineWidth=8;q.strokeRect(8,8,w-16,hh-16);q.fillStyle='#fff';q.fillRect(78,46,64,100);q.fillRect(150,70,14,8);q.fillRect(160,70,8,70);q.fillStyle='#1f5aa6';q.fillRect(90,60,40,28);q.fillStyle='#fff';q.fillRect(64,146,92,14);q.font='800 50px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(m,w/2,222)});
+ const dsm=ROADLEN/(NS-1);for(const m of[500,200]){const si=Math.max(4,ri-Math.round(m/dsm)-10);const sp=sideAt(si,7.5),sy=getH(sp.x,sp.z);const sg=new THREE.Group();sg.position.set(sp.x,sy,sp.z);sg.rotation.y=sp.ang+Math.PI;scene.add(sg);addBox(.12,3.4,.12,MAT.steel,0,1.7,0,sg);const pn=new THREE.Mesh(new THREE.PlaneGeometry(1.9,1.9),new THREE.MeshBasicMaterial({map:st(m+' m'),side:THREE.DoubleSide}));pn.position.set(0,3.9,.08);sg.add(pn)}
+
  PORTOPS.mola={ri,g}}
 // ===== YAKIT VE KANTAR (1.1) =====
 // Motorin 20 Kasım 2026 İstanbul pompa fiyatına yakın; ağır nakliye çekici ~60 L/100 km; gerçek güzergâh uzunlukları
@@ -568,7 +601,7 @@ function lPerKm(){const t=G&&G.job?G.job.type:'donus';return t==='donus'?.32:HEA
 function routeKm(){return REAL_KM[REG]||80}
 function fuelNeed(i){return Math.max(0,(NS-1-i)/(NS-1))*routeKm()*lPerKm()}
 function fuelInit(){const need=fuelNeed(0),r=hash2((G.job&&G.job.n)||7,REG.length*13);G.fuel=mode==='free'?TANK_L/2:Math.min(TANK_L,Math.round(need*(.45+r*.45)+30));G.fuelTL=0;G.fuelW=0;G.fuelOut=null;G.kantarOk=false;G.kantarF=0;G.kantarH=0;G.fueled=false}
-function buildKantar(){let ki=Math.round(NS*.2);if(PORTOPS.ak&&Math.abs(ki-PORTOPS.ak.ai)<30)ki+=45;if(PORTOPS.mola&&Math.abs(ki-PORTOPS.mola.ri)<30)ki-=40;const p=sideAt(ki,9.5),y=getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang;scene.add(g);
+function buildKantar(){const ki=PLAN.ki||Math.round(NS*.22);const p=sideAt(ki,10.5),y=PADS[1]?PADS[1].y:getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang;scene.add(g);
  const pad=new THREE.Mesh(new THREE.PlaneGeometry(9,30),new THREE.MeshLambertMaterial({color:0x7b7b74}));pad.rotation.x=-Math.PI/2;pad.position.y=.05;g.add(pad);
  const plate=P('#5c6166',{shininess:80});for(let k=0;k<3;k++)addBox(3.4,.12,6.6,plate,0,.1,-7+k*7,g);for(const s of[-1,1])addBox(.25,.35,22,MAT.yellow,s*1.9,.17,0,g);
  const bo=new THREE.Group();bo.position.set(4,0,2);g.add(bo);rbox(2.4,2.6,3,.15,P('#e8e1d2'),0,1.3,0,bo);addBox(2.7,.25,3.3,P('#1f5aa6'),0,2.75,0,bo);addBox(.06,1,1.8,MAT.glass,-1.22,1.6,0,bo);
@@ -789,7 +822,7 @@ function buildVillage(){
 // ---- Ege ağaçları: zeytinlik sıraları, yamaçlarda kızılçam, köy çevresinde servi
 function buildTreesEge(){const N=MOBILE?1500:2200;const d=new THREE.Object3D(),col=new THREE.Color();
  const olive=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(2,1),P('#7f8f5c',{shininess:6}),N),pine=new THREE.InstancedMesh(new THREE.ConeGeometry(2.2,6.8,7),P('#355c2c',{shininess:8}),N),cyp=new THREE.InstancedMesh(new THREE.ConeGeometry(.9,9,8),P('#24421f',{shininess:8}),300),trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.26,.38,2,5),P('#5e4a36'),N*2);
- let co=0,cpn=0,cc=0,ct=0;const ok=(x,z)=>{const h=getH(x,z);if(h<3.5)return-1;if(getRD(x,z)<11)return-1;if(yardMask(x,z)>.01||siteMask(x,z)>.01)return-1;if(world.turbines.some(p=>Math.hypot(p.x-x,p.z-z)<12))return-1;if(HOBS.some(o=>Math.hypot(o.x-x,o.z-z)<o.r+3))return-1;return h};
+ let co=0,cpn=0,cc=0,ct=0;const ok=(x,z)=>{const h=getH(x,z);if(h<3.5)return-1;if(getRD(x,z)<11||onPad(x,z))return-1;if(yardMask(x,z)>.01||siteMask(x,z)>.01)return-1;if(world.turbines.some(p=>Math.hypot(p.x-x,p.z-z)<12))return-1;if(HOBS.some(o=>Math.hypot(o.x-x,o.z-z)<o.r+3))return-1;return h};
  // zeytinlik bahçeleri: yolun iki yanında sıralı
  for(let gi=0;gi<90&&co<N*.8;gi++){const i=20+Math.floor(rnd()*(NS-60));const p=sideAt(i,(rnd()<.5?-1:1)*(20+rnd()*48));const ang=p.ang+rnd()*.3;const ca=Math.cos(ang),sa=Math.sin(ang);
   for(let a=-4;a<=4;a++)for(let b=-2;b<=2;b++){if(co>=N)break;const x=p.x+a*8*ca+b*8*sa+(rnd()-.5)*1.5,z=p.z-a*9*sa+b*9*ca+(rnd()-.5)*1.5;const h=ok(x,z);if(h<0)continue;const s=.75+rnd()*.4;
@@ -866,7 +899,7 @@ function pineGeo(){const a=new THREE.ConeGeometry(2.3,3.6,9);a.translate(0,-1.6,
 function leafGeo(){const parts=[[0,0,0,2.4],[1.3,-.5,.4,1.6],[-1.1,-.3,-.6,1.7],[.2,1.1,-.3,1.5],[-.4,-.6,1.2,1.5]].map(([x,y,z,r])=>{const g=new THREE.IcosahedronGeometry(r,1);const p=g.attributes.position;for(let i=0;i<p.count;i++){const k=1+(Math.sin(p.getX(i)*3.1+p.getY(i)*2.3)+Math.cos(p.getZ(i)*2.7))*.06;p.setXYZ(i,p.getX(i)*k,p.getY(i)*k,p.getZ(i)*k)}g.computeVertexNormals();g.translate(x,y,z);return g});return mergeGeos(parts)}
 function buildTrees(){const N=MOBILE?900:1500;const crown=new THREE.InstancedMesh(pineGeo(),P('#2f5a2c',{shininess:8}),N);const crown2=new THREE.InstancedMesh(leafGeo(),P('#3f6b30',{shininess:8}),N);const trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(.22,.32,2.4,5),P('#5a4128'),N*2);
  const d=new THREE.Object3D(),col=new THREE.Color();let c1=0,c2=0,ct=0,tries=0;
- while((c1+c2)<N&&tries<N*12){tries++;const x=TX0+60+rnd()*(TX1-TX0-120),z=TZ0+60+rnd()*(TZ1-TZ0-120);const h=getH(x,z);if(h<3.5)continue;const rd=getRD(x,z);if(rd<12)continue;if(rd>240&&rnd()<.75)continue;if(yardMask(x,z)>0.01||siteMask(x,z)>0.01)continue;if(world.turbines.some(p=>Math.hypot(p.x-x,p.z-z)<12))continue;if(fbm(x*.01+9,z*.01,3)<-.05&&rnd()<.8)continue;
+ while((c1+c2)<N&&tries<N*12){tries++;const x=TX0+60+rnd()*(TX1-TX0-120),z=TZ0+60+rnd()*(TZ1-TZ0-120);const h=getH(x,z);if(h<3.5)continue;const rd=getRD(x,z);if(rd<12)continue;if(rd>240&&rnd()<.75)continue;if(yardMask(x,z)>0.01||siteMask(x,z)>0.01||onPad(x,z))continue;if(world.turbines.some(p=>Math.hypot(p.x-x,p.z-z)<12))continue;if(fbm(x*.01+9,z*.01,3)<-.05&&rnd()<.8)continue;
   const s=.7+rnd()*.7;const pine=x<coastX(z)+260||rnd()<.45;
   if(pine&&c1<N){d.position.set(x,h+2.4*s+3.2*s,z);d.scale.set(s,s,s);d.rotation.set(0,rnd()*6,0);d.updateMatrix();crown.setMatrixAt(c1,d.matrix);col.setHSL(.27+rnd()*.06,.45,.22+rnd()*.08);crown.setColorAt(c1,col);c1++}
   else if(c2<N){d.position.set(x,h+2.4*s+1.8*s,z);d.scale.set(s*.95,s*.85,s*.95);d.rotation.set(0,rnd()*6,0);d.updateMatrix();crown2.setMatrixAt(c2,d.matrix);col.setHSL(.2+rnd()*.08,.5,.24+rnd()*.1);crown2.setColorAt(c2,col);c2++}else continue;
@@ -1408,6 +1441,7 @@ function drawMini(){if(!RS.length)return;const v=phase==='fork'?fork.v:truck.v;c
  if(G.target){let tx=(G.target.x-v.x)*sc,tz=(G.target.z-v.z)*sc;const L2=Math.hypot(tx,tz),lim=S/2-10;if(L2>lim){tx*=lim/L2;tz*=lim/L2}mctx.fillStyle=(mode==='free'&&G.fr&&!G.fr.loaded)?'#ffc93c':'#6dff8c';mctx.beginPath();mctx.arc(tx,tz,7,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=2;mctx.stroke()}
  if(CZ&&CZ.ring&&CZ.ring.visible){let cx=(CZ.x-v.x)*sc,cz=(CZ.z-v.z)*sc;const L3=Math.hypot(cx,cz),lim3=S/2-10;if(L3>lim3){cx*=lim3/L3;cz*=lim3/L3}mctx.fillStyle='#4fb8ff';mctx.beginPath();mctx.arc(cx,cz,6,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=2;mctx.stroke()}
  mctx.fillStyle='#ffffff';for(const c of TRAF)if(c.on)mctx.fillRect((c.g.position.x-v.x)*sc-2.5,(c.g.position.z-v.z)*sc-2.5,5,5);
+ for(const s of [PORTOPS.mola,PORTOPS.kantar]){if(!s||!s.g)continue;let cx=(s.g.position.x-v.x)*sc,cz=(s.g.position.z-v.z)*sc;const Lm=Math.hypot(cx,cz);if(Lm>S/2-10){cx*=(S/2-10)/Lm;cz*=(S/2-10)/Lm}mctx.save();mctx.translate(cx,cz);mctx.rotate(-v.h);mctx.fillStyle=s===PORTOPS.mola?'#e8452c':'#2a6fd0';mctx.beginPath();mctx.arc(0,0,8,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=1.5;mctx.stroke();mctx.fillStyle='#fff';mctx.font='bold 10px sans-serif';mctx.textAlign='center';mctx.textBaseline='middle';mctx.fillText(s===PORTOPS.mola?'⛽︎':'T',0,.5);mctx.restore()}
  mctx.fillStyle='#f2b632';for(const p of world.turbines)mctx.fillRect((p.x-v.x)*sc-1.5,(p.z-v.z)*sc-1.5,3,3);
  mctx.restore();mctx.fillStyle='#ff5a3c';mctx.beginPath();mctx.moveTo(S/2,S/2-10);mctx.lineTo(S/2+7,S/2+8);mctx.lineTo(S/2-7,S/2+8);mctx.fill()}
 
