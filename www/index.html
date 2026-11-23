@@ -1460,7 +1460,7 @@ function drawMini(){if(!RS.length)return;const v=phase==='fork'?fork.v:truck.v;c
  if(CZ&&CZ.ring&&CZ.ring.visible){let cx=(CZ.x-v.x)*sc,cz=(CZ.z-v.z)*sc;const L3=Math.hypot(cx,cz),lim3=S/2-10;if(L3>lim3){cx*=lim3/L3;cz*=lim3/L3}mctx.fillStyle='#4fb8ff';mctx.beginPath();mctx.arc(cx,cz,6,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=2;mctx.stroke()}
  mctx.fillStyle='#ffffff';for(const c of TRAF)if(c.on)mctx.fillRect((c.g.position.x-v.x)*sc-2.5,(c.g.position.z-v.z)*sc-2.5,5,5);
  for(const s of [PORTOPS.mola,PORTOPS.kantar]){if(!s||!s.g)continue;let cx=(s.g.position.x-v.x)*sc,cz=(s.g.position.z-v.z)*sc;const Lm=Math.hypot(cx,cz);if(Lm>S/2-10){cx*=(S/2-10)/Lm;cz*=(S/2-10)/Lm}mctx.save();mctx.translate(cx,cz);mctx.rotate(-v.h);mctx.fillStyle=s===PORTOPS.mola?'#e8452c':'#2a6fd0';mctx.beginPath();mctx.arc(0,0,8,0,7);mctx.fill();mctx.strokeStyle='#fff';mctx.lineWidth=1.5;mctx.stroke();mctx.fillStyle='#fff';mctx.font='bold 10px sans-serif';mctx.textAlign='center';mctx.textBaseline='middle';mctx.fillText(s===PORTOPS.mola?'⛽︎':'T',0,.5);mctx.restore()}
- mctx.fillStyle='#f2b632';for(const p of world.turbines)mctx.fillRect((p.x-v.x)*sc-1.5,(p.z-v.z)*sc-1.5,3,3);
+ if(window.EXT&&EXT.mini)EXT.mini(mctx,v,sc,S);mctx.fillStyle='#f2b632';for(const p of world.turbines)mctx.fillRect((p.x-v.x)*sc-1.5,(p.z-v.z)*sc-1.5,3,3);
  mctx.restore();mctx.fillStyle='#ff5a3c';mctx.beginPath();mctx.moveTo(S/2,S/2-10);mctx.lineTo(S/2+7,S/2+8);mctx.lineTo(S/2-7,S/2+8);mctx.fill()}
 
 // ================= DÖNGÜ =================

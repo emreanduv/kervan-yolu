@@ -83,3 +83,30 @@ window.EXT={
  if(SAVE.tab==='free'){const d=document.createElement('div');d.innerHTML=`<div style="margin-top:10px;font-family:'Barlow Condensed';letter-spacing:.1em;color:var(--mut);font-size:13px">${T('hava').toUpperCase()}</div><div class="chips">${['clear','rain'].map(k=>`<div class="chip ${SAVE.wx===k?'on':''}" data-wx="${k}">${T(k)}</div>`).join('')}</div>`;b.appendChild(d);d.querySelectorAll('[data-wx]').forEach(c=>c.onclick=()=>{SAVE.wx=c.dataset.wx;save();renderMenu()})}
  else{const jc=b.querySelector('.jobcard');if(!jc)return;const j=sefer(nextSefer());const kv=(a,v)=>{const e=document.createElement('div');e.className='kv';e.innerHTML=`<span>${a}</span><b>${v}</b>`;return e};const ref=jc.querySelector('.kv:last-of-type');
   const add=[];if(j.rain)add.push(kv(T('lYagmur'),'🌧︎ '+T('rain')));if(j.type!=='donus'&&j.mud)add.push(kv(T('lSaha'),T('sahaCamur')));add.forEach(e=>jc.insertBefore(e,ref?ref.nextSibling:null))}}catch(e){}}})();
+/* Drone ile güzergâh keşfi: sefer evrakı ekranından; kamera yolu baştan sona uçar, viraj, köy, enerji hattı, kantar, akaryakıt, zincir alanı ve çamur işaretlenir; işaretler mini haritada kalır */
+(function(){
+const TRk={kesif:'🛰︎ GÜZERGÂHI DRONE İLE KEŞFET',kesifOk:'Keşif tamam: {n} nokta haritada.',p_viraj:'KESKİN VİRAJ',p_koy:'KÖY · DAR SOKAK',p_tel:'ENERJİ HATTI',p_kantar:'KANTAR',p_yakit:'AKARYAKIT',p_zincir:'ZİNCİR TAK',p_camur:'ÇAMURLU SAHA YOLU',p_saha:'SAHA',kesifAtla:'Atla'};
+const ENk={kesif:'🛰︎ SURVEY THE ROUTE BY DRONE',kesifOk:'Survey done: {n} points on the map.',p_viraj:'SHARP BEND',p_koy:'VILLAGE · NARROW STREET',p_tel:'POWER LINE',p_kantar:'WEIGH STATION',p_yakit:'FUEL',p_zincir:'FIT CHAINS',p_camur:'MUDDY SITE ROAD',p_saha:'SITE',kesifAtla:'Skip'};
+Object.assign(STR.tr,TRk);Object.assign(STR.en,ENk);
+const RENK={p_viraj:'#ffb21a',p_koy:'#ff7a3d',p_tel:'#ff3b2f',p_kantar:'#3d8bff',p_yakit:'#ff9a1f',p_zincir:'#7fd4ff',p_camur:'#a0703c',p_saha:'#6dff8c'};
+function noktalar(){const P=[];if(typeof bendsKur==='function'&&BENDS._rs!==RS){bendsKur();BENDS._rs=RS}(BENDS||[]).forEach(i=>P.push(['p_viraj',i]));
+ if(VZ&&VZ.v0)P.push(['p_koy',VZ.v0]);const tels=(typeof HOBS!=='undefined'?HOBS:[]).filter(o=>o.k==='tel');if(tels.length){const o=tels[Math.floor(tels.length/2)];let bi=0,bd=1e9;for(let i=0;i<NS;i+=2){const d=(RS[i].x-o.x)**2+(RS[i].z-o.z)**2;if(d<bd){bd=d;bi=i}}P.push(['p_tel',bi])}
+ if(PORTOPS.kantar&&G&&HEAVY.includes(G.job.type))P.push(['p_kantar',PORTOPS.kantar.ki]);if(PORTOPS.mola)P.push(['p_yakit',PORTOPS.mola.ri]);
+ if(RG().snow&&CZ&&CZ.ci)P.push(['p_zincir',CZ.ci]);if(G&&G.mud)P.push(['p_camur',NS-1-64]);P.push(['p_saha',NS-1]);return P.sort((a,b)=>a[1]-b[1])}
+let SPR=[],KES=null;
+function spr(txt,col){const m=new THREE.Sprite(new THREE.SpriteMaterial({map:ctex(512,128,(q,w,h)=>{q.fillStyle='rgba(12,16,14,.85)';q.fillRect(0,20,w,88);q.fillStyle=col;q.fillRect(0,20,14,88);q.fillStyle='#fff';q.font='800 54px "Barlow Condensed",sans-serif';q.fillText(txt,32,84)}),depthTest:false,sizeAttenuation:false}));m.scale.set(.32,.08,1);m.renderOrder=999;scene.add(m);return m}
+function temizle(){SPR.forEach(s=>scene.remove(s));SPR=[]}
+EXT.kesif=function(){if(!G||KES)return;const P=noktalar();temizle();$('docs').classList.remove('on');
+ for(const[k,i]of P){const p=RS[Math.max(0,Math.min(NS-1,i))];const s=spr(T(k),RENK[k]);s.position.set(p.x,(RY[i]||getH(p.x,p.z))+14,p.z);s.userData.i=i;SPR.push(s)}
+ const btn=document.createElement('button');btn.className='btn';btn.textContent=T('kesifAtla');btn.style.cssText='position:fixed;right:calc(env(safe-area-inset-right) + 14px);bottom:calc(env(safe-area-inset-bottom) + 16px);z-index:41';document.body.appendChild(btn);
+ const t0=performance.now(),DUR=15000;KES={P,btn,said:{}};showHud(false);
+ const bit=()=>{if(!KES)return;KES.btn.remove();temizle();G.kesif=P.map(x=>[x[0],x[1]]);KES=null;window.camTarget=KCT;showHud(true);snapCam&&snapCam();toast(T('kesifOk').replace('{n}',P.length),'#8ff0a4',3);if(!G.docs&&(G.pst==='kapiBekle'||G.pst==='evrak'))setTimeout(()=>{if(!G.docs&&typeof openDocs==='function')openDocs()},300)};btn.onclick=bit;
+ const KCT=window.camTarget;window.camTarget=()=>{if(!KES)return KCT();const k=Math.min(1,(performance.now()-t0)/DUR);const f=k*(NS-1),i=Math.floor(f);const a=RS[Math.min(NS-1,i)],b=RS[Math.min(NS-1,i+12)];const y=(RY[i]||0)+48;
+  for(const[kk,ii]of KES.P){if(!KES.said[ii+kk]&&ii<=i+30){KES.said[ii+kk]=1;blip(880,1320,.08)}}if(k>=1)setTimeout(bit,600);
+  const back=RS[Math.max(0,i-30)];return{p:new THREE.Vector3(back.x,y,back.z),l:new THREE.Vector3(b.x,(RY[Math.min(NS-1,i+12)]||0)+4,b.z)}};
+ cizirti&&cizirti()};
+// mini harita işaretleri
+EXT.mini=function(c,v,sc,S){if(!G||!G.kesif)return;for(const[k,i]of G.kesif){const p=RS[Math.max(0,Math.min(NS-1,i))];let x=(p.x-v.x)*sc,z=(p.z-v.z)*sc;if(Math.hypot(x,z)>S/2-6)continue;c.save();c.translate(x,z);c.rotate(-v.h);c.fillStyle=RENK[k];c.beginPath();c.moveTo(0,-6);c.lineTo(5.5,4);c.lineTo(-5.5,4);c.closePath();c.fill();c.strokeStyle='#000';c.lineWidth=1;c.stroke();c.restore()}};
+// evrak ekranına düğme
+const _od=openDocs;openDocs=function(){if(KES)return;_od();if(G&&!G.freeDocs&&!G.kesif){const bt=document.querySelector('#docs .btns');if(bt&&!bt.querySelector('#kesB')){const b=document.createElement('button');b.className='btn';b.id='kesB';b.textContent=T('kesif');b.style.marginTop='8px';b.onclick=()=>EXT.kesif();bt.appendChild(b)}}else{const e=document.getElementById('kesB');if(e)e.remove()}};
+})();

@@ -78,9 +78,9 @@ function projeBasla(){const p=F().proje;if(!p||p.bitti)return;const n=100000+p.i
 function finale(){const p=F().proje;if(!p)return;show(null);showHud(false);phase='finale';state='finale';const c=G.target||{x:0,z:0};let a=0;const y0=getH(c.x,c.z);
  const ov=document.createElement('div');ov.id='finOv';ov.style.cssText='position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12vh;pointer-events:auto;background:linear-gradient(transparent 55%,rgba(0,0,0,.55));color:#fff;text-align:center;font-family:"Barlow Condensed",sans-serif';
  ov.innerHTML=`<div style="font-size:14px;letter-spacing:.3em;color:#ffcf4a">${(F().ad||'').toUpperCase()}</div><div style="font-size:44px;font-weight:800;letter-spacing:.06em">${T('finTitle')}</div><div style="font-size:18px;opacity:.9">${T('finSub').replace('{mw}',10*5.7).replace('{r}',REGIONS[p.reg].name[L])}</div><div class="sig" style="margin-top:10px;opacity:.8">1923 · Bir Mr. Anduv! yapımıdır.</div>`;document.body.appendChild(ov);
- const t0=performance.now();window.camTarget=()=>{a=(performance.now()-t0)/1000*.12;return{p:new THREE.Vector3(c.x+Math.sin(a)*140,y0+60,c.z+Math.cos(a)*140),l:new THREE.Vector3(c.x,y0+40,c.z)}};
+ const t0=performance.now();const FCT=window.camTarget;window.camTarget=()=>{a=(performance.now()-t0)/1000*.12;return{p:new THREE.Vector3(c.x+Math.sin(a)*140,y0+60,c.z+Math.cos(a)*140),l:new THREE.Vector3(c.x,y0+40,c.z)}};
  blip(523,784,.4);setTimeout(()=>blip(659,988,.4),300);setTimeout(()=>blip(784,1175,.6),600);
- const end=()=>{ov.remove();delete window.camTarget;toMenu()};ov.onclick=end;setTimeout(()=>{if(document.body.contains(ov))end()},14000)}
+ const end=()=>{ov.remove();window.camTarget=FCT;toMenu()};ov.onclick=end;setTimeout(()=>{if(document.body.contains(ov))end()},14000)}
 
 // ---------- menü: Firma sekmesi ----------
 const tabs=document.querySelector('#menu .tabs');const tf=document.createElement('div');tf.className='tab';tf.dataset.tab='firma';tf.id='tFirma';tabs.appendChild(tf);
