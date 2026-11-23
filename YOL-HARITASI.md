@@ -12,8 +12,8 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 
 ## 1.1
 - ✓ Fotoğraf modu (paylaşım = reklam) — 1.0'a girdi
-- Mr. Anduv! FM'de trafik ve hava anonsları (Emre'nin sesiyle de olabilir)
-- Kabinde sinyal, dörtlü, korna, silecek; telsiz anonsları ("Eskort 1, viraj temiz")
+- ✓ Mr. Anduv! FM'de yol ve hava bülteni (yazılı) — 1.0'a girdi; Emre'nin sesiyle kayıt sonra
+- ✓ Sinyal, dörtlü, korna; eskort telsiz anonsları — 1.0'a girdi (silecek: yağmur gelince)
 - ✓ Yakıt ve kantar istasyonu — 1.0'a girdi (motorin 89 ₺/L, gerçek güzergâh km'si)
 - Gece seferi kuralı ve polis eskortu (bazı özel yükler)
 
