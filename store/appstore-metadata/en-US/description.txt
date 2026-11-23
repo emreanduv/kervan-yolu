@@ -1,4 +1,4 @@
-Wind turbine logistics simulator: drive a truck from the port to a wind farm in the hills hauling tower sections, blades, SCADA panels and spare parts. Four regions (Marmara, the Aegean, Central Anatolia and Thrace), a blade lifter, snow chains, crosswinds, 1923 jobs, forklift loading, drone damage inspection and realistic freight pay.
+Wind turbine logistics simulator: haul tower sections, blades, SCADA panels and spare parts by truck from the port to a hilltop wind farm. Four regions (Marmara, the Aegean, Central Anatolia and Thrace), a blade lifter, snow chains, crosswinds, 1923 jobs, forklift, drone inspection and realistic freight pay.
 
 JOBS
 • Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
@@ -7,7 +7,7 @@ JOBS
 • Nacelle: a 90 ton machine house, the heaviest load; slow on the climbs and brake before the bends.
 • Hub, drive train (main shaft and gearbox), anchor cage and material container: each with its own weight, width and wind area.
 • Urgent spare part: a turbine is down; short deadline, high pay.
-• Return job: take the empty blade racks back to the port.
+• Return job: bring the empty blade racks back to port.
 
 PORT, CUSTOMS AND PERMITS
 • Imported cargo comes off the ship by port crane and goes through customs inspection in the bonded area.
@@ -33,7 +33,7 @@ REGIONS
 Morning, noon, evening and night drives; at night, drive by your headlights.
 
 BLADE LIFTER
-On the Aegean route the 72 metre blade cannot enter the narrow village street on the long trailer. At the transfer yard a mobile crane moves it to the blade lifter; in the village tilt the blade up and lower it before the power line. Crane and lifter hire are costs, the lifter surcharge is income.
+On the Aegean route the 72 metre blade cannot enter the narrow village street on the long trailer. At the transfer yard a mobile crane moves it to the blade lifter; in the village tilt the blade up and lower it before the power line. Costs and surcharge show in the report.
 
 SNOW CHAINS
 On the icy climbs to Sivas the truck spins and the brakes weaken. Stop at the chain-up area, fit the chains and climb at up to 40 km/h.
