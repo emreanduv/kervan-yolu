@@ -97,4 +97,27 @@ window.vehAnim=function(c,dt,h){const night=CUR_TOD==='gece'||CUR_TOD==='aksam';
  const tt=(G&&G.t)||0;const haz=c.yield&&(c.cur||0)<2;const on=Math.floor(tt*2.6)%2===0;if(c.I)for(const[s,m]of c.I)m.material.color.setHex(haz&&on?0xffa31a:0x5a3a08);
  const ph=h-(c._h==null?h:c._h);c._h=h;let st=Math.max(-.45,Math.min(.45,(Math.abs(ph)<1?ph:0)/Math.max(dt,1e-3)*.35));c._st=(c._st||0)+(st-(c._st||0))*.2;for(const w of c.FW||[])w.g.rotation.y=c._st;
  c.pitch+=((br?.03:dec<-0.8?-.012:0)-c.pitch)*Math.min(1,dt*6);c.g.rotation.x=c.pitch};
+
+// eskort ve polis: gerçek LED tepe lambası (gövde + mercekler + gece ışığı), direkli GENİŞ YÜK levhası
+function ledBar(g,y,z,w,cols){const h=new THREE.Group();h.position.set(0,y,z);g.add(h);
+ const base=new THREE.Mesh(new THREE.BoxGeometry(w,.09,.34),new THREE.MeshStandardMaterial({color:0x1a1c1f,roughness:.5,metalness:.4}));h.add(base);
+ for(const s of[1,-1]){const ft=new THREE.Mesh(new THREE.BoxGeometry(.08,.09,.24),base.material);ft.position.set(s*(w/2-.18),-.08,0);h.add(ft)}
+ const out=[];const n=cols.length;const lw=(w-.06)/n;
+ cols.forEach((c,i)=>{const x=-w/2+.03+lw*(i+.5);const dim=new THREE.Mesh(new THREE.BoxGeometry(lw-.03,.13,.3),new THREE.MeshStandardMaterial({color:c,roughness:.15,metalness:.1,transparent:true,opacity:.55}));dim.position.set(x,.1,0);h.add(dim);
+  const lit=new THREE.Mesh(new THREE.BoxGeometry(lw-.02,.135,.305),new THREE.MeshBasicMaterial({color:c}));lit.position.copy(dim.position);h.add(lit);out.push(lit)});
+ return out}
+mkEsc=function(){const E=makeVeh('pikap');E.g.children.forEach(o=>{if(o.userData.paint)o.material=P('#f4f4f0',{shininess:80})});
+ const L1=ledBar(E.g,1.94,-.35,1.5,[0xff9a1a,0xff9a1a,0xff9a1a,0xff9a1a]);E.beac=[{set visible(v){L1[0].visible=L1[2].visible=v}},{set visible(v){L1[1].visible=L1[3].visible=v}}];
+ // kasada direkli levha çerçevesi (arkaya ve öne okunur)
+ const pm=new THREE.MeshStandardMaterial({color:0x2a2d30,roughness:.6,metalness:.5});for(const x of[-.78,.78])addBox(.06,1.0,.06,pm,x,1.65,2.45,E.g);addBox(1.62,.06,.06,pm,0,2.13,2.45,E.g);
+ const tx=ctex(256,88,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.fillStyle='#d0141a';for(let i=-2;i<12;i++){q.beginPath();q.moveTo(i*28,0);q.lineTo(i*28+14,0);q.lineTo(i*28-6,h);q.lineTo(i*28-20,h);q.fill()}q.fillStyle='#f2c230';q.fillRect(10,10,w-20,h-20);q.fillStyle='#111';q.font='800 34px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'DİKKAT GENİŞ YÜK':'WIDE LOAD',w/2,58)});
+ const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.6,.55),new THREE.MeshBasicMaterial({map:tx,side:THREE.DoubleSide}));sg.position.set(0,1.8,2.47);E.g.add(sg);
+ const sf=sg.clone();sf.position.set(0,2.44,-.35);sf.scale.set(.9,.8,1);sf.rotation.y=Math.PI;E.g.add(sf);signBacks([E.g]);
+ E.g.visible=false;return E};
+mkPol=function(){const R0=Math.random;Math.random=()=>.1;let P2;try{P2=makeVeh('oto')}finally{Math.random=R0}P2.g.children.forEach(o=>{if(o.userData.paint)o.material=P('#f4f5f6',{shininess:90})});
+ let top=1.44;P2.g.traverse(o=>{if(o.isMesh&&o.geometry){o.geometry.computeBoundingBox&&o.geometry.computeBoundingBox();const b=o.geometry.boundingBox;if(b&&o.position.y+b.max.y>top&&o.position.y+b.max.y<2.2)top=o.position.y+b.max.y}});
+ P2.band=[];for(const s of[1,-1]){const b=addBox(.03,.26,3.9,P('#1d4fa3'),s*.905,.72,0,P2.g);P2.band.push(b)}
+ const L2=ledBar(P2.g,top+.06,.1,1.25,[0x1e5bff,0x1e5bff,0xff2a2a,0xff2a2a]);P2.lb=[{set visible(v){L2[0].visible=L2[1].visible=v}},{set visible(v){L2[2].visible=L2[3].visible=v}}];
+ const mk=(txt,bg)=>ctex(256,64,(q,w,hh)=>{q.fillStyle=bg;q.fillRect(0,0,w,hh);q.fillStyle='#fff';q.font='800 44px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(txt,w/2,48)});P2.tx={polis:mk('POLİS','#1d4fa3'),jandarma:mk('JANDARMA','#2f5a37')};P2.sides=[];for(const s of[1,-1]){const m=new THREE.Mesh(new THREE.PlaneGeometry(1.9,.4),new THREE.MeshBasicMaterial({map:P2.tx.polis,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2}));m.position.set(s*.912,.95,.1);m.rotation.y=s*Math.PI/2;P2.g.add(m);P2.sides.push(m)}
+ P2.g.visible=false;return P2};
 })();
