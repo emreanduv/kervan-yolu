@@ -110,3 +110,27 @@ EXT.mini=function(c,v,sc,S){if(!G||!G.kesif)return;for(const[k,i]of G.kesif){con
 // evrak ekranına düğme
 const _od=openDocs;openDocs=function(){if(KES)return;_od();if(G&&!G.freeDocs&&!G.kesif){const bt=document.querySelector('#docs .btns');if(bt&&!bt.querySelector('#kesB')){const b=document.createElement('button');b.className='btn';b.id='kesB';b.textContent=T('kesif');b.style.marginTop='8px';b.onclick=()=>EXT.kesif();bt.appendChild(b)}}else{const e=document.getElementById('kesB');if(e)e.remove()}};
 })();
+/* Köy hayatı: köy evlerinin önünde köylüler (kasketli dede, yazmalı nine, çocuklar, çay ocağında oturanlar); tır geçerken dönüp el sallarlar */
+(function(){
+let KOY=[];
+function insan(par,x,z,o){const g=new THREE.Group();g.position.set(x,0,z);par.add(g);const sk=P(o.ten||'#c99a74',{shininess:10});const ust=P(o.ust,{shininess:15}),alt=P(o.alt,{shininess:10});const s=o.boy||1;
+ const oturan=o.otur;const legY=oturan?.25:.45;for(const lx of[-.11,.11]){const l=addBox(.12,oturan?.45:.85,.14,alt,lx*s,legY*s,oturan?.2*s:0,g);if(oturan){l.rotation.x=-1.2}}
+ const govde=rbox(.44*s,.62*s,.26*s,.08*s,ust,0,(oturan?.78:1.17)*s,0,g);const bas=new THREE.Mesh(new THREE.SphereGeometry(.13*s,12,10),sk);bas.position.y=(oturan?1.24:1.62)*s;g.add(bas);
+ if(o.kasket){const k=new THREE.Mesh(new THREE.CylinderGeometry(.14*s,.15*s,.07*s,12),P('#3b3a38'));k.position.y=bas.position.y+.1*s;g.add(k);addBox(.16*s,.02*s,.1*s,P('#3b3a38'),0,bas.position.y+.075*s,-.12*s,g)}
+ if(o.yazma){const y=new THREE.Mesh(new THREE.SphereGeometry(.145*s,12,10,0,Math.PI*2,0,Math.PI*.62),P(o.yazma));y.position.y=bas.position.y+.01;g.add(y);addBox(.3*s,.25*s,.06*s,P(o.yazma),0,bas.position.y-.12*s,.09*s,g)}
+ const kollar=[];for(const sx of[-1,1]){const a=new THREE.Group();a.position.set(sx*.27*s,(oturan?1.04:1.43)*s,0);g.add(a);const k=addBox(.1*s,.55*s,.11*s,ust,0,-.27*s,0,a);const el=new THREE.Mesh(new THREE.SphereGeometry(.055*s,8,6),sk);el.position.y=-.56*s;a.add(el);kollar.push(a)}
+ return{g,kollar,faz:Math.random()*6,sallar:o.sallar!==false}}
+function koyKur(){KOY=[];if(!RG().village||typeof HOBS==='undefined')return;const evler=HOBS.filter(o=>o.k==='ev');if(!evler.length)return;const root=new THREE.Group();scene.add(root);if(typeof WOBJ!=='undefined')WOBJ.push(root);
+ const TIP=[{ust:'#5b5f66',alt:'#3a3d44',kasket:1},{ust:'#7a3b3b',alt:'#2f2c33',yazma:'#e9e2d0'},{ust:'#2f6db3',alt:'#3a4a6a',boy:.72},{ust:'#c9a227',alt:'#3a3d44',boy:.66},{ust:'#4d6b4f',alt:'#2e2e2e',kasket:1},{ust:'#6b4a7a',alt:'#3a2f3a',yazma:'#d8c27a'}];
+ evler.slice(0,9).forEach((e,k)=>{let bi=0,bd=1e9;for(let i=0;i<NS;i+=2){const d=(RS[i].x-e.x)**2+(RS[i].z-e.z)**2;if(d<bd){bd=d;bi=i}}const r=RS[bi];const dx=r.x-e.x,dz=r.z-e.z,L=Math.hypot(dx,dz)||1;const t=Math.min(.75,(L-5.5)/L);const x=e.x+dx*t,z=e.z+dz*t;
+  const o=Object.assign({},TIP[k%TIP.length]);const h=insan(root,x,z,o);h.g.position.y=getH(x,z);h.g.rotation.y=Math.atan2(dx,dz)+Math.PI;KOY.push(h)});
+ // çay ocağı: masa, iki oturan dede
+ const e=evler[Math.floor(evler.length/2)];if(e){let bi=0,bd=1e9;for(let i=0;i<NS;i+=2){const d=(RS[i].x-e.x)**2+(RS[i].z-e.z)**2;if(d<bd){bd=d;bi=i}}const p=sideAt(bi,-7.5);const gy=getH(p.x,p.z);const m=new THREE.Group();m.position.set(p.x,gy,p.z);m.rotation.y=p.ang;root.add(m);
+  addCyl(.45,.45,.05,14,P('#8a6a44'),0,.72,0,m);addCyl(.05,.05,.72,6,MAT.dark,0,.36,0,m);for(const s of[-1,1]){addBox(.4,.05,.4,P('#6b4a2a'),s*.75,.42,0,m);const h=insan(m,s*.75,0,{ust:s>0?'#5b5f66':'#4a4f3f',alt:'#333',kasket:1,otur:1});h.g.rotation.y=s>0?-Math.PI/2:Math.PI/2;h.g.position.y=.05;KOY.push(h)}
+  for(const s of[-1,1]){const b=new THREE.Mesh(new THREE.CylinderGeometry(.035,.03,.09,8),new THREE.MeshStandardMaterial({color:0xb2381a,transparent:true,opacity:.85,roughness:.1}));b.position.set(s*.18,.79,.05);m.add(b)}}}
+const _br=buildRegion;buildRegion=function(r){_br(r);try{koyKur()}catch(e){}};
+const _st=EXT.step;EXT.step=function(dt,run){const r=_st(dt,run);if(KOY.length&&truck&&G){const v=truck.v;const tt=G.t||0;for(const h of KOY){const p=h.g.getWorldPosition(_kv);const d=Math.hypot(v.x-p.x,v.z-p.z);
+  if(d<45&&h.sallar){const want=Math.atan2(v.x-p.x,v.z-p.z)-(h.g.parent.rotation?h.g.parent.rotation.y:0);let dy=want-h.g.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));h.g.rotation.y+=dy*Math.min(1,dt*3);h.kollar[1].rotation.z=-2.6+Math.sin(tt*9+h.faz)*.45}
+  else h.kollar[1].rotation.z+=(0-h.kollar[1].rotation.z)*Math.min(1,dt*4)}}return r};
+const _kv=new THREE.Vector3();
+})();
