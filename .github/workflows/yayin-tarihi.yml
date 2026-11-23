@@ -1,0 +1,21 @@
+name: App Store — yayın tarihi
+# store/YAYIN-TARIHI değişince sürümü "onaydan sonra, en erken bu tarihte" yayına ayarlar.
+on:
+  push:
+    branches: [main]
+    paths: ['store/YAYIN-TARIHI']
+  workflow_dispatch:
+env:
+  ASC_KEY_ID: DJSHKK6T3P
+  ASC_ISSUER_ID: f4943ef8-df6f-42c8-a561-58554097ea35
+  APP_ID: "6837800818"
+  SURUM: "1.0.0"
+jobs:
+  tarih:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pyjwt cryptography requests
+      - name: Yayın tarihini ayarla
+        env: { P8: "${{ secrets.ASC_KEY_P8 }}" }
+        run: python3 araclar/yayin-tarihi.py
