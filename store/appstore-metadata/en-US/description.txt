@@ -3,17 +3,21 @@ Wind turbine logistics simulator: drive a truck from the port to a wind farm in 
 JOBS
 • Crate job: load the SCADA panel, switchgear and spare part crates onto the trailer with a forklift and strap them down.
 • Tower section: a heavy load on a lowbed trailer; manage gears and brakes on the climbs.
-• Turbine blade: a 40 metre blade sticking out 30 metres behind the trailer. Take corners wide and keep it off the slopes.
+• Turbine blade: a 72 m blade on an extendable trailer, root frame up front, tip frame at the back, self-steering rear bogie. Take bends wide and keep off the banks.
 • Nacelle: a 90 ton machine house, the heaviest load; slow on the climbs and brake before the bends.
 • Hub, drive train (main shaft and gearbox), anchor cage and material container: each with its own weight, width and wind area.
 • Urgent spare part: a turbine is down; short deadline, high pay.
 • Return job: take the empty blade racks back to the port.
 
+PORT, CUSTOMS AND PERMITS
+• Imported cargo comes off the ship by port crane and goes through customs inspection in the bonded area.
+• Heavy and oversize loads need an abnormal load road permit, a road use fee and, where needed, a road modification protocol; papers are checked at the port exit gate.
+
 TRAFFIC RULES
 • Trucks: 80 km/h on open roads, 50 in villages, 30 at the port and on site; special-permit heavy and wide loads max 60, with chains 40. The limit is on the sign next to the speed.
 • Speed cameras: go over the limit and a traffic fine goes into the job report.
-• Keep right: cars, shared taxis, coaches, pickups and tractors come the other way. With a wide load a WIDE LOAD escort vehicle drives ahead and oncoming traffic pulls over.
-• Every job goes to a real-style site: loads carry the turbine manufacturer's label and the site sign shows the investor and the wind farm.
+• Keep right: oncoming cars, minibuses, coaches and tractors. Wide loads get escort vehicles front and rear; oncoming traffic pulls over.
+• Loads carry the turbine maker's label; the site sign shows the investor and wind farm.
 
 DELIVERY AND DAMAGE
 • Fly the drone at delivery and scan the cargo: scratches, dents and coating damage go into the report.
@@ -28,7 +32,7 @@ REGIONS
 Morning, noon, evening and night drives; at night, drive by your headlights.
 
 BLADE LIFTER
-In the narrow Aegean village street a 40 metre blade hits the houses. Stop, tilt the blade up from its root and carry it over the roofs. A power line follows the village: stop in front of it and lower the blade.
+On the Aegean route the 72 metre blade cannot enter the narrow village street on the long trailer. At the transfer yard a mobile crane moves it to the blade lifter; in the village tilt the blade up and lower it before the power line. Crane and lifter hire are costs, the lifter surcharge is income.
 
 SNOW CHAINS
 On the icy climbs to Sivas the truck spins and the brakes weaken. Stop at the chain-up area, fit the chains and climb at up to 40 km/h.

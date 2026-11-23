@@ -3,16 +3,20 @@ Rüzgâr türbini lojistiği simülasyonu: tırla limandan dağdaki rüzgâr sah
 SEFERLER
 • Kasa seferi: depoda forkliftle SCADA panosunu, kesiciyi ve yedek parça kasalarını dorseye diz, spanzetle bağla.
 • Kule segmenti: lowbed dorsede ağır yük; yokuşlarda vites ve fren yönetimi.
-• Türbin kanadı: dorsenin 30 metre arkasına taşan 40 metrelik kanat. Virajları geniş al, şevlere sürtme.
+• Türbin kanadı: 72 metrelik kanat teleskopik uzayan dorsede; önde kök çerçevesi, arkada uç çerçevesi, kendi dönen arka boji. Virajları geniş al, şevlere sürtme.
 • Nasel: 90 tonluk makine dairesi, en ağır yük; yokuşta yavaş, virajdan önce hız kes.
 • Hub, güç aktarma (ana mil ve dişli kutusu), ankraj kafesi ve malzeme konteyneri: her biri farklı ağırlık, genişlik ve rüzgâr yüzeyi.
 • Acil yedek parça: arızalı türbin bekliyor; süre kısa, navlun yüksek.
 • Dönüş seferi: boş kanat raflarını limana geri götür.
 
+LİMAN, GÜMRÜK VE BELGELER
+• İthal yük gemiden liman vinciyle indirilir, gümrüklü sahada muayeneden geçer.
+• Ağır ve gabari dışı yükte özel yük taşıma izin belgesi, karayolu kullanım bedeli ve gerekirse yol düzenlemesi protokolü; liman çıkış kapısında belge kontrolü.
+
 TRAFİK KURALLARI
 • Tır için açık yolda 80, köyde 50, liman ve şantiyede 30 km/sa; özel izinli ağır ve geniş yükte en çok 60, zincirle 40. Sınır hız göstergesinin yanındaki levhada.
 • EDS hız kameraları: sınırı aşarsan sefer raporuna trafik cezası yazılır.
-• Sağ şeritte kal: karşıdan otomobil, dolmuş, otobüs, pikap ve traktör gelir. Geniş yükte önünde GENİŞ YÜK levhalı eskort aracı gider, karşı trafik kenara çekilir.
+• Sağ şeritte kal: karşıdan otomobil, dolmuş, otobüs ve traktör gelir. Geniş yükte önde ve arkada eskort aracı gider, karşı trafik kenara çekilir.
 • Her sefer gerçek bir sahaya: yükler türbin üreticisinin etiketiyle gelir, saha girişinde yatırımcının ve santralin tabelası seni karşılar.
 
 TESLİM VE HASAR
@@ -28,7 +32,7 @@ BÖLGELER
 Sabah, öğle, akşam ve gece yolculukları; gece farlarla sür.
 
 KANAT KALDIRICI
-Ege'nin dar köy sokağında 40 metrelik kanat evlere çarpar. Dur, kanadı kökünden havaya dik ve evlerin üstünden geçir. Köyden sonra enerji hattı var: önünde dur ve kanadı indir.
+Ege yolunda 72 metrelik kanat uzun dorseyle dar köy sokağına giremez. Aktarma sahasında mobil vinç kanadı blade lifter'a aktarır; köyde kanadı dik, enerji hattından önce indir. Vinç ve lifter kirası masraf, lifter ek bedeli gelir olarak raporda.
 
 KAR ZİNCİRİ
 Sivas yolunda buzlu yokuşta tır patinaj yapar, fren zayıflar. Zincir takma alanında dur, zincirleri tak, 40 km/sa ile tırman.
