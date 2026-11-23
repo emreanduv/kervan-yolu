@@ -438,12 +438,14 @@ function makeVeh(type){const g=new THREE.Group();g.rotation.order='YXZ';const W=
  else if(type==='pikap'){addBox(1.85,.8,5.2,pm,0,.85,0,g);addBox(1.75,.75,1.9,pm,0,1.6,-.9,g);addBox(1.77,.55,1.7,MAT.glass,0,1.62,-.9,g);addBox(1.8,.5,.08,pm,0,1.4,2.55,g);for(const z of[-1.6,1.6])for(const x of[-.88,.88])wheel(.38,.28,x,.38,z,g,W);lights(2.61,.65,.95);len=5.2;spd=18}
  else{const rd=P('#b52417',{shininess:50});addBox(1.2,.9,2.6,rd,0,1.3,-.4,g);addBox(1.1,1.4,1.2,rd,0,2.3,.5,g);addBox(1.12,1,1.1,MAT.glass,0,2.4,.5,g);wheel(.85,.45,.95,.85,.7,g,W);wheel(.85,.45,-.95,.85,.7,g,W);wheel(.45,.25,.7,.45,-1.4,g,W);wheel(.45,.25,-.7,.45,-1.4,g,W);addCyl(.06,.06,1.2,6,MAT.dark,.4,2.6,-1.2,g);len=3.6;wid=2.1;spd=7}
  g.traverse(o=>{if(o.isMesh)o.castShadow=true});g.visible=false;scene.add(g);return{g,W,type,len,wid,spd0:spd,spd:spd,i:0,dir:1,off:0,on:false,brake:false,honk:0,crashT:0}}
-let ESC=null;
+let ESC=null,ESC2=null;
 function setupTraffic(){if(TRAF.length)return;for(const t of['oto','dolmus','otobus','pikap','oto','traktor'])TRAF.push(makeVeh(t));
  // eskort aracı: geniş/ağır yükün önünde, tepe lambası ve GENİŞ YÜK levhası
- ESC=makeVeh('pikap');ESC.g.children.forEach(o=>{if(o.material&&o.material.color&&o.material!==MAT.glass&&o.material!==MAT.head&&o.material!==MAT.tail&&o.material!==MAT.tyre&&o.material!==MAT.rim)o.material=P('#f4f4f0',{shininess:80})});
+ESC=mkEsc();ESC2=mkEsc()}
+// eskort aracı: tepe lambası ve GENİŞ YÜK levhası (önde; uzun yükte arkada da bir tane)
+function mkEsc(){const ESC=makeVeh('pikap');ESC.g.children.forEach(o=>{if(o.material&&o.material.color&&o.material!==MAT.glass&&o.material!==MAT.head&&o.material!==MAT.tail&&o.material!==MAT.tyre&&o.material!==MAT.rim)o.material=P('#f4f4f0',{shininess:80})});
  const bar=addBox(1.4,.18,.3,MAT.dark,0,2.05,-.9,ESC.g);ESC.beac=[];for(const x of[-.5,.5]){const m=new THREE.Mesh(new THREE.BoxGeometry(.35,.22,.25),new THREE.MeshBasicMaterial({color:0xff9a1a}));m.position.set(x,2.25,-.9);ESC.g.add(m);ESC.beac.push(m)}
- const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.6,.55),new THREE.MeshBasicMaterial({map:ctex(256,88,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.strokeStyle='#d0141a';q.lineWidth=8;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#111';q.font='800 40px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'GENİŞ YÜK':'WIDE LOAD',w/2,58)}),side:THREE.DoubleSide}));sg.position.set(0,2.3,.6);ESC.g.add(sg);signBacks([ESC.g])}
+ const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.6,.55),new THREE.MeshBasicMaterial({map:ctex(256,88,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.strokeStyle='#d0141a';q.lineWidth=8;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#111';q.font='800 40px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'GENİŞ YÜK':'WIDE LOAD',w/2,58)}),side:THREE.DoubleSide}));sg.position.set(0,2.3,.6);ESC.g.add(sg);signBacks([ESC.g]);ESC.g.visible=false;return ESC}
 function laneOf(i,x,z){const a=RS[Math.max(0,i-1)],b=RS[Math.min(NS-1,i+1)];let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz)||1;tx/=l;tz/=l;return (x-RS[i].x)*(-tz)+(z-RS[i].z)*tx}
 function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roadIdx(v);const ds=ROADLEN/(NS-1);
  const a=RS[Math.max(0,ti-2)],b=RS[Math.min(NS-1,ti+2)];const fwdx=-Math.sin(v.h),fwdz=-Math.cos(v.h);const sgn=((b.x-a.x)*fwdx+(b.z-a.z)*fwdz)>=0?1:-1;
@@ -469,6 +471,8 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
   if(hitCab||hitTr){c.crashT=2.5;c.cur=0;const imp=Math.abs(v.speed)+c.spd*.5;v.speed*=-.15;if(mode==='career'){G.dmg=Math.min(100,G.dmg+6+imp*.6);G.fines=(G.fines||0)+(hitCab?4000:0);G.tickets=(G.tickets||0)+(hitCab?1:0)}toast(T(hitCab?'t_crashCar':'t_sweep'),'#ff8a7f',2.6);G.warnT=3;blip(120,60,.4)}}
  if(ESC){const on=HEAVY.includes(G.job.type);ESC.g.visible=on;if(on){const raw=ti+sgn*26,ei=clamp(raw,46,NS-46);const park=raw!==ei;const p=sideAt(Math.round(ei),(park?5.2:LANE)*sgn);const i1=Math.round(ei),i2=clamp(i1+sgn,0,NS-1);
    const tx=RS[i2].x-RS[i1].x,tz=RS[i2].z-RS[i1].z;ESC.g.position.set(p.x,getH(p.x,p.z)+.05,p.z);ESC.g.rotation.set(0,Math.atan2(-tx,-tz),0);for(const w of ESC.W)w.g.rotation.x-=(park?0:v.speed)/.38*dt;const bl=Math.sin(G.t*9)>0;ESC.beac[0].visible=bl;ESC.beac[1].visible=!bl}}
+ if(ESC2){const on=['kanat','kule'].includes(G.job.type);ESC2.g.visible=on;if(on){const back=Math.ceil(((G.job.type==='kanat'?20+trailer.ext:22)+14)/ds);const raw=ti-sgn*back,ei=clamp(raw,46,NS-46);const park=raw!==ei;const p=sideAt(Math.round(ei),(park?5.2:LANE)*sgn);const i1=Math.round(ei),i2=clamp(i1+sgn,0,NS-1);
+   const tx=RS[i2].x-RS[i1].x,tz=RS[i2].z-RS[i1].z;ESC2.g.position.set(p.x,getH(p.x,p.z)+.05,p.z);ESC2.g.rotation.set(0,Math.atan2(-tx,-tz),0);for(const w of ESC2.W)w.g.rotation.x-=(park?0:v.speed)/.38*dt;const bl=Math.sin(G.t*9+1)>0;ESC2.beac[0].visible=bl;ESC2.beac[1].visible=!bl}}
  // sağ şerit kuralı (geniş yük virajda yolu kullanabilir)
  const wrong=tOff*sgn< -0.6;if(wrong&&Math.abs(v.speed)>3&&!HEAVY.includes(G.job.type)){G.leftT=(G.leftT||0)+dt;if(G.leftT>4&&G.warnT<=0){toast(T('t_keepRight'),'#ffe08a',2);G.warnT=3;G.leftT=0}}else G.leftT=0}
 function trafficRules(dt){if(!G)return;const v=truck.v,kmh=Math.abs(v.speed)*3.6;const i=roadIdx(v);const lim=curLimit();
@@ -825,7 +829,7 @@ function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;set
 }
 function cargoMarkers(type){if(type==='kule')return[[1.9,3.9,3],[1.9,3.9,9],[0,6.1,6],[-1.9,3.9,6]];if(type==='kanat')return[[.6,4.6,3],[.6,4.5,12],[.5,4.2,21],[.4,3.9,30],[.3,3.7,38]];if(type==='donus')return[[1.1,3.7,2.5],[1.1,3.7,8.5],[0,3.85,5.5]];if(type==='nasel')return[[2,3.6,2],[2,3.6,10],[0,5.6,6],[-2,3.6,6],[0,3.6,.7]];if(type==='hub')return[[0,6.1,5.5],[2,4,5.5],[-2,4,5.5],[0,4,2.6]];if(type==='aktarma')return[[1.5,3.8,8],[0,5.3,8],[.7,3.8,3.5],[0,3.8,1.2]];if(type==='ankraj')return[[2.2,3.4,6],[-2.2,3.4,6],[0,4.8,8.1],[0,4.8,3.9]];if(type==='konteyner')return[[1.25,3.2,4],[1.25,3.2,8],[0,4.3,6],[-1.25,3.2,6]];return null}
 
-function resetGame(m,n){mode=m;coachHide();const job=m==='career'?sefer(n):{type:'free',tod:SAVE.tod,fee:0,n:0};
+function resetGame(m,n){if(trailer){trailer.ext=0;trailer.steer=0}mode=m;coachHide();const job=m==='career'?sefer(n):{type:'free',tod:SAVE.tod,fee:0,n:0};
  G={t:0,dmg:0,loaded:0,carry:-1,strapped:false,warnT:0,score:0,dist:0,scanned:0,toastT:0,bl:0,blT:0,chain:0,chT:0,fines:0,tickets:0,camDone:{},job,deadline:m==='career'?Math.round(ROADLEN/JT[job.type].v+50+(REG==='ege'&&job.type==='kanat'?70:0)+(REG==='sivas'?90:0)+(REG==='trakya'?40:0)):0,deliverT:0,t0:null,arr:false,lift:null};
  setTOD(job.tod);
  crates.forEach(c=>{if(c.parent!==scene)scene.add(c);c.visible=false;c.userData.dmg=false});
@@ -840,7 +844,7 @@ function resetGame(m,n){mode=m;coachHide();const job=m==='career'?sefer(n):{type
  trailer.th=truck.v.h;fork.v=newVeh(10,22,0,FORKP);fork.car.position.y=.12;
  pickRing.visible=pickBeam.visible=false;const showRing=m==='career';ring.visible=ringBeam.visible=showRing;const ty=getH(G.target.x,G.target.z);ring.position.set(G.target.x,ty+.35,G.target.z);ringBeam.position.set(G.target.x,ty+13,G.target.z);
  if(m==='career'){if(t==='kasa'){phase='fork';setObj(T('o_fork')+' (0/3)')}else{phase='drive';setObj(T('o_prep'))}}else{phase='drive';G.strapped=false;G.fj=0;freeJob()}
- TRAF.forEach(c=>{c.on=false;c.g.visible=false;c.cur=undefined;c.yield=false});if(ESC)ESC.g.visible=false;G.trT=3;$('limB').hidden=true;
+ TRAF.forEach(c=>{c.on=false;c.g.visible=false;c.cur=undefined;c.yield=false});if(ESC)ESC.g.visible=false;if(ESC2)ESC2.g.visible=false;G.trT=3;$('limB').hidden=true;
  G.oem=job.oem||OEMS[Math.floor(Math.random()*OEMS.length)];G.inv=job.inv||INV[REG][0];drawOem(G.oem);drawSiteSign(G.inv,G.oem);
  truck.chains.forEach(c=>c.visible=false);camYaw=0;placeVehicles(0);snapCam();state='play';hudLabels();
 }
