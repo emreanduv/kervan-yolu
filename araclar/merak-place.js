@@ -1,0 +1,2 @@
+([job,frac,back,cam])=>{SAVE.tips={gas:1,fork:1,strap:1,drone:1,cam:1,off:1,kanat:1,night:1};SAVE.muted=true;resetGame('career',job);if(G.job.type!=='kasa')doStrap();
+ const i=Math.round(frac*(NS-1));const j=back?i-1:i+1;truck.v.x=RS[i].x;truck.v.z=RS[i].z;truck.v.h=Math.atan2(-(RS[j].x-RS[i].x),-(RS[j].z-RS[i].z));trailer.th=truck.v.h+0.02;truck.v.speed=0;camMode=cam;camYaw=0.35;snapCam();setAct(null);coachHide();}
