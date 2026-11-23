@@ -309,7 +309,7 @@ const MAT={dark:P('#1c1e20'),dark2:P('#33373a',{shininess:50}),chrome:P('#d9dde0
 tyre:P('#151515',{shininess:5}),rim:P('#b8bec2',{shininess:90}),grille:P('#22272b',{shininess:80}),white:P('#f2f2ee',{shininess:60}),
 head:new THREE.MeshBasicMaterial({color:0xfff3d0}),tail:new THREE.MeshBasicMaterial({color:0xff2a1a}),amber:new THREE.MeshBasicMaterial({color:0xffa31a}),
 trailer:P('#2b3d52',{shininess:40}),yellow:P('#f0b21b',{shininess:60}),yellowD:P('#c88a10',{shininess:40}),wood:P('#8a6236'),concrete:P('#a8a59d'),
-turb:P('#f4f5f3',{shininess:70}),steel:P('#7d8790',{shininess:60}),strap:P('#e0a21a'),flange:P('#2f5f9c',{shininess:60})};
+turb:P('#f4f5f3',{shininess:70}),frame:P('#9aa3a9',{shininess:50}),blade:P('#ffffff',{shininess:70}),steel:P('#7d8790',{shininess:60}),strap:P('#e0a21a'),flange:P('#2f5f9c',{shininess:60})};
 
 // ================= DÜNYA =================
 const TX0=-420,TX1=820,TZ0=-1640,TZ1=220,SEG=10,NX=(TX1-TX0)/SEG,NZ=(TZ1-TZ0)/SEG;
@@ -465,7 +465,7 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
   c.g.position.set(x,getH(x,z)+.05,z);c.g.rotation.set(0,h,0);for(const w of c.W)w.g.rotation.x-=c.cur/0.4*dt;
   // çarpışma: çekici ya da dorse/yük
   const hitCab=Math.hypot(x-(v.x-Math.sin(v.h)*3.5),z-(v.z-Math.cos(v.h)*3.5))<(c.len/2+1.6)&&inLane;
-  let hitTr=false;if(!hitCab){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?[6,12,20,30,40]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+1.3){hitTr=true;break}}}
+  let hitTr=false;if(!hitCab){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?[6,14,24,34,44,54,62,70]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+1.3){hitTr=true;break}}}
   if(hitCab||hitTr){c.crashT=2.5;c.cur=0;const imp=Math.abs(v.speed)+c.spd*.5;v.speed*=-.15;if(mode==='career'){G.dmg=Math.min(100,G.dmg+6+imp*.6);G.fines=(G.fines||0)+(hitCab?4000:0);G.tickets=(G.tickets||0)+(hitCab?1:0)}toast(T(hitCab?'t_crashCar':'t_sweep'),'#ff8a7f',2.6);G.warnT=3;blip(120,60,.4)}}
  if(ESC){const on=HEAVY.includes(G.job.type);ESC.g.visible=on;if(on){const raw=ti+sgn*26,ei=clamp(raw,46,NS-46);const park=raw!==ei;const p=sideAt(Math.round(ei),(park?5.2:LANE)*sgn);const i1=Math.round(ei),i2=clamp(i1+sgn,0,NS-1);
    const tx=RS[i2].x-RS[i1].x,tz=RS[i2].z-RS[i1].z;ESC.g.position.set(p.x,getH(p.x,p.z)+.05,p.z);ESC.g.rotation.set(0,Math.atan2(-tx,-tz),0);for(const w of ESC.W)w.g.rotation.x-=(park?0:v.speed)/.38*dt;const bl=Math.sin(G.t*9)>0;ESC.beac[0].visible=bl;ESC.beac[1].visible=!bl}}
@@ -624,7 +624,8 @@ function buildSite(){
   const m=new THREE.Mesh(new THREE.PlaneGeometry(6,3),new THREE.MeshBasicMaterial({map:tx,side:THREE.DoubleSide}));m.position.y=4.6;g.add(m);put(g,40,-13,0);{const tp=RS[NS-48];g.rotation.y=Math.atan2(tp.x-(SX+g.position.x),tp.z-(SZ+g.position.z))}OC(40,-13,3);world.siteSign={c,tx}}
  const fg=new THREE.Group();addBox(.1,3,.1,MAT.steel,0,1.5,0,fg);const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.6,1.07),new THREE.MeshBasicMaterial({map:ctex(120,80,(g)=>{g.fillStyle='#e30a17';g.fillRect(0,0,120,80);g.fillStyle='#fff';g.beginPath();g.arc(42,40,20,0,7);g.fill();g.fillStyle='#e30a17';g.beginPath();g.arc(47,40,16,0,7);g.fill();g.fillStyle='#fff';g.save();g.translate(70,40);g.rotate(-.3);g.beginPath();for(let i=0;i<5;i++){const a=i*4*Math.PI/5;g.lineTo(Math.cos(a)*9,Math.sin(a)*9)}g.fill();g.restore()}),side:THREE.DoubleSide}));flag.position.set(.8,2.5,0);fg.add(flag);put(fg,26,18);world.flag=flag;
 }
-function bladeGeom(){const sh=new THREE.Shape();sh.moveTo(-.9,0);sh.bezierCurveTo(-1.6,6,-1.4,10,-1,18);sh.lineTo(-.25,40);sh.lineTo(.2,40);sh.bezierCurveTo(.6,24,1.5,8,.9,0);sh.lineTo(-.9,0);
+const BLADE_L=72;
+function bladeGeom(L=40){const k=L/40,c=L>50?1.45:1;const sh=new THREE.Shape();sh.moveTo(-.9*c,0);sh.bezierCurveTo(-1.6*c,6*k,-1.4*c,10*k,-1*c,18*k);sh.lineTo(-.25,L);sh.lineTo(.2,L);sh.bezierCurveTo(.6*c,24*k,1.5*c,8*k,.9*c,0);sh.lineTo(-.9*c,0);
  const g=new THREE.ExtrudeGeometry(sh,{depth:.45,bevelEnabled:true,bevelThickness:.15,bevelSize:.12,bevelSegments:2,curveSegments:8});g.translate(0,1.8,-.22);return g}
 function makeTurbine(){const g=new THREE.Group();addCyl(1.35,2.4,80,20,MAT.turb,0,40,0,g);addCyl(2.6,2.6,.6,20,MAT.concrete,0,.3,0,g);
  addBox(3.4,3.6,10,MAT.turb,0,82,1.6,g);addBox(3.42,.35,10.02,P('#3e7f4f'),0,80.6,1.6,g);
@@ -691,10 +692,21 @@ function buildTrailer(){const g=new THREE.Group();g.rotation.order='YXZ';const W
  addBox(2.55,.3,13.2,MAT.trailer,0,1.48,5.7,g);for(const s of[1,-1])addBox(.12,.42,13.2,MAT.dark,s*1.22,1.2,5.7,g);
  addBox(2.5,1.4,.14,MAT.trailer,0,2.3,-.85,g);for(let x=-1;x<=1;x++)addBox(.08,1.4,.16,MAT.dark,x*.8,2.3,-.85,g);
  for(const s of[1,-1]){addBox(.14,1.0,.14,MAT.dark2,s*.9,.72,2.2,g);addBox(.4,.08,.4,MAT.dark2,s*.9,.22,2.2,g)}
- for(const z of[9.2,10.5,11.8])for(const s of[1,-1])wheel(.5,.6,s*1.0,.5,z,g,W);for(const s of[1,-1])addBox(.7,.08,4.2,MAT.dark,s*1.0,1.12,10.5,g);
- addBox(2.5,.25,.16,MAT.dark2,0,.95,12.36,g);for(const s of[1,-1]){addBox(.36,.16,.06,MAT.tail,s*.95,.95,12.45,g);addBox(.14,.14,.06,MAT.amber,s*.62,.95,12.45,g)}
+ const rear=new THREE.Group();g.add(rear);const bog=new THREE.Group();rear.add(bog);bog.position.z=10.5;
+ for(const z of[-1.3,0,1.3])for(const s of[1,-1])wheel(.5,.6,s*1.0,.5,z,bog,W);for(const s of[1,-1])addBox(.7,.08,4.2,MAT.dark,s*1.0,1.12,0,bog);
+ addBox(2.5,.25,.16,MAT.dark2,0,.95,1.86,bog);for(const s of[1,-1]){addBox(.36,.16,.06,MAT.tail,s*.95,.95,1.95,bog);addBox(.14,.14,.06,MAT.amber,s*.62,.95,1.95,bog)}
+ addBox(2.55,.3,4.6,MAT.trailer,0,1.48,0,bog);
+ const tipF=new THREE.Group();bog.add(tipF);for(const s of[1,-1])for(const z of[-.55,.55])addBox(.22,4.9,.22,MAT.frame,s*1.2,4.05,z,tipF);addBox(2.62,.24,1.32,MAT.frame,0,6.45,0,tipF);addBox(2.4,.5,1.2,MAT.wood,0,1.85,0,tipF);for(const s of[1,-1]){const d=addBox(.14,4.9,.14,MAT.frame,s*1.2,4.05,0,tipF);d.rotation.x=.4}tipF.visible=false;
+ const uz=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.55),new THREE.MeshBasicMaterial({map:ctex(256,64,(g,w,h)=>{g.fillStyle='#ffd21f';g.fillRect(0,0,w,h);g.fillStyle='#d32f2a';for(let x=-40;x<w;x+=36){g.beginPath();g.moveTo(x,h);g.lineTo(x+18,h);g.lineTo(x+46,0);g.lineTo(x+28,0);g.fill()}g.fillStyle='#ffd21f';g.fillRect(36,10,w-72,h-20);g.fillStyle='#111';g.font='800 36px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText('UZUN ARAÇ',w/2,45)})}));uz.position.set(0,2.15,2.0);bog.add(uz);
+ const spine=addBox(.9,.42,1,MAT.dark,0,1.25,0,rear);spine.visible=false;
  for(let z=0;z<13;z+=1.1)for(const s of[1,-1])addBox(.06,.06,.06,MAT.amber,s*1.28,1.4,z,g);
- const cargo=new THREE.Group();g.add(cargo);const slots=[2.4,6.0,9.6].map(z=>new THREE.Vector3(0,1.63,z));scene.add(g);return{g,W,slots,L:10.5,cargo}}
+ const cargo=new THREE.Group();g.add(cargo);const slots=[2.4,6.0,9.6].map(z=>new THREE.Vector3(0,1.63,z));scene.add(g);return{g,W,slots,L:10.5,cargo,bog,tipF,spine,ext:0,steer:0}}
+// Kanat dorsesi: teleskopik uzar (uç çerçevesi kanadın ~3/4'ünde, arkada ~16 m çıkıntı), arka boji uzaktan kumandayla/kendiliğinden döner.
+// Kanat kaldırıcıyla kanat havaya kalkınca dorse içeri kayar (kısa dingil mesafesi, dar virajlar).
+const TR_EXT=46;
+function trailerExt(dt){const kan=G&&G.job&&G.job.type==='kanat'&&CARGO.kanat&&CARGO.kanat.visible;const want=kan?TR_EXT*(1-(G.bl||0)):0;trailer.ext+=clamp(want-trailer.ext,-dt*8,dt*8);const e=trailer.ext;
+ trailer.bog.position.z=10.5+e;trailer.L=10.5+e*.17;trailer.tipF.visible=kan&&(G.bl||0)<.05;trailer.spine.visible=e>.3;if(e>.3){trailer.spine.scale.z=e+1;trailer.spine.position.z=12.8+e/2}
+ const st=kan?clamp(angDiff(truck.v.h,trailer.th)*1.6,-.9,.9):0;trailer.steer+=(st-trailer.steer)*Math.min(1,dt*3);trailer.bog.rotation.y=-trailer.steer*.35}
 function buildForklift(){const g=new THREE.Group();g.rotation.order='YXZ';const W=[],F=[];
  addBox(1.26,.85,2.1,MAT.yellow,0,.82,.75,g);addBox(1.34,1.05,.62,MAT.yellowD,0,1.0,1.9,g);addBox(.52,.45,.52,MAT.dark,0,1.48,1.0,g);addBox(.52,.55,.1,MAT.dark,0,1.85,1.27,g);
  for(const x of[-.56,.56])for(const z of[.15,1.45])addBox(.07,1.55,.07,MAT.dark,x,2.0,z,g);addBox(1.22,.06,1.42,MAT.dark,0,2.78,.8,g);addBox(.3,.3,.06,MAT.head,.45,2.6,.08,g);addBox(.3,.3,.06,MAT.head,-.45,2.6,.08,g);addCyl(.08,.08,.5,6,MAT.amber,0,3.05,1.2,g);
@@ -769,7 +781,8 @@ const FORKP={acc:2.8,vmax:6,vrev:3,brake:6,steer:.75,steerFall:.03,slopeK:.5,rol
 let truck,trailer,fork,drone,crates=[],arrow,ring,ringBeam,pickRing,pickBeam,CARGO={};
 let OEMC=null,OEMT=null,CUR_OEM='';
 function drawOem(o){CUR_OEM=o;if(!OEMC)return;const g=OEMC.getContext('2d');g.fillStyle=OEM_COL[o]||'#1d3e7a';g.fillRect(0,0,512,128);g.fillStyle='#fff';g.fillRect(0,100,512,6);g.font='800 70px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText(o,256,84);OEMT.needsUpdate=true}
-function setupVehicles(){setupTraffic();truck=buildTruck();truck.chains=[];for(const w of truck.W){const c=new THREE.Group();for(let k=0;k<10;k++){const l=new THREE.Mesh(new THREE.BoxGeometry(.66,.05,.09),MAT.chrome);const a=k/10*Math.PI*2;l.position.set(0,Math.cos(a)*.575,Math.sin(a)*.575);l.rotation.x=a;c.add(l)}c.visible=false;w.g.add(c);truck.chains.push(c)}trailer=buildTrailer();fork=buildForklift();drone=buildDrone();crates=[0,1,2].map(()=>buildCrate());
+function bladeTex(){const t=ctex(4,512,(g,w,h)=>{g.fillStyle='#f4f5f3';g.fillRect(0,0,w,h);g.fillStyle='#c9cdd0';g.fillRect(0,0,w,h*.035);g.fillStyle='#d32f2a';g.fillRect(0,h*.035,w,h*.06);g.fillRect(0,h*.125,w,h*.06)});t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;t.repeat.set(1,1/BLADE_L);t.offset.set(0,0);return t}
+function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;setupTraffic();truck=buildTruck();truck.chains=[];for(const w of truck.W){const c=new THREE.Group();for(let k=0;k<10;k++){const l=new THREE.Mesh(new THREE.BoxGeometry(.66,.05,.09),MAT.chrome);const a=k/10*Math.PI*2;l.position.set(0,Math.cos(a)*.575,Math.sin(a)*.575);l.rotation.x=a;c.add(l)}c.visible=false;w.g.add(c);truck.chains.push(c)}trailer=buildTrailer();fork=buildForklift();drone=buildDrone();crates=[0,1,2].map(()=>buildCrate());
  arrow=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.arrow,transparent:true,depthTest:false,depthWrite:false}));arrow.scale.set(1.6,1.6,1);arrow.renderOrder=10;scene.add(arrow);
  world.straps=[];for(let i=0;i<3;i++){const s=new THREE.Group();for(const dz of[-.45,.45]){addBox(2.62,.05,.09,MAT.strap,0,1.42,dz,s);for(const x of[-1.31,1.31])addBox(.05,1.42,.09,MAT.strap,x,.71,dz,s)}s.visible=false;trailer.g.add(s);s.position.copy(trailer.slots[i]);world.straps.push(s)}
  ring=new THREE.Mesh(new THREE.RingGeometry(8,9.2,48),new THREE.MeshBasicMaterial({color:0x6dff8c,transparent:true,opacity:.85,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;scene.add(ring);
@@ -778,7 +791,8 @@ function setupVehicles(){setupTraffic();truck=buildTruck();truck.chains=[];for(c
  // yük modelleri
  const kule=new THREE.Group();const seg=addCyl(2.1,2.25,11,28,MAT.turb,0,0,0,kule);seg.rotation.x=Math.PI/2;for(const z of[-5.5,5.5]){const f=new THREE.Mesh(new THREE.TorusGeometry(2.12,.12,8,28),MAT.flange);f.position.z=z;kule.add(f)}
  for(const z of[-3.5,3.5]){addBox(2.6,.7,.9,MAT.wood,0,-1.85,z,kule)}kule.position.set(0,1.63+2.25,6);trailer.cargo.add(kule);
- const kanat=new THREE.Group();const bw=new THREE.Group();bw.rotation.z=Math.PI/2;kanat.add(bw);const bl=new THREE.Mesh(bladeGeom(),MAT.turb);bl.castShadow=true;bl.rotation.set(Math.PI/2,0,0);bw.add(bl);const root=addCyl(1.25,1.25,1.6,24,MAT.turb,0,0,1.0,kanat);root.rotation.x=Math.PI/2;addBox(2.6,2.6,.5,MAT.flange,0,0,.2,kanat);addBox(2.5,1.9,1.4,MAT.steel,0,-1.0,1.2,kanat);addBox(2.4,1.1,1.0,MAT.steel,0,-1.2,9,kanat);kanat.position.set(0,3.55,-.2);trailer.cargo.add(kanat);
+ const kanat=new THREE.Group();const bw=new THREE.Group();bw.rotation.z=Math.PI/2;kanat.add(bw);const bl=new THREE.Mesh(bladeGeom(BLADE_L),MAT.blade);bl.castShadow=true;bl.rotation.set(Math.PI/2,0,0);bw.add(bl);const root=addCyl(1.6,1.6,1.6,28,MAT.turb,0,0,1.0,kanat);root.rotation.x=Math.PI/2;const neck=addCyl(1.25,1.6,9,28,MAT.turb,0,0,6.3,kanat);neck.rotation.x=Math.PI/2;addBox(3.4,3.4,.5,MAT.flange,0,0,.2,kanat);
+ const rf=new THREE.Group();kanat.add(rf);rf.position.set(0,0,.9);for(const x of[-1.85,1.85])for(const z of[-.7,.7])addBox(.24,4.6,.24,MAT.frame,x,-.1,z,rf);for(const y of[-2.3,2.1])addBox(3.94,.24,1.64,MAT.frame,0,y,0,rf);for(const x of[-1.85,1.85]){const d=addBox(.16,4.6,.16,MAT.frame,x,-.1,0,rf);d.rotation.x=.33}kanat.position.set(0,3.75,-.2);trailer.cargo.add(kanat);
  const raf=new THREE.Group();for(const z of[2.5,8.5]){for(const x of[-1,1])addBox(.18,2.2,.18,MAT.steel,x,1.1,z,raf);addBox(2.2,.18,.18,MAT.steel,0,2.2,z,raf);addBox(2.2,.18,3,MAT.steel,0,.1,z,raf)}raf.position.set(0,1.63,0);trailer.cargo.add(raf);
  // nasel: makine dairesi gövdesi, üstte soğutucu, taşıma kızağı
  const nasel=new THREE.Group();addBox(3.9,3.9,10.4,MAT.turb,0,2.15,0,nasel);addBox(3.92,.32,10.42,P('#3e7f4f'),0,.55,0,nasel);addBox(2.4,.9,3,P('#cfd3d0',{shininess:50}),0,4.55,2.4,nasel);for(const z of[-4.2,4.2])addBox(4.1,.5,1,MAT.steel,0,.05,z,nasel);
@@ -853,7 +867,7 @@ function vehStep(v,dt,inp,load){const p=v.p;let acc=0;const af=load||1;
  else if(collides(v,nx,nz)&&!collides(v,v.x,v.z)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
  else{v.x=nx;v.z=nz}}
 function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h);if(v===fork.v)return hitObs(nx+fx*1.2,nz+fz*1.2)||hitObs(nx-fx*2.1,nz-fz*2.1);
- if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;if(mode!=='career')return false;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'&&!(G.bl>.05)?[4,8,12,20,28,36]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
+ if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;if(mode!=='career')return false;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'&&!(G.bl>.05)?[4,10,18,26,34,42,50,56]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
 function orient(obj,v,fz,rz,half){const fx=-Math.sin(v.h),fzz=-Math.cos(v.h),rx=Math.cos(v.h),rzz=-Math.sin(v.h);
  const hF=getH(v.x-fx*fz,v.z-fzz*fz),hR=getH(v.x-fx*rz,v.z-fzz*rz),mc=-(fz+rz)/2,mx=v.x+fx*mc,mz=v.z+fzz*mc,hL=getH(mx-rx*half,mz-rzz*half),hRi=getH(mx+rx*half,mz+rzz*half);
  const Ln=rz-fz;v.slope=(hF-hR)/Ln;const pitch=Math.atan2(hF-hR,Ln),roll=Math.atan2(hRi-hL,half*2);const hO=hR+(hF-hR)*(0-rz)/(fz-rz);obj.position.set(v.x,hO+.2,v.z);obj.rotation.set(pitch,v.h,roll)}
@@ -862,7 +876,7 @@ function placeVehicles(dt){const v=truck.v;orient(truck.g,v,-4.1,.1,1.1);
  trailer.th+=(v.speed/trailer.L)*Math.sin(v.h-trailer.th)*dt;const dth=angDiff(trailer.th,v.h);if(Math.abs(dth)>1.25)trailer.th=v.h+Math.sign(dth)*1.25;
  const hx=v.x,hz=v.z;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ax=hx+bx*trailer.L,az=hz+bz*trailer.L;
  const hH=truck.g.position.y,hA=getH(ax,az)+.2;const tp=Math.atan2(hH-hA,trailer.L);const rx=Math.cos(trailer.th),rz=-Math.sin(trailer.th);const tr=Math.atan2(getH(ax+rx,az+rz)-getH(ax-rx,az-rz),2);
- trailer.g.position.set(hx,hH,hz);trailer.g.rotation.set(tp,trailer.th,tr*.7);for(const w of trailer.W)w.g.rotation.x-=v.speed/w.r*dt;
+ trailerExt(dt);trailer.g.position.set(hx,hH,hz);trailer.g.rotation.set(tp,trailer.th,tr*.7);for(const w of trailer.W)w.g.rotation.x-=v.speed/w.r*dt;
  const f=fork.v;orient(fork.g,f,0,1.55,.6);for(const w of fork.W)w.g.rotation.x-=f.speed/w.r*dt;for(const w of fork.F){w.g.rotation.x-=f.speed/w.r*dt;w.g.rotation.y=-f.steer}}
 const _v=new THREE.Vector3();
 function forkTip(){const f=fork.v;return{x:f.x-Math.sin(f.h)*1.25,z:f.z-Math.cos(f.h)*1.25}}
@@ -871,7 +885,7 @@ function slotWorld(i){trailer.g.updateMatrixWorld();return trailer.slots[i].clon
 // ---- kamera
 const camPos=new THREE.Vector3(),camLook=new THREE.Vector3();
 function camTarget(){let v,dist,hgt,ahead,obj;const por=innerWidth<innerHeight;const kanat=G&&G.job.type==='kanat';
- if(phase==='fork'){v=fork.v;obj=fork.g;dist=9;hgt=5;ahead=2}else{v=truck.v;obj=truck.g;const kule=G&&['kule','nasel','hub','aktarma','ankraj'].includes(G.job.type);dist=(por?25:19)+(kanat?8:0)+(kule?4:0);hgt=(por?9.5:7.2)+(kanat?3:0)+(kule?3.5:0);ahead=6}
+ if(phase==='fork'){v=fork.v;obj=fork.g;dist=9;hgt=5;ahead=2}else{v=truck.v;obj=truck.g;const kule=G&&['kule','nasel','hub','aktarma','ankraj'].includes(G.job.type);dist=(por?25:19)+(kanat?16:0)+(kule?4:0);hgt=(por?9.5:7.2)+(kanat?6:0)+(kule?3.5:0);ahead=6}
  const h=v.h+camYaw;const p=new THREE.Vector3(v.x+Math.sin(h)*dist,0,v.z+Math.cos(h)*dist);p.y=Math.max(getH(p.x,p.z)+2,obj.position.y+hgt);
  for(let k=1;k<=6;k++){const q=k/6,sx=lerp(v.x,p.x,q),sz=lerp(v.z,p.z,q);p.y=Math.max(p.y,getH(sx,sz)+2.5+q*1.5)}
  const l=new THREE.Vector3(v.x-Math.sin(v.h)*ahead,obj.position.y+2.2,v.z-Math.cos(v.h)*ahead);return{p,l}}
@@ -923,10 +937,10 @@ function freeLogic(){const v=truck.v,sp=Math.abs(v.speed),f=G.fr;if(!f){if(actFn
 function doStrapFree(){const t=G.job.type;const sc=STRAP_SC[t]||[1,1];world.straps.forEach((s,i)=>{s.scale.set(sc[0],sc[1],1);s.visible=(t!=='kanat'&&t!=='donus'||i!==1)})}
 // ================= KANAT KALDIRICI (blade lifter) =================
 // Kanat kökünden 40°'ye kadar dikilir: dar köy sokağında evlerin üstünden geçer; enerji hattından önce indirilmelidir.
-const BL_ANG=.7,BL_VMAX=5;
+const BL_ANG=1.0,BL_VMAX=5;
 function bladeOn(){return CARGO.kanat&&CARGO.kanat.visible&&(mode==='free'||G.strapped)}
 function roadIdx(v){let bi=G.ri||0,bd=1e9;const a=Math.max(0,bi-40),b=Math.min(NS-1,bi+40);for(let i=a;i<=b;i++){const d=(RS[i].x-v.x)**2+(RS[i].z-v.z)**2;if(d<bd){bd=d;bi=i}}if(bd>900){for(let i=0;i<NS;i+=2){const d=(RS[i].x-v.x)**2+(RS[i].z-v.z)**2;if(d<bd){bd=d;bi=i}}}G.ri=bi;return bi}
-const BLZ=[12,18,24,30,36,42];
+const BLZ=[12,20,28,36,44,52,60,68];
 function bladeHit(dx,dz){if(!bladeOn()||!HOBS.length)return null;CARGO.kanat.updateMatrixWorld(true);for(const z of BLZ)for(const bx of[-1.3,0,1.3]){_v.set(bx,0,z).applyMatrix4(CARGO.kanat.matrixWorld);const x=_v.x+dx,zz=_v.z+dz,y=_v.y;for(const o of HOBS){if((x-o.x)**2+(zz-o.z)**2<o.r*o.r&&y>o.lo&&y<o.hi)return o.k}}return null}
 function bladeAct(){if(actFn===rescue)return;const v=truck.v,sp=Math.abs(v.speed);
  const near=VZ&&(()=>{const i=roadIdx(v);return i>VZ.v0-70&&i<VZ.wi+6})();
@@ -964,7 +978,7 @@ function driveLogic(dt){const v=truck.v;const sp=Math.abs(v.speed);G.dist+=sp*dt
  const ds=Math.hypot(v.x-G.target.x,v.z-G.target.z);if(ds<150&&!G.arr){G.arr=true;toast(T('t_arr'),'#8ff0a4',2)}
  if(ds<12){setObj(T('o_park'));if(sp<.8)setAct(T('deliver'),startDrone);else setAct(null)}else{bladeAct();if(G.arr)setObj(G.job.type==='donus'?T('o_back'):T('o_drive'))}}
 function startDrone(){setAct(null);phase='drone';G.deliverT=G.t-G.t0;showCtl(false);coach('drone');
- trailer.g.updateMatrixWorld();const kanat=G.job.type==='kanat';G.orbC=new THREE.Vector3(0,2.4,kanat?18:6).applyMatrix4(trailer.g.matrixWorld);G.orbR=kanat?24:11.5;G.orb=0;drone.g.visible=true;
+ trailer.g.updateMatrixWorld();const kanat=G.job.type==='kanat';G.orbC=new THREE.Vector3(0,2.4,kanat?34:6).applyMatrix4(trailer.g.matrixWorld);G.orbR=kanat?42:11.5;G.orb=0;drone.g.visible=true;
  const pts=[];const cm=cargoMarkers(G.job.type);if(cm){for(const p of cm)pts.push(new THREE.Vector3(...p).applyMatrix4(trailer.g.matrixWorld))}else{for(const c of crates){if(!c.visible||c.parent!==trailer.g)continue;c.updateMatrixWorld();for(const lp of[[.8,.9,0],[0,1.5,0]])pts.push(new THREE.Vector3(...lp).applyMatrix4(c.matrixWorld))}}
  for(const p of pts){const m=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.marker,transparent:true,depthTest:false,depthWrite:false}));m.scale.set(kanat?1.8:.95,kanat?1.8:.95,1);m.renderOrder=11;m.position.copy(p);m.userData={scanned:false,bad:false};scene.add(m);world.markers.push(m)}
  const nb=Math.min(world.markers.length,G.dmg<4?0:G.dmg<22?1:G.dmg<50?2:3);const idx=world.markers.map((_,i)=>i).sort(()=>Math.random()-.5);for(let i=0;i<nb;i++)world.markers[idx[i]].userData.bad=true;G.nbad=nb;

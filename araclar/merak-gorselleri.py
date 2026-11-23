@@ -7,10 +7,10 @@ PLACE=open(os.path.join(KOK,'araclar','merak-place.js')).read()
 TARIH='28.11'
 # (ad, bölge, yük, konum oranı, saat, kamera dönüşü, ek kurulum, büyük yazı, küçük yazı)
 SAH=[
- ('1-yukleniyor','marmara','kanat',0.03,'gece',2.6,"",'Bir şey yükleniyor.','Bandırma Limanı · gece'),
+ ('1-yukleniyor','marmara','kanat',0.03,'gece',(66,-13,.38),"",'Bir şey yükleniyor.','Bandırma Limanı · gece'),
  ('2-dar-sokak','ege','kanat',None,'aksam',0.95,"G.bl=G.blT=1;CARGO.kanat.rotation.x=-BL_ANG;placeVehicles(0);",'70 metrelik kanat. Dar bir köy sokağı.','Ege · Bergama yolu'),
- ('3-zincir','sivas','kanat',0.55,'sabah',1.4,"G.chain=1;truck.chains.forEach(c=>c.visible=true);",'Yokuş buz. Zinciri tak.','Sivas Yaylası'),
- ('4-yarin','trakya','kanat',0.2,'aksam',0.7,"G.wind=12;",'Yarın yoldayız.','Trakya · Ganos Dağı'),
+ ('3-zincir','sivas','kanat',0.55,'sabah',(66,14,.5),"G.chain=1;truck.chains.forEach(c=>c.visible=true);",'Yokuş buz. Zinciri tak.','Sivas Yaylası'),
+ ('4-yarin','trakya','kanat',0.2,'aksam',(66,-15,.42),"G.wind=12;",'Yarın yoldayız.','Trakya · Ganos Dağı'),
 ]
 async def main():
     async with async_playwright() as p:
@@ -25,7 +25,8 @@ async def main():
                 await pg.evaluate(f"()=>buildRegion('{reg}')")
                 if frac is None: frac=await pg.evaluate("()=>(VZ.v0+14)/(NS-1)")
                 await pg.evaluate(PLACE,[n,frac,False,0])
-                await pg.evaluate(f"()=>{{setTOD('{tod}');{ek}camYaw={yaw};snapCam();showHud(false);for(const id of['hPause','hSnd','hFM','bcam','limB','fmTk'])document.getElementById(id)&&(document.getElementById(id).style.display='none')}}")
+                cam=f"window._cam=null;camYaw={yaw};" if not isinstance(yaw,tuple) else f"window._cam=[{yaw[0]},{yaw[1]},{yaw[2]}];"
+                await pg.evaluate(f"()=>{{setTOD('{tod}');{ek}{cam}if(window._cam){{if(!window._ct)window._ct=camTarget;camTarget=()=>{{const v=truck.v,[D,R,H]=window._cam;const cx=v.x+Math.sin(v.h)*D,cz=v.z+Math.cos(v.h)*D;const p=new THREE.Vector3(cx+Math.cos(v.h)*R,0,cz-Math.sin(v.h)*R);p.y=Math.max(getH(p.x,p.z),truck.g.position.y)+Math.abs(R)*H;return{{p,l:new THREE.Vector3(v.x+Math.sin(v.h)*18,truck.g.position.y+3.5,v.z+Math.cos(v.h)*18)}}}}}}else if(window._ct)camTarget=window._ct;snapCam();showHud(false);for(const id of['hPause','hSnd','hFM','bcam','limB','fmTk'])document.getElementById(id)&&(document.getElementById(id).style.display='none')}}")
                 for _ in range(50): await pg.evaluate("()=>new Promise(r=>requestAnimationFrame(()=>r()))")
                 await pg.evaluate("""([b,k,t])=>{document.querySelectorAll('#coach,#toast,#act,.pad,#pedals,#steer,#hud .tb').forEach(e=>e.style.display='none');
                  let e=document.getElementById('merak');if(!e){e=document.createElement('div');e.id='merak';document.body.appendChild(e)}
