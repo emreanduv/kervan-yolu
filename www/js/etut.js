@@ -5,40 +5,44 @@
 'use strict';
 const TRe={
  etH:'GÜZERGÂH ETÜDÜ · DENEME SÜRÜŞÜ',
- etTxt:'Pilot araç güzergâhı taradı. Engeller renk koduyla işaretlendi; işaretli olanlar yükten önce düzenlenir. Hazırlanan yol bu bölgede kalıcıdır.',
+ etTxt:'Pilot araç güzergâhı taradı. Engeller renk koduyla işaretlendi; işaretli olanlar yükten önce düzenlenir. Yol işlerini yatırımcı öder, sen yüzde 10 koordinasyon payı verirsin. Hazırlanan yol bu bölgede kalıcıdır.',
  etLej:'<b style="color:#6fd38a">Yeşil</b> geçer · <b style="color:#f2c230">Sarı</b> küçük düzenleme · <b style="color:#ff8a3c">Turuncu</b> orta düzey · <b style="color:#ff4a4a">Kırmızı</b> büyük iş',
- etHazir:'hazır',etTop:'Yol düzenleme toplamı',etHep:'Yol bu bölgede hazır: bütün engeller daha önce düzenlendi.',
+ etHazir:'hazır',etTop:'Senin payın (yüzde 10)',etHep:'Yol bu bölgede hazır: bütün engeller daha önce düzenlendi.',
  e_dal:'Ağaç dalı yola sarkıyor',a_dal:'dal budama',
  e_levha:'Viraj içinde trafik levhası',a_levha:'levhayı geri al',
  e_tel:'Alçak telefon kablosu',a_tel:'kabloyu yükselt',
  e_genis:'Dar viraj, iç kenarda şev',a_genis:'yol genişletme ve dolgu',
  e_og:'Viraj içinde OG elektrik direği',a_og:'direği deplase et',
+ e_tarama:'Kanat ucu tarama alanında çalı ve şev',a_tarama:'kazı ve budama, son yükseklik en çok 1,5 m',e_yanal:'Virajda yanal eğim',a_yanal:'yanal eğimi gider, tesviye',e_bom:'Tümsek: dorse bomu zemine sürtebilir',a_bom:'tümseği tıraşla, bom yüksekliğini ayarla',e_durak:'Otobüs durağı ve çardak',a_durak:'durağı ve çardağı kaldır',e_koykablo:'Köy içinde alçak kablolar',a_koykablo:'geçişte kabloları aparatla kaldıran ekip',e_elektrik:'Yolun üstünden geçen OG hattı',a_elektrik:'geçiş sırasında elektrik kesintisi (yatırımcı organize eder)',
+ t_tarama:'Kanat ucu yol kenarındaki çalılara çarptı!',t_bom:'Dorse bomu tümseğe sürttü!',t_durak:'Yük otobüs durağının çatısına sürttü!',t_koykablo:'Yük köydeki alçak kabloları kopardı!',
  t_dal:'Kanat sarkan dala sürttü! Etütte budanmalıydı.',t_levha:'Yük viraj içindeki levhayı devirdi!',t_tel:'Yük alçak telefon kablosuna takıldı!',
  t_dur:'Dur! Önünde düzenlenmemiş engel var: {e}. Geçemezsin.',a_acil:'ACİL EKİP ÇAĞIR (−{p})',t_acilGel:'Ekip geldi, çalışıyor…',t_acilOk:'Engel giderildi, yol açık.',
  k_etut:'Yol düzenleme (güzergâh etüdü)',k_etutAcil:'Acil yol düzenleme',
  km:'km'};
 const ENe={
  etH:'ROUTE SURVEY · DUMMY RUN',
- etTxt:'A pilot vehicle surveyed the route. Obstacles are colour-coded; the ticked ones are fixed before the load moves. A prepared road stays prepared in this region.',
+ etTxt:'A pilot vehicle surveyed the route. Obstacles are colour-coded; the ticked ones are fixed before the load moves. The investor pays for road works; you pay a 10 percent coordination share. A prepared road stays prepared in this region.',
  etLej:'<b style="color:#6fd38a">Green</b> passable · <b style="color:#f2c230">Yellow</b> minor work · <b style="color:#ff8a3c">Orange</b> moderate work · <b style="color:#ff4a4a">Red</b> major work',
- etHazir:'ready',etTop:'Road works total',etHep:'This road is ready: every obstacle was fixed earlier.',
+ etHazir:'ready',etTop:'Your share (10 percent)',etHep:'This road is ready: every obstacle was fixed earlier.',
  e_dal:'Tree branch over the road',a_dal:'trim branch',
  e_levha:'Traffic sign inside the bend',a_levha:'move the sign back',
  e_tel:'Low telephone cable',a_tel:'raise the cable',
  e_genis:'Narrow bend with a bank inside',a_genis:'widen and backfill',
  e_og:'MV power pole inside the bend',a_og:'relocate the pole',
+ e_tarama:'Bushes and bank in the blade-tip sweep zone',a_tarama:'excavate and trim, final height at most 1.5 m',e_yanal:'Cross slope in the bend',a_yanal:'remove the cross slope, grade',e_bom:'Crest: the trailer boom may scrape',a_bom:'shave the crest, adjust boom height',e_durak:'Bus stop and shelter',a_durak:'remove the stop and shelter',e_koykablo:'Low cables in the village',a_koykablo:'crew lifts cables with a pole during the pass',e_elektrik:'MV line crossing the road',a_elektrik:'power cut during the pass (arranged by the investor)',
+ t_tarama:'The blade tip hit roadside bushes!',t_bom:'The trailer boom scraped the crest!',t_durak:'The load scraped the bus stop roof!',t_koykablo:'The load tore the low village cables!',
  t_dal:'The blade scraped an overhanging branch! It should have been trimmed.',t_levha:'The load knocked down the sign in the bend!',t_tel:'The load snagged a low telephone cable!',
  t_dur:'Stop! An unfixed obstacle ahead: {e}. You cannot pass.',a_acil:'CALL EMERGENCY CREW (−{p})',t_acilGel:'Crew on site, working…',t_acilOk:'Obstacle cleared, the road is open.',
  k_etut:'Road works (route survey)',k_etutAcil:'Emergency road works',
  km:'km'};
 Object.assign(STR.tr,TRe);Object.assign(STR.en,ENe);
-HELP.tr.unshift(['Güzergâh etüdü ve deneme sürüşü','Kanat, kule ve nasel seferinde evrak ekranında etüt raporu çıkar. Pilot aracın bulduğu engeller dört renkle işaretlenir: yeşil geçer; sarı küçük iş (dal budama, levha taşıma, telefon kablosunu yükseltme); turuncu orta düzey iş (yol genişletme, dolgu, OG direği deplase); kırmızı büyük iş. İşaretli engeller yükten önce düzenlenir ve yol o bölgede hazır kalır. Düzenlenmeyen sarı engel yüke zarar verir; turuncu engelde durursun ve iki kat pahalı acil ekip çağırırsın.']);
-HELP.en.unshift(['Route survey and dummy run','On blade, tower and nacelle jobs the papers screen shows a route survey. Obstacles found by the pilot vehicle are colour-coded: green passes; yellow is minor work (trim branches, move signs, raise phone cables); orange is moderate work (widen the road, backfill, relocate an MV pole); red is major work. Ticked obstacles are fixed before the load moves and the road stays ready in that region. An unfixed yellow obstacle damages the load; at an orange one you stop and call an emergency crew at double the price.']);
+HELP.tr.unshift(['Güzergâh etüdü ve deneme sürüşü','Kanat, kule ve nasel seferinde evrak ekranında etüt raporu çıkar. Pilot aracın bulduğu engeller dört renkle işaretlenir: yeşil geçer; sarı küçük iş (dal budama, levha taşıma, telefon kablosunu yükseltme); turuncu orta düzey iş (yol genişletme, dolgu, OG direği deplase); kırmızı büyük iş. İşaretli engeller yükten önce düzenlenir ve yol o bölgede hazır kalır. Yol işlerini yatırımcı öder, sen yüzde 10 pay verirsin. Düzenlenmeyen sarı engel yüke zarar verir; turuncu engelde durursun ve bedelin yüzde 30unu ödeyerek acil ekip çağırırsın.']);
+HELP.en.unshift(['Route survey and dummy run','On blade, tower and nacelle jobs the papers screen shows a route survey. Obstacles found by the pilot vehicle are colour-coded: green passes; yellow is minor work (trim branches, move signs, raise phone cables); orange is moderate work (widen the road, backfill, relocate an MV pole); red is major work. Ticked obstacles are fixed before the load moves and the road stays ready in that region. An unfixed yellow obstacle damages the load; the investor pays for road works and you pay a 10 percent share; at an orange one you stop and pay 30 percent for an emergency crew.']);
 
 // tür: renk, maliyet, hasar, durdurur mu
-const TUR={dal:{c:'sari',p:4000,d:4},levha:{c:'sari',p:3000,d:3},tel:{c:'sari',p:6000,d:6},genis:{c:'turuncu',p:45000,dur:1},og:{c:'turuncu',p:60000,dur:1}};
+const TUR={dal:{c:'sari',p:4000,d:4},levha:{c:'sari',p:3000,d:3},tel:{c:'sari',p:6000,d:6},bom:{c:'sari',p:5000,d:5},durak:{c:'sari',p:7000,d:5},koykablo:{c:'sari',p:8000,d:7},genis:{c:'turuncu',p:45000,dur:1},og:{c:'turuncu',p:60000,dur:1},tarama:{c:'turuncu',p:30000,dur:1},yanal:{c:'turuncu',p:35000,dur:1},elektrik:{c:'turuncu',p:12000,dur:1}};
 const RK={sari:'#f2c230',turuncu:'#ff8a3c',kirmizi:'#ff4a4a',yesil:'#6fd38a'};
-const AGIR=['kanat','kule','nasel'];
+const AGIR=['kanat','kule','nasel'];const PAY=.1,ACIL=.3;const pay=o=>Math.round(TUR[o.tip].p*PAY/100)*100;
 let EN=[],DEK=null;
 
 function rng(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296}}
@@ -70,20 +74,28 @@ function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R
  const egr=[];for(let i=lo;i<hi;i+=3){if(yasak(i))continue;const e=egri(i);egr.push([i,e.k,e.ic])}egr.sort((a,b)=>b[1]-a[1]);
  const al=(n,uz)=>{const out=[];for(const e of egr){if(out.length>=n)break;if(EN.some(o=>Math.abs(o.i-e[0])<uz)||out.some(o=>Math.abs(o[0]-e[0])<uz))continue;out.push(e)}return out};
  let id=0;const ekle=(tip,i,ic)=>{const o={id:tip+'-'+(id++),tip,i,ic,km:(i/(NS-1)*ROADLENS[REG]/1000)};EN.push(o);return o};
- for(const e of al(1,40))ekle('genis',e[0],e[2]);
- for(const e of al(1,40))ekle('og',e[0],e[2]);
- for(const e of al(1,30))ekle('levha',e[0],e[2]);
- for(let n=0;n<2;n++){for(let t=0;t<40;t++){const i=Math.floor(lo+R()*(hi-lo));if(yasak(i)||EN.some(o=>Math.abs(o.i-i)<25))continue;ekle('dal',i,R()<.5?1:-1);break}}
- for(let t=0;t<40;t++){const i=Math.floor(lo+R()*(hi-lo));if(yasak(i)||EN.some(o=>Math.abs(o.i-i)<25))continue;ekle('tel',i,1);break}
+ for(const e of al(2,30))ekle('genis',e[0],e[2]);
+ for(const e of al(2,30))ekle('tarama',e[0],e[2]);
+ for(const e of al(1,30))ekle('og',e[0],e[2]);
+ for(const e of al(1,30))ekle('yanal',e[0],e[2]);
+ for(const e of al(1,25))ekle('levha',e[0],e[2]);
+ const rast=(tip,n)=>{for(let k=0;k<n;k++)for(let t=0;t<60;t++){const i=Math.floor(lo+R()*(hi-lo));if(yasak(i)||EN.some(o=>Math.abs(o.i-i)<20))continue;ekle(tip,i,R()<.5?1:-1);break}};
+ rast('dal',2);rast('tel',1);rast('bom',1);rast('durak',1);rast('elektrik',1);
+ if(VZ){const i=clamp(VZ.v0-90,lo,hi);if(!EN.some(o=>Math.abs(o.i-i)<12))ekle('koykablo',i,1)}
  EN.sort((a,b)=>a.i-b.i);
  for(const o of EN){const p=sideAt(o.i,o.ic*7.6),ic=o.ic;
   if(o.tip==='dal'){const r=agacG(g,p.x,p.z,p.ang,ic,4.4);o.bad=r.bad;o.ok=r.ok}
   else if(o.tip==='levha'){o.bad=levhaG(g,sideAt(o.i,ic*5.1),p.ang);o.ok=levhaG(g,sideAt(o.i,ic*9.5),p.ang)}
   else if(o.tip==='tel'){o.bad=telG(g,o.i,5.1);o.ok=telG(g,o.i,8.6)}
   else if(o.tip==='genis'){o.bad=sevG(g,o.i,ic,5.4);o.ok=new THREE.Group();g.add(o.ok);o.ok.add(cakilG(g,o.i,ic));o.ok.add(sevG(g,o.i,ic,9.2))}
+  else if(o.tip==='tarama'){const ca=P('#4f6b34',{shininess:4});const mk=(h)=>{const t=new THREE.Group();g.add(t);for(let k=-4;k<=4;k++){const q=sideAt(clamp(o.i+k,1,NS-2),ic*(6.4+Math.abs(k)*.2));const b=new THREE.Mesh(new THREE.IcosahedronGeometry(1,0),ca);b.scale.set(1.4,h,1.4);b.position.set(q.x,getH(q.x,q.z)+h*.6,q.z);t.add(b)}return t};o.bad=mk(2.6);o.ok=mk(.6)}
+  else if(o.tip==='durak'){const mk=(off)=>{const q=sideAt(o.i,ic*off);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang;g.add(t);const m=P('#3a6fb0',{shininess:30}),gl=MAT.glass;for(const x of[-1.4,1.4])addBox(.08,2.5,.08,MAT.steel,x,1.25,0,t);addBox(3.1,.1,1.5,m,0,2.55,.2,t);addBox(2.8,1.6,.04,gl,0,1.4,-.5,t);addBox(2.4,.08,.4,P('#7a5a3a'),0,.5,-.25,t);return t};o.bad=mk(5.7);o.ok=new THREE.Group();g.add(o.ok)}
+  else if(o.tip==='koykablo'){o.bad=telG(g,o.i,4.8);o.ok=telG(g,o.i,7.4)}
+  else if(o.tip==='elektrik'){const grp=telG(g,o.i,9.5);o.bad=null;o.ok=grp}
+  else if(o.tip==='bom'||o.tip==='yanal'){o.bad=null;o.ok=null}
   else if(o.tip==='og'){const c=P('#b8b6ae',{shininess:6});o.bad=direk(g,sideAt(o.i,ic*5),9,c,1);o.ok=direk(g,sideAt(o.i,ic*10.5),9,c,1)}}
  gorsel();dekor(g)}
-function gorsel(){const H=hazir();const free=typeof mode!=='undefined'&&mode!=='career';for(const o of EN){const f=free||H.has(o.id)||(G&&G.etutSec&&G.etutSec.has(o.id)&&G.docs)||o.acil;if(o.bad)o.bad.visible=!f;if(o.ok)o.ok.visible=!!f}}
+function gorsel(){const H=hazir();const free=typeof mode!=='undefined'&&mode!=='career';for(const o of EN){const f=free||H.has(o.id)||(G&&G.etutSec&&G.etutSec.has(o.id)&&G.docs)||o.acil;if(o.bad)o.bad.visible=!f;if(o.ok)o.ok.visible=!!f||o.bad===null}}
 
 // ---------- saha yolu ve yayla dekoru ----------
 function pilon(g,x,z,ang,h){const t=new THREE.Group();t.position.set(x,getH(x,z),z);t.rotation.y=ang;g.add(t);const m=P('#9aa0a4',{shininess:20});
@@ -136,20 +148,20 @@ function acik(o){const H=hazir();return !(H.has(o.id)||o.acil)}
 addEventListener('load',()=>{
  // evrak ekranı: etüt raporu
  const _od=openDocs;openDocs=function(){_od();try{if(!agirIs()||!EN.length||G.freeDocs)return;const H=hazir();if(!G.etutSec)G.etutSec=new Set(EN.filter(o=>!H.has(o.id)).map(o=>o.id));
-  const rows=EN.map(o=>{const t=TUR[o.tip],h=H.has(o.id);return`<label class="kv" style="align-items:center;gap:6px;cursor:pointer"><span style="display:flex;align-items:center;gap:7px;text-align:left"><i style="width:11px;height:11px;border-radius:50%;flex:none;background:${h?RK.yesil:RK[t.c]}"></i><span>${T('e_'+o.tip)} <small style="opacity:.7">· ${o.km.toFixed(1)} ${T('km')} · ${h?T('etHazir'):T('a_'+o.tip)}</small></span></span>${h?'<b style="color:#8ff0a4">✓</b>':`<span style="display:flex;align-items:center;gap:6px;white-space:nowrap"><b class="neg">−${fmt(t.p)}</b><input type="checkbox" data-et="${o.id}" ${G.etutSec.has(o.id)?'checked':''} style="width:18px;height:18px"></span>`}</label>`}).join('');
+  const rows=EN.map(o=>{const t=TUR[o.tip],h=H.has(o.id);return`<label class="kv" style="align-items:center;gap:6px;cursor:pointer"><span style="display:flex;align-items:center;gap:7px;text-align:left"><i style="width:11px;height:11px;border-radius:50%;flex:none;background:${h?RK.yesil:RK[t.c]}"></i><span>${T('e_'+o.tip)} <small style="opacity:.7">· ${o.km.toFixed(1)} ${T('km')} · ${h?T('etHazir'):T('a_'+o.tip)}</small></span></span>${h?'<b style="color:#8ff0a4">✓</b>':`<span style="display:flex;align-items:center;gap:6px;white-space:nowrap"><b class="neg">−${fmt(pay(o))}</b><input type="checkbox" data-et="${o.id}" ${G.etutSec.has(o.id)?'checked':''} style="width:18px;height:18px"></span>`}</label>`}).join('');
   const hep=EN.every(o=>H.has(o.id));
   const box=document.createElement('div');box.id='etutB';box.style.cssText='text-align:left;margin:10px 0 4px;padding:8px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:rgba(0,0,0,.18)';
   box.innerHTML=`<div style="font-weight:800;letter-spacing:.04em;margin-bottom:4px">${T('etH')}</div><div class="small" style="margin-bottom:6px;opacity:.85">${hep?T('etHep'):T('etTxt')}</div><div class="small" style="margin-bottom:6px">${T('etLej')}</div>${rows}<div class="kv" id="etTopR"><span>${T('etTop')}</span><b id="etTop"></b></div>`;
   const db=$('docsB');const eski=document.getElementById('etutB');if(eski)eski.remove();db.appendChild(box);
-  const top=()=>{let s=0;G.etutSec.forEach(id=>{const o=EN.find(x=>x.id===id);if(o&&!H.has(id))s+=TUR[o.tip].p});$('etTop').textContent=s?'−'+fmt(s):fmt(0)};top();
+  const top=()=>{let s=0;G.etutSec.forEach(id=>{const o=EN.find(x=>x.id===id);if(o&&!H.has(id))s+=pay(o)});$('etTop').textContent=s?'−'+fmt(s):fmt(0)};top();
   box.querySelectorAll('input[data-et]').forEach(c=>c.onchange=()=>{if(c.checked)G.etutSec.add(c.dataset.et);else G.etutSec.delete(c.dataset.et);top()})}catch(e){console.log('etut docs',e)}};
- const _ok=$('docsOk').onclick;$('docsOk').onclick=function(){try{if(agirIs()&&G.etutSec&&!G.freeDocs){const H=hazir();let s=0;const yeni=[];G.etutSec.forEach(id=>{const o=EN.find(x=>x.id===id);if(o&&!H.has(id)){s+=TUR[o.tip].p;yeni.push(id)}});
+ const _ok=$('docsOk').onclick;$('docsOk').onclick=function(){try{if(agirIs()&&G.etutSec&&!G.freeDocs){const H=hazir();let s=0;const yeni=[];G.etutSec.forEach(id=>{const o=EN.find(x=>x.id===id);if(o&&!H.has(id)){s+=pay(o);yeni.push(id)}});
    if(s){G.ext.push(['k_etut',-s]);SAVE.etut=SAVE.etut||{};SAVE.etut[REG]=[...H,...yeni];save()}gorsel()}}catch(e){console.log(e)}return _ok.apply(this,arguments)};
  // sürüş: düzenlenmemiş engel
  const _st=EXT.step;EXT.step=function(dt,run){const r=_st?_st(dt,run):undefined;try{if(!run||phase!=='drive'||!agirIs()||!EN.length)return r;const v=truck.v,ti=roadIdx(v);
   for(const o of EN){if(!acik(o))continue;const t=TUR[o.tip];
    if(t.dur){if(ti>=o.i-6&&ti<=o.i&&!o.acil){if(v.speed>0)v.speed=0;if(!o.vur){o.vur=1;titre(1);toast(T('t_dur').replace('{e}',T('e_'+o.tip)),'#ff8a3c',3.2);}
-     if(!(actFn&&actFn.etut)){const p=t.p*2;const fn=()=>{setAct(null);G.ext.push(['k_etutAcil',-p]);toast(T('t_acilGel'),'#ffe08a',2.4);blip(300,420,.3);setTimeout(()=>{o.acil=1;gorsel();toast(T('t_acilOk'),'#8ff0a4',2.4);blip(523,784,.3)},4500)};fn.etut=1;setAct(T('a_acil').replace('{p}',fmt(p)),fn)}}}
+     if(!(actFn&&actFn.etut)){const p=Math.round(t.p*ACIL/100)*100;const fn=()=>{setAct(null);G.ext.push(['k_etutAcil',-p]);toast(T('t_acilGel'),'#ffe08a',2.4);blip(300,420,.3);setTimeout(()=>{o.acil=1;gorsel();toast(T('t_acilOk'),'#8ff0a4',2.4);blip(523,784,.3)},4500)};fn.etut=1;setAct(T('a_acil').replace('{p}',fmt(p)),fn)}}}
    else if(!o.vur&&Math.abs(ti-o.i)<=2&&Math.abs(v.speed)>.5){o.vur=1;G.dmg=Math.min(100,G.dmg+t.d);titre(1);toast(T('t_'+o.tip),'#ff8a7f',3);if(o.tip==='levha'&&o.bad)o.bad.rotation.z=1.2}}}catch(e){}return r};
  // mini harita: keşiften sonra açık engeller
  const _mn=EXT.mini;EXT.mini=function(c,v,sc,S){if(_mn)_mn(c,v,sc,S);try{if(!G||!G.kesif||!agirIs())return;for(const o of EN){if(!acik(o))continue;const p=RS[o.i];const x=(p.x-v.x)*sc,z=(p.z-v.z)*sc;if(Math.hypot(x,z)>S/2-6)continue;c.fillStyle=RK[TUR[o.tip].c];c.beginPath();c.arc(x,z,4.5,0,7);c.fill();c.strokeStyle='#000';c.lineWidth=1;c.stroke()}}catch(e){}};
