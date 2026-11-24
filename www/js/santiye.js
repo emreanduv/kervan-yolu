@@ -141,8 +141,14 @@ function kuleKur(){KULE=null;ISTIF.length=0;try{const s=world.site;if(!s)return;
  const top=25+4*22;const nac=new THREE.Group();nac.position.set(0,top+2,0);g.add(nac);rbox(3.9,3.9,10.4,.6,MAT.turb,0,0,1.5,nac);nac.visible=false;
  const hub=new THREE.Group();hub.position.set(0,top+2,-4.6);g.add(hub);const hb=addCyl(1.6,2.2,3.4,20,MAT.turb,0,0,0,hub);hb.rotation.x=Math.PI/2;hub.visible=false;
  const bls=[];const bg=bladeGeom(56);for(let k=0;k<3;k++){const b=new THREE.Mesh(bg,MAT.turb);b.rotation.z=k*Math.PI*2/3;b.position.z=-1;hub.add(b);b.visible=false;bls.push(b)}
- KULE={g,seg,nac,hub,bls,top};kuleGoster()}catch(e){console.log('kule',e)}}
-function kuleGoster(){if(!KULE)return;const m=mtKayit();KULE.seg.forEach((s,k)=>{s.visible=k<m.k;s.userData.fl.visible=k<m.k});KULE.nac.visible=!!m.n;KULE.hub.visible=!!(m.n&&(m.h||m.b>0));KULE.bls.forEach((b,k)=>b.visible=k<m.b)}
+ // bir sonraki türbinin temel çukuru: ankraj kafesi buraya iner, sonra beton dökülmüş temel ve ankraj civataları görünür
+ const tg=new THREE.Group();{const tx=x-px*44-ax*14,tz=z-pz*44-az*14;let ym=getH(tx,tz);for(let k=0;k<12;k++){const a=k/12*Math.PI*2;ym=Math.max(ym,getH(tx+Math.cos(a)*10,tz+Math.sin(a)*10))}tg.position.set(tx,ym-.15,tz)};scene.add(tg);WOBJ.push(tg);
+ const cuk=new THREE.Group();tg.add(cuk);const toprak=P('#6b5540'),beton=P('#b4b0a6'),demir=P('#5a4a3c');
+ addCyl(11,11.4,4,28,toprak,0,-1.85,0,cuk);addCyl(9.6,9.6,.1,28,P('#3b2f24'),0,.2,0,cuk);for(let k=0;k<10;k++){const a=k/10*Math.PI*2;const t=rbox(3.2,1.4,2.2,.4,toprak,Math.cos(a)*12.6,.6,Math.sin(a)*12.6,cuk);t.rotation.y=-a}
+ const cit=P('#e8531f');for(let k=0;k<16;k++){const a=k/16*Math.PI*2;addCyl(.05,.05,1.1,5,cit,Math.cos(a)*15,.55,Math.sin(a)*15,cuk)}
+ const tem=new THREE.Group();tg.add(tem);addCyl(9.5,10.4,4.2,32,beton,0,-.9,0,tem);addCyl(3,3.2,.9,28,beton,0,1.6,0,tem);for(let k=0;k<36;k++){const a=k/36*Math.PI*2;addCyl(.05,.05,.5,4,demir,Math.cos(a)*2.55,2.3,Math.sin(a)*2.55,tem)}
+ KULE={g,seg,nac,hub,bls,top,cuk,tem,tg};kuleGoster()}catch(e){console.log('kule',e)}}
+function kuleGoster(){if(!KULE)return;const m=mtKayit();KULE.seg.forEach((s,k)=>{s.visible=k<m.k;s.userData.fl.visible=k<m.k});KULE.nac.visible=!!m.n;KULE.hub.visible=!!(m.n&&(m.h||m.b>0));KULE.bls.forEach((b,k)=>b.visible=k<m.b);if(KULE.cuk){KULE.cuk.visible=!m.a;KULE.tem.visible=!!m.a}}
 const ISTIF=[];
 function montajBasla(tip,bitti,ind){if(!KULE){bitti();return}const m=mtKayit();phase='montaj';showHud(false);showCtl&&showCtl(true);
  const parca=new THREE.Group();scene.add(parca);let hedefY,hedef=new THREE.Vector3();
@@ -150,12 +156,12 @@ function montajBasla(tip,bitti,ind){if(!KULE){bitti();return}const m=mtKayit();p
   else{const src=CARGO[{kasa:'raf',yedek:'raf'}[tip]||tip];if(src){const c=src.clone(true);c.position.set(0,0,0);c.rotation.set(0,0,0);c.traverse(o=>{o.visible=true});parca.add(c)}else rbox(2.4,2.4,6,.1,P('#8a6b3c'),0,1.2,0,parca)}};govde();
  const KP=KULE.g.position;const ax=KP.x-SITE.x,az=KP.z-SITE.z;const al=Math.hypot(ax,az)||1;
  if(ind){const n=ISTIF.length%4;hedef.set(KP.x+(-az/al)*(34+n*7)+(ax/al)*14,KP.y+1.2,KP.z+(ax/al)*(34+n*7)+(az/al)*14)}
- else if(tip==='ankraj')hedef.set(KP.x,KP.y-1.6,KP.z);
+ else if(tip==='ankraj'){const t=KULE.tg.position;hedef.set(t.x,t.y-.4,t.z)}
  else{hedefY=tip==='kule'?25+m.k*22+11:KULE.top+2;if(tip==='hub')hedef.set(KP.x,KP.y+hedefY,KP.z-4.6);else hedef.set(KP.x,KP.y+hedefY,KP.z)}const bas=new THREE.Vector3(KULE.g.position.x+18,KULE.g.position.y+3,KULE.g.position.z+10);parca.position.copy(bas);
  const hook=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1,4),new THREE.MeshBasicMaterial({color:0x111111}));scene.add(hook);
  const ov=document.createElement('div');ov.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translateX(-50%);z-index:40;background:rgba(12,16,14,.86);color:#fff;padding:10px 14px;border-radius:10px;text-align:center;font:600 14px "Barlow Condensed",sans-serif;max-width:88vw';document.body.appendChild(ov);
  MT={tip,ind:!!ind,p:0,parca,bas,hedef,hook,ov,ruz:7,bitti,durT:0,oto:false};const ab=document.createElement('button');ab.className='btn sm';ab.id='mtAtla';ab.textContent=T('mtAtla');ab.style.cssText='position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:41';ab.onclick=()=>{if(MT){MT.oto=true;ab.remove()}};document.body.appendChild(ab);MT.ab=ab;const KCT=window.camTarget;MT.kct=KCT;
- window.camTarget=()=>{const c=MT?MT.parca.position:hedef;return{p:new THREE.Vector3(KULE.g.position.x+70,KULE.g.position.y+60,KULE.g.position.z+70),l:new THREE.Vector3(KULE.g.position.x,c.y*.6+KULE.g.position.y*.4,KULE.g.position.z)}};snapCam&&snapCam()}
+ window.camTarget=()=>{const c=MT?MT.parca.position:hedef;return{p:new THREE.Vector3(KULE.g.position.x+70,KULE.g.position.y+60,KULE.g.position.z+70),l:new THREE.Vector3((KULE.g.position.x+c.x)/2,c.y*.6+KULE.g.position.y*.4,(KULE.g.position.z+c.z)/2)}};snapCam&&snapCam()}
 function mtAdim(dt){const M=MT;M.ruz=clamp(M.ruz+(Math.random()-.5)*dt*6+Math.sin(G.t*.5)*dt*1.4,4,14.5);const ruzgar=M.ruz>12;
  const bas=input.gas>0||M.oto;if(M.oto)M.p=Math.min(1,M.p+dt*.5);else if(bas&&!ruzgar)M.p=Math.min(1,M.p+dt*(M.ind||M.tip==='ankraj'?.24:.15));if(bas&&ruzgar&&!M.oto){M.durT+=dt;if(M.durT>1.2&&mode==='career'){G.dmg=Math.min(100,G.dmg+dt*4)}}else M.durT=0;
  const k=M.p;const P2=new THREE.Vector3().lerpVectors(M.bas,M.hedef,k);P2.y=(M.ind||M.tip==='ankraj')?M.bas.y+(M.hedef.y-M.bas.y)*k+Math.sin(Math.PI*k)*12:M.bas.y+(M.hedef.y-M.bas.y)*Math.min(1,k*1.25);M.parca.position.copy(P2);M.parca.rotation.y=Math.sin(G.t*.8)*(ruzgar?.12:.04);

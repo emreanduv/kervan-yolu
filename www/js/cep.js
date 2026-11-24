@@ -9,7 +9,7 @@ function serPad(c,ilk,son,off,r0){const d=dsmRS(c);for(let i=Math.round(c-ilk/d)
 const _sp=stPlan;stPlan=function(){_sp();try{
  if(PLAN&&PLAN.ri)serPad(PLAN.ri,66,66,7.6,3.4);
  if(PLAN&&PLAN.ki)serPad(PLAN.ki,46,46,6,2.4);
- if(RG().snow){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}serPad(Math.max(60,ci-18),58,58,8.2,4.2)}}catch(e){console.log('cep pad',e)}};
+ if(RG().snow){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}serPad(Math.min(NS-90,Math.max(60,ci-18)),58,58,8.2,4.2)}}catch(e){console.log('cep pad',e)}};
 let TX=null;
 function tex(){if(TX)return TX;const a=ctex(256,256,(q,w,h)=>{q.fillStyle='#45474a';q.fillRect(0,0,w,h);for(let k=0;k<3800;k++){const l=50+Math.random()*60|0;q.fillStyle=`rgba(${l},${l},${l+3},.5)`;q.fillRect(Math.random()*w,Math.random()*h,1+Math.random()*2,1+Math.random()*2)}
   for(let k=0;k<5;k++){q.strokeStyle='rgba(28,28,30,.35)';q.lineWidth=1+Math.random()*2;q.beginPath();let x=Math.random()*w,y=Math.random()*h;q.moveTo(x,y);for(let j=0;j<6;j++){x+=(Math.random()-.5)*50;y+=Math.random()*40;q.lineTo(x,y)}q.stroke()}},true);

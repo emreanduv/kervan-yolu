@@ -119,7 +119,7 @@ body.fotom #speedo,body.fotom #cl,body.fotom #cr,body.fotom #bcam,body.fotom #hS
     <div class="phead"><span>Dil / Language</span><span>&#x1F310;&#xFE0E;</span></div>
     <div class="pbody">
       <button class="btn go blk" data-lang="tr">Türkçe</button>
-      <button class="btn blk" data-lang="en">English</button>
+      <button class="btn blk" data-lang="en" lang="en">English</button>
     </div>
   </div>
   <div class="made sig">Bir Mr. Anduv! yapımıdır.</div>
@@ -788,7 +788,7 @@ function windStep(dt){if(!RG().wind||!G){G&&(G.wind=0);return}const t=G.t;let ba
 function windArea(){if(!G)return 0;const ty=G.job.type;return WIND_AREA[ty]!==undefined?WIND_AREA[ty]:.3}
 function windLat(sp){if(!RG().wind||!G||!G.wind)return 0;return Math.max(0,G.wind-9)**2*.03*windArea()*Math.min(1.6,sp/14)}
 // ---- İç Anadolu (Sivas): zincir takma cebi, ağıl, Kangal köpekleri, kar yağışı
-function buildSnowStuff(){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}CZ={ci:Math.max(60,ci-18)};
+function buildSnowStuff(){const sl=RG().snowLine;let ci=NS-1;for(let i=40;i<NS;i++){if(RY[i]>sl-4){ci=i;break}}CZ={ci:Math.min(NS-90,Math.max(60,ci-18))};
  const sgn=(i,txt,off)=>{const p=sideAt(i,off);const g=new THREE.Group();g.position.set(p.x,getH(p.x,p.z),p.z);g.rotation.y=p.ang+Math.PI;scene.add(g);addBox(.15,3.6,.15,MAT.steel,0,1.8,0,g);const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.8,1.35),new THREE.MeshBasicMaterial({map:signTex(txt),side:THREE.DoubleSide}));pl.position.y=3.7;g.add(pl);obsC(p.x,p.z,.6)};
  sgn(CZ.ci-45,L==='tr'?'Zincir takma alanı 150 m':'Chain-up area 150 m',7.8);sgn(CZ.ci-45,L==='tr'?'Zincir takma alanı 150 m':'Chain-up area 150 m',-7.8);
  // yolun üstünde köprü tabela (gelen tıra bakar)
@@ -1277,13 +1277,13 @@ function bladeHit(dx,dz){if(!bladeOn()||!HOBS.length)return null;CARGO.kanat.upd
 function bladeAct(){if(actFn===rescue||actFn&&(actFn.port||actFn.akt||actFn.mola||actFn.kantar||actFn.yakit||actFn.dozer))return;const v=truck.v,sp=Math.abs(v.speed);
  const near=VZ&&(()=>{const i=roadIdx(v);return i>VZ.v0-70&&i<VZ.wi+6})();
  if(bladeOn()&&(!needLift()||G.lifter)&&(near||G.blT>.5)&&sp<1.4&&Math.abs(G.blT-G.bl)<.01){const up=G.blT<.5;const lb=up?T('bl_up'):T('bl_down');if(actFn&&actFn.blade&&$('act').textContent===lb)return;const fn=()=>{G.blT=up?1:0;setAct(null);blip(up?300:500,up?520:260,.5);toast(T(up?'t_blUp':'t_blDown'),'#ffe08a',1.6);coachHide()};fn.blade=1;setAct(lb,fn)}
- else if(CZ&&!G.chain&&!(G.chT>0)&&sp<1.4&&(cepteMi(v,{x:CZ.x,z:CZ.z},6.5,CZ.ci)||(()=>{const i=roadIdx(v);return i>CZ.ci+16})())){const lb=T('ch_on');if(actFn&&actFn.chain&&$('act').textContent===lb)return;const fn=()=>{G.chT=4;setAct(null);toast(T('t_chFit'),'#ffe08a',3.6);blip(260,330,.6);coachHide()};fn.chain=1;fn.blade=1;setAct(lb,fn)}
+ else if(CZ&&!G.chain&&!(G.chT>0)&&sp<1.4&&(cepteMi(v,{x:CZ.x,z:CZ.z},6.5,CZ.ci)||(()=>{const i=roadIdx(v);return i>CZ.ci+2})())){const lb=T('ch_on');if(actFn&&actFn.chain&&$('act').textContent===lb)return;const fn=()=>{G.chT=4;setAct(null);toast(T('t_chFit'),'#ffe08a',3.6);blip(260,330,.6);coachHide()};fn.chain=1;fn.blade=1;setAct(lb,fn)}
  else if(actFn&&actFn!==rescue)setAct(null)}
 function chainLogic(dt){if(!CZ)return;const v=truck.v,sp=Math.abs(v.speed);
  if(G.chT>0){G.chT-=dt;v.speed=0;if(G.chT<=0){G.chain=1;truck.chains.forEach(c=>c.visible=true);toast(T('t_chOn'),'#8ff0a4',2);blip(400,800,.3)}return}
  const i=roadIdx(v);const back=mode==='career'&&G.job.type==='donus';
  const dC=Math.hypot(v.x-CZ.x,v.z-CZ.z);const showR=!G.chain&&!back;CZ.ring.visible=CZ.beam.visible=showR;
- if(!G.chain&&!back&&i>CZ.ci-80&&dC>6.5&&i<CZ.ci+16&&G.warnT<=0){const m=Math.max(10,Math.round((CZ.ci-i)*ROADLEN/(NS-1)/10)*10);toast(T('t_snow').replace('{m}',m),'#bfe4ff',2.6);G.warnT=3.2;coach('chain')}
+ if(!G.chain&&!back&&i>CZ.ci-80&&dC>6.5&&i<CZ.ci+2&&G.warnT<=0){const m=Math.max(10,Math.round((CZ.ci-i)*ROADLEN/(NS-1)/10)*10);toast(T('t_snow').replace('{m}',m),'#bfe4ff',2.6);G.warnT=3.2;coach('chain')}
  if(!G.chain&&dC<6.5&&sp>1.4&&G.warnT<=0){toast(T('t_ring'),'#bfe4ff',1.8);G.warnT=2}
  if(v.ice&&G.spin>20&&G.warnT<=0){toast(T('t_spin'),'#bfe4ff',2.2);G.warnT=2.5;G.spin=0;coach('chain')}
  if(G.chain&&v.speed>10.5&&G.warnT<=0){toast(T('t_chSlow'),'#ffe08a',1.6);G.warnT=3}}
