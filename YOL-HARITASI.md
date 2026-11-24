@@ -30,6 +30,8 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - Şantiye sahnesi: yatırılmış kule segmentleri, kazık makinesi, beton mikseri, ışık kulesi, kırmızı-beyaz bariyerler, toprak/çakıl zemin (PBR doku)
 - Görsel: mevsime göre sararan ağaçlar (sonbahar), daha canlı gökyüzü ve bulut, yakın plan makine ayrıntısı
 - Markalar isim bozmayla (gerçek ad/logo yok); Gelişim Defteri'ne KV satırı
+- Güzergâh etüdü ve deneme sürüşü (dummy run): yeni bir saha yolunda ilk kanattan önce pilot araçla yol taranır; engeller dört renkle işaretlenir (yeşil geçer; sarı dal budama, levha/direk taşıma, telefon kablosu kaldırma; turuncu yol genişletme, dolgu, kamera ve OG/YG hattı taşıma; kırmızı yeni yol, yıkım, ev arası dar geçit). Her düzeltmenin süresi ve maliyeti; düzeltilmeyen engel seferde hasar ya da durma demek. 80 m'lik uzun kanat sınıfı, düşük yükseklikli uç çerçevesi seçimi
+- Saha yolu gerçekçiliği (gerçek yol fotoğraflarından esin, fotoğraflar oyuna girmez): eriyen kar lekeli kahverengi-yeşil yayla, tekerlek izli çakıl yol ve ortasında çamur şeridi, yol kenarında kar yığını, menfez, "Yol ver", "Kaygan yol", viraj okları, köy yön tabelası, iletim hattı pilonları ve GSM direkleri, söğüt kümeleri, ufukta yayla köyü
 
 ## Sonra
 - ✓ Yeni bölgeler: Karadeniz yaylası, Hatay-İskenderun, Çanakkale, Kapadokya (derleme 32); gemi bağlantısı sonra
