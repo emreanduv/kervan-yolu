@@ -45,10 +45,25 @@ function temizle(root){const keep=new Set([root,world.terrain,world.roadMesh,wor
  for(const o of scene.children){if(!o.isInstancedMesh||keep.has(o))continue;let ch=false;for(let k=0;k<o.count;k++){o.getMatrixAt(k,m4);v3.setFromMatrixPosition(m4);if(icinde(v3.x,v3.z)){o.setMatrixAt(k,z4);ch=true;n++}}if(ch)o.instanceMatrix.needsUpdate=true}
  if(typeof OBS!=='undefined')for(let k=OBS.length-1;k>=0;k--){const b=OBS[k];if(b&&b.c&&b.r<2.5&&icinde(b.x,b.z))OBS.splice(k,1)}
  return n}
+// cepten önce yol kenarında mavi bilgi levhası (KGM tipi): beyaz çerçeve, P işareti ve tesis adı, altında mesafe
+const LV={yakit:['AKARYAKIT','FUEL'],kantar:['KANTAR','WEIGH STATION'],zincir:['ZİNCİR TAKMA','CHAIN-UP AREA']};
+function levha(root,i,tip,m){if(i<2||i>=NS-2)return;const tr=(typeof L==='undefined'||L==='tr');const ad=LV[tip][tr?0:1];
+ const tx=ctex(256,192,(q,w,h)=>{q.fillStyle='#1d4f9c';q.fillRect(0,0,w,h);q.strokeStyle='#fff';q.lineWidth=7;q.strokeRect(8,8,w-16,h-16);
+  q.fillStyle='#fff';q.font='bold 92px "Barlow Condensed",Arial,sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText('P',58,78);
+  q.strokeStyle='#fff';q.lineWidth=5;q.beginPath();q.moveTo(110,128);q.lineTo(150,96);q.lineTo(236,96);q.stroke();
+  let fs=34;do{q.font='bold '+fs+'px "Barlow Condensed",Arial,sans-serif';fs--}while(q.measureText(ad).width>132&&fs>14);q.textAlign='left';q.fillText(ad,110,56);q.font='bold 34px "Barlow Condensed",Arial,sans-serif';q.textAlign='center';q.fillText((Math.round(m/50)*50)+' m',128,158)});
+ const p=sideAt(i,EDGE+2.6);const y=getH(p.x,p.z);const g=new THREE.Group();g.position.set(p.x,y,p.z);g.rotation.y=p.ang+Math.PI;root.add(g);
+ const dir=P('#8f969c');addCyl(.06,.06,3.2,6,dir,-.75,1.6,0,g);addCyl(.06,.06,3.2,6,dir,.75,1.6,0,g);
+ const pl=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.65),new THREE.MeshLambertMaterial({map:tx,side:THREE.DoubleSide}));pl.position.set(0,2.75,.08);g.add(pl);
+ const ar=new THREE.Mesh(new THREE.PlaneGeometry(2.25,1.7),new THREE.MeshLambertMaterial({color:0x6c7378}));ar.position.set(0,2.75,.04);g.add(ar)}
 function kur(){CEPS.length=0;const root=new THREE.Group();scene.add(root);WOBJ.push(root);const dsm=ROADLEN/(NS-1);const n=m=>Math.max(2,Math.round(m/dsm));
- if(PLAN&&PLAN.ri){const ri=PLAN.ri;cep(root,ri-n(30),ri+n(30),n(36),6.2,false)}
- if(PLAN&&PLAN.ki){const ki=PLAN.ki;cep(root,ki-n(16),ki+n(16),n(30),2.2,false)}
- if(typeof CZ!=='undefined'&&CZ&&CZ.ci){const c=CZ.ci;cep(root,c-n(24),c+n(24),n(34),7.2,true)}
+ const LVL=[];
+ if(PLAN&&PLAN.ri){const ri=PLAN.ri;cep(root,ri-n(30),ri+n(30),n(36),6.2,false);LVL.push([ri-n(30)-n(36),'yakit'])}
+ if(PLAN&&PLAN.ki){const ki=PLAN.ki;cep(root,ki-n(16),ki+n(16),n(30),2.2,false);LVL.push([ki-n(16)-n(30),'kantar'])}
+ if(typeof CZ!=='undefined'&&CZ&&CZ.ci){const c=CZ.ci;cep(root,c-n(24),c+n(24),n(34),7.2,true);LVL.push([c-n(24)-n(34),'zincir'])}
+ // levha cebin ağzından 150 m önce; başka bir cebin içine ya da liman kapısının gerisine düşerse öne kaydırılır, sığmazsa konmaz
+ const gi=(PORTOPS&&PORTOPS.gi||30)+8;const icCep=i=>CEPS.some(c=>i>=c.a-c.t-2&&i<=c.b+c.t+2);
+ for(const[ag,tip]of LVL){let i=ag-n(150);while(i<ag-n(40)&&(icCep(i)||i<gi))i++;if(i>=ag-n(40)||icCep(i)||i<gi)continue;levha(root,i,tip,(ag-i)*dsm)}
  window._cepTemiz=temizle(root)}
 const _br=buildRegion;buildRegion=function(r){_br(r);try{kur()}catch(e){console.log('cep kur',e)}};
 })();
