@@ -25,6 +25,12 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - ✓ Saha yolu: stabilize yol, yağmurdan sonra çamur, greyder/dozer çekmesi
 - ✓ Güzergâh keşfi: sefer öncesi drone ile köprü, viraj, hat işaretleme
 
+## 1.1 "Şantiye" (çıkıştan sonra; esin: Construction Simulator rüzgâr santrali görevleri)
+- Teslimden sonra montaj: kule segmentini ana vinçle temele oturt, nasel ve kanatları sırayla tak (oyuncu vinci yönetir)
+- Şantiye sahnesi: yatırılmış kule segmentleri, kazık makinesi, beton mikseri, ışık kulesi, kırmızı-beyaz bariyerler, toprak/çakıl zemin (PBR doku)
+- Görsel: mevsime göre sararan ağaçlar (sonbahar), daha canlı gökyüzü ve bulut, yakın plan makine ayrıntısı
+- Markalar isim bozmayla (gerçek ad/logo yok); Gelişim Defteri'ne KV satırı
+
 ## Sonra
 - ✓ Yeni bölgeler: Karadeniz yaylası, Hatay-İskenderun, Çanakkale, Kapadokya (derleme 32); gemi bağlantısı sonra
 - ✓ Köy hayatı (el sallayan köylüler, çay masası), yağmur; mevsimler sonra
