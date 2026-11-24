@@ -106,7 +106,7 @@ function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&
  HZ={skor:bs,ri,g,kol,isik,train:tr,ang,nx,nz,st:'acik',s:-999,tetik:false,kol0:Math.PI/2*.95,kolA:Math.PI/2*.95}}
 function hzAdim(dt,run){const H=HZ;const v=truck.v;const tf=(typeof roadF==='function')?roadF(v):roadIdx(v);const ds=ROADLEN/(NS-1);const ileri=(H.ri-tf)*ds;// tıra göre ileride +
  if(run&&phase==='drive'&&!H.tetik&&ileri>0&&ileri<140&&Math.abs(v.speed)>1){H.tetik=true;if(mode==='career'||Math.random()<.6){H.st='kapaniyor';H.t=0;H.s=-260;toast(T('t_hzKapi'),'#ffb36b',3);if(HEAVY.includes(G.job.type)&&mode==='career')telsiz(T('hzTz'))}}
- if(H.st!=='acik'){H.t+=dt;const f=Math.floor(H.t*2.4)%2;H.isik.forEach((l,k)=>l.material.color.setHex((k%2)===f?0xff2a1a:0x3a0c0c));if(H.t%0.84<dt)blip(1100,1100,.05)}
+ if(H.st!=='acik'){H.t+=dt;if(run&&G&&G.deadline&&Math.abs(v.speed)<1&&ileri>0&&ileri<90)G.deadline+=dt;const f=Math.floor(H.t*2.4)%2;H.isik.forEach((l,k)=>l.material.color.setHex((k%2)===f?0xff2a1a:0x3a0c0c));if(H.t%0.84<dt)blip(1100,1100,.05)}
  const hedef=(H.st==='kapaniyor'||H.st==='kapali')?0:H.kol0;H.kolA+=clamp(hedef-H.kolA,-dt*.6,dt*.6);H.kol.forEach(a=>a.rotation.z=H.kolA);
  if(H.st==='kapaniyor'&&H.t>3.5){H.st='kapali'}
  if(H.st==='kapali'){H.train.visible=true;H.s+=dt*24;const p=sideAt(H.ri,H.s),q=sideAt(H.ri,H.s+1);H.train.position.set(p.x,Math.max(RY[H.ri]+.45,getH(p.x,p.z)+.35),p.z);H.train.rotation.y=Math.atan2(q.x-p.x,q.z-p.z);
@@ -124,7 +124,7 @@ function manAdim(dt){if(!MR||!G||mode!=='career'||!HEAVY.includes(G.job.type)||G
  if(ti>MR.i+2&&v.speed>0){v.speed=0;if(G.warnT<=0){toast(T('t_manDur'),'#ffb36b',3);G.warnT=3}}
  if(Math.abs(ti-MR.i)<=3&&sp<.6){if(!(actFn&&actFn.man)){const fn=()=>{setAct(null);manBasla()};fn.man=1;fn.blade=1;setAct(T('a_man'),fn)}}
  else if(actFn&&actFn.man)setAct(null)}
-function manBasla(){const v=truck.v;G.manT=0;G.manX={i0:roadIdx(v)};showCtl&&showCtl(false);telsiz(T('manTz1'));const ds=ROADLEN/(NS-1);
+function manBasla(){const v=truck.v;G.manT=0;if(G.deadline)G.deadline+=10;G.manX={i0:roadIdx(v)};showCtl&&showCtl(false);telsiz(T('manTz1'));const ds=ROADLEN/(NS-1);
  const bip=setInterval(()=>{if(G.manT<0||G.manT>9)return clearInterval(bip);blip(1250,1250,.08)},700);
  const t0=performance.now();const tick=()=>{if(!G||G.manT<0)return;const k=(performance.now()-t0)/1000;G.manT=k;const geri=k<4.5?k/4.5:k<6?1:1-(k-6)/3;const fi=G.manX.i0-geri*(26/ds);
   const i0=Math.floor(fi),f=fi-i0;const a=sideAt(i0,LANE),b=sideAt(i0+1,LANE);v.x=lerp(a.x,b.x,f);v.z=lerp(a.z,b.z,f);v.speed=0;
