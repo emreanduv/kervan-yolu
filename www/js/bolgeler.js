@@ -58,8 +58,8 @@ function malakli(root){const i0=Math.floor(NS*.45),side=1;const ap=sideAt(i0,sid
 const _br2=buildRegion;buildRegion=function(r){MK=null;_br2(r);try{if(r==='kapadokya'){const root=new THREE.Group();scene.add(root);if(typeof WOBJ!=='undefined')WOBJ.push(root);malakli(root)}}catch(e){console.log(e)}};
 addEventListener('load',()=>{if(!window.EXT)return;const _st=EXT.step;EXT.step=function(dt,run){const r=_st?_st(dt,run):false;try{if(MK&&truck&&G&&run){const v=truck.v,ti=roadIdx(v);
  if(!MK.run&&!MK.done&&Math.abs(ti-MK.i0)<10&&Math.abs(v.speed)>1.5){MK.run=true;MK.ci=MK.i0;blip(260,200,.12);setTimeout(()=>blip(240,190,.12),180);if(G.warnT<=0){toast(L==='tr'?'Malaklı çoban köpeği bir süre tırın yanında koşuyor':'A Malaklı shepherd dog runs alongside for a while','#ffe08a',2.4);G.warnT=2.5}}
- if(MK.run){const sp=Math.min(Math.abs(v.speed),9);const tgt=ti+(ti>=MK.ci?1:-1)*0;const di=dt*sp/(ROADLEN/(NS-1));MK.ci+=clamp(tgt+1-MK.ci,-di,di);const dir=ti>=MK.i0?1:-1;
-  const i=Math.round(MK.ci),p=sideAt(clamp(i,1,NS-2),MK.side*7.5),q=sideAt(clamp(i+dir,1,NS-2),MK.side*7.5);MK.dg.position.set(p.x,getH(p.x,p.z),p.z);MK.dg.rotation.y=Math.atan2(q.x-p.x,q.z-p.z)-Math.PI/2;
+ if(MK.run){const sp=Math.min(Math.abs(v.speed),9);const tgt=(typeof roadF==='function'?roadF(v):ti);const di=dt*sp/(ROADLEN/(NS-1));MK.ci+=clamp(tgt+1-MK.ci,-di,di);const dir=ti>=MK.i0?1:-1;
+  const ci=clamp(MK.ci,1,NS-3),i=Math.floor(ci),f=ci-i,a=sideAt(i,MK.side*7.5),b=sideAt(i+1,MK.side*7.5),px=lerp(a.x,b.x,f),pz=lerp(a.z,b.z,f);MK.dg.position.set(px,getH(px,pz),pz);let hh=Math.atan2((b.x-a.x)*dir,(b.z-a.z)*dir)-Math.PI/2;let dh=hh-(MK.hh===undefined?hh:MK.hh);dh=Math.atan2(Math.sin(dh),Math.cos(dh));MK.hh=(MK.hh===undefined?hh:MK.hh)+dh*Math.min(1,dt*6);MK.dg.rotation.y=MK.hh;
   MK.ph+=dt*(4+sp*1.2);MK.legs.forEach((l,k)=>l.rotation.z=Math.sin(MK.ph+(k<2?0:Math.PI)+(k%2?.6:0))*.55);MK.dg.position.y+=Math.abs(Math.sin(MK.ph))*.12;
   if(Math.abs(MK.ci-MK.i0)>45||Math.abs(ti-MK.ci)>12){MK.run=false;MK.done=true;MK.legs.forEach(l=>l.rotation.z=0)}}}}catch(e){}return r}});
 })();

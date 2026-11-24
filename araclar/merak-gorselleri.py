@@ -4,7 +4,7 @@ import asyncio, os
 from playwright.async_api import async_playwright
 KOK=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLACE=open(os.path.join(KOK,'araclar','merak-place.js')).read()
-TARIH='05.12'
+TARIH='28.11'
 # (ad, bölge, yük, konum oranı, saat, kamera dönüşü, ek kurulum, büyük yazı, küçük yazı)
 SAH=[
  ('1-yukleniyor','marmara','kanat',0.03,'gece',(66,-13,.38),"",'Bir şey yükleniyor.','Bandırma Limanı · gece'),

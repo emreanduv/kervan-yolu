@@ -2,7 +2,7 @@
 
 Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en başına girer. Geri kalanı bu sırayla, ETS2'den ilhamla.
 
-## 1.0 (çıkış 5 Aralık 2026, 09:00)
+## 1.0 (çıkış 28 Kasım 2026, 09:00)
 - ✓ Gerçekçi kanat tırı: 72 m kanat, teleskopik dorse, uç çerçevesi, kendi dönen boji, ön ve arka eskort
 - ✓ Liman: gemiden tahliye, gümrük muayenesi, sefer evrakı (KGM izin, kullanım bedeli, yol düzenlemesi protokolü), çıkış kapısı
 - ✓ Ege aktarma sahası: mobil vinçle blade lifter'a aktarma; masraf ve ek gelir raporda
