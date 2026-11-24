@@ -31,8 +31,13 @@ Emre sektöre özgü ayrıntıları dönem dönem yazar; onlar sıranın en baş
 - Görsel: mevsime göre sararan ağaçlar (sonbahar), daha canlı gökyüzü ve bulut, yakın plan makine ayrıntısı
 - Markalar isim bozmayla (gerçek ad/logo yok); Gelişim Defteri'ne KV satırı
 - Güzergâh etüdü ve deneme sürüşü (dummy run): yeni bir saha yolunda ilk kanattan önce pilot araçla yol taranır; engeller dört renkle işaretlenir (yeşil geçer; sarı dal budama, levha/direk taşıma, telefon kablosu kaldırma; turuncu yol genişletme, dolgu, kamera ve OG/YG hattı taşıma; kırmızı yeni yol, yıkım, ev arası dar geçit). Her düzeltmenin süresi ve maliyeti; düzeltilmeyen engel seferde hasar ya da durma demek. 80 m'lik uzun kanat sınıfı, düşük yükseklikli uç çerçevesi seçimi
-- Saha yolu gerçekçiliği (gerçek yol fotoğraflarından esin, fotoğraflar oyuna girmez): eriyen kar lekeli kahverengi-yeşil yayla, tekerlek izli çakıl yol ve ortasında çamur şeridi, yol kenarında kar yığını, menfez, "Yol ver", "Kaygan yol", viraj okları, köy yön tabelası, iletim hattı pilonları ve GSM direkleri, söğüt kümeleri, ufukta yayla köyü
+- ✓ Saha yolu gerçekçiliği (gerçek yol fotoğraflarından esin, fotoğraflar oyuna girmez): eriyen kar lekeli kahverengi-yeşil yayla, tekerlek izli çakıl yol ve ortasında çamur şeridi, yol kenarında kar yığını, menfez, "Yol ver", "Kaygan yol", viraj okları, köy yön tabelası, iletim hattı pilonları ve GSM direkleri, söğüt kümeleri, ufukta yayla köyü
 
+- ✓ Etüt gerçek rapor düzeninde (derleme 36–37): 11 engel türü, renk kodu, yatırımcı öder / nakliyeci payı, kantarda aks yükleri
+- Deneme sürüşü seferi: boş ve tam boy uzatılmış dorseyle güzergâhı sür, engelleri sen işaretle (dronun yanında ikinci yol)
+- Manevra alanı: sahaya son yüzlerce metre (200 m – 1 km) geri geri sürüş
+- Hemzemin geçit, dolgu alanı sıkıştırma ve kot farkı, toprak birikintisi
+- 80 m kanat sınıfı (28,5 t, 4,5 m genişlik), yükseklik kısıtında alçak uç çerçevesi seçimi
 ## Sonra
 - ✓ Yeni bölgeler: Karadeniz yaylası, Hatay-İskenderun, Çanakkale, Kapadokya (derleme 32); gemi bağlantısı sonra
 - ✓ Köy hayatı (el sallayan köylüler, çay masası), yağmur; mevsimler sonra
