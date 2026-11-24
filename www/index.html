@@ -404,7 +404,7 @@ function buildWorld(){
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const x=TX0+i*SEG,z=TZ0+j*SEG,id=j*(NX+1)+i;
   let best=1e9,bk=0;for(let k=0;k<NS;k+=6){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
   for(let k=Math.max(0,bk-6);k<=Math.min(NS-1,bk+6);k++){const dx=SX[k]-x,dz=SZ[k]-z,d=dx*dx+dz*dz;if(d<best){best=d;bk=k}}
-  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(6,32,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));for(const pd of PADS){const dd=Math.hypot(x-pd.x,z-pd.z);if(dd<pd.r1)h=lerp(h,pd.y,(1-sstep(pd.r0,pd.r1,dd))*sstep(5.5,12,rd))}
+  const rd=Math.sqrt(best);RDG[id]=rd;let h=natural(x,z);h=lerp(h,RY[bk],1-sstep(17,44,rd));h=lerp(h,YARD_Y,yardMask(x,z));h=lerp(h,SITE_Y,siteMask(x,z));for(const pd of PADS){const dd=Math.hypot(x-pd.x,z-pd.z);if(dd<pd.r1)h=lerp(h,pd.y,(1-sstep(pd.r0,pd.r1,dd))*sstep(5.5,12,rd))}
   HG[id]=h;pos[id*3]=x;pos[id*3+1]=h;pos[id*3+2]=z}
  const cSun=new THREE.Color('#d9b52a'),cWheat=new THREE.Color('#cfb26a'),cPlow=new THREE.Color('#6f5639'),cSnow=new THREE.Color('#dfe6ed'),cSlush=new THREE.Color('#b9bcbf'),RC=RG().cols,cG1=new THREE.Color(RC.g1),cG2=new THREE.Color(RC.g2),cDry=new THREE.Color(RC.dry),cRock=new THREE.Color(RC.rock),cSand=new THREE.Color('#d6c597'),cDirt=new THREE.Color('#97805c'),cCon=new THREE.Color('#8f8d86'),cGrav=new THREE.Color('#a39883'),cUW=new THREE.Color('#5d6b5a'),tc=new THREE.Color();
  for(let j=0;j<=NZ;j++)for(let i=0;i<=NX;i++){const id=j*(NX+1)+i,x=TX0+i*SEG,z=TZ0+j*SEG,h=HG[id];
@@ -427,7 +427,7 @@ function buildWorld(){
  for(let i=0;i<18;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:TEX.cloud,transparent:true,opacity:.75,fog:false,depthWrite:false}));const a=rnd()*Math.PI*2,r=700+rnd()*1400;s.position.set(200+Math.cos(a)*r,260+rnd()*180,-600+Math.sin(a)*r);s.scale.set(420+rnd()*300,140+rnd()*80,1);scene.add(s);world.clouds.push(s)}
  const rp=[],ru=[],ri=[];let acc=0;const HW=4.6;
  for(let i=0;i<NS;i++){const a=RS[Math.max(0,i-1)],b=RS[Math.min(NS-1,i+1)];let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz);tx/=l;tz/=l;const nx=-tz,nz=tx;if(i>0)acc+=RS[i].distanceTo(RS[i-1]);
-  const lx=RS[i].x+nx*HW,lz=RS[i].z+nz*HW,rx=RS[i].x-nx*HW,rz=RS[i].z-nz*HW;rp.push(lx,getH(lx,lz)+.2,lz,rx,getH(rx,rz)+.2,rz);ru.push(0,acc/14,1,acc/14);
+  const lx=RS[i].x+nx*HW,lz=RS[i].z+nz*HW,rx=RS[i].x-nx*HW,rz=RS[i].z-nz*HW;rp.push(lx,RY[i]+.2,lz,rx,RY[i]+.2,rz);ru.push(0,acc/14,1,acc/14);
   if(i<NS-1){const k=i*2;ri.push(k,k+2,k+1,k+1,k+2,k+3)}}
  const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));rg.setAttribute('uv',new THREE.Float32BufferAttribute(ru,2));rg.setIndex(ri);rg.computeVertexNormals();
  const road=new THREE.Mesh(rg,new THREE.MeshLambertMaterial({map:TEX.road,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4}));road.receiveShadow=true;scene.add(road);world.roadMesh=road;
@@ -595,7 +595,10 @@ function buildMola(){const ri=PLAN.ri||Math.round(NS*.5);const pd=PADS[0];const 
  PORTOPS.mola={ri,g,ring:stopRing(0xff9a1f,L==='tr'?'⛽︎ YAKIT':'⛽︎ FUEL')};ringAt(PORTOPS.mola.ring,ri,CEP.yakit)}
 // ===== YAKIT VE KANTAR (1.1) =====
 // Motorin 20 Kasım 2026 İstanbul pompa fiyatına yakın; ağır nakliye çekici ~60 L/100 km; gerçek güzergâh uzunlukları
-const CEP={yakit:13,kantar:10.5,zincir:8.4};const DIZEL_TL=89,TANK_L=800,REAL_KM={marmara:105,ege:55,sivas:340,trakya:65};
+const CEP={yakit:13,kantar:10.5,zincir:8.4};// uzun yükte (kanat, kule) tır cebe tam sığmaz: cebin ağzında, yolun sağına çekilip halkanın hizasında durmak yeter
+function uzunYuk(){return G&&G.job&&['kanat','kule'].includes(G.job.type)}
+function cepteMi(v,R,r,ri){if(!R)return false;if(Math.hypot(v.x-R.x,v.z-R.z)<r)return true;if(!uzunYuk())return false;const i=roadIdx(v);if(ri==null)ri=roadIdx(R);const d=RS[i].distanceTo(RS[Math.max(0,Math.min(NS-1,ri))]);if(d>18)return false;const a=sideAt(i,0),b=sideAt(i,1);return (v.x-a.x)*(b.x-a.x)+(v.z-a.z)*(b.z-a.z)>LANE+1.2}
+const DIZEL_TL=89,TANK_L=800,REAL_KM={marmara:105,ege:55,sivas:340,trakya:65};
 const TON={nasel:90,hub:38,aktarma:56,ankraj:24,konteyner:24,kasa:12,kule:64,kanat:28.5,yedek:6,donus:0};
 function lPerKm(){const t=G&&G.job?G.job.type:'donus';return t==='donus'?.32:HEAVY.includes(t)?.6:.42}
 function routeKm(){return REAL_KM[REG]||80}
@@ -624,12 +627,12 @@ function yakitLogic(dt){if(!G||!G.job||phase!=='drive'||(G.pst!=='yolda'&&G.pst!
  // akaryakıt pompası (dinlenme tesisi)
  if(M&&Math.abs(i-M.ri)>30)G.fuelDone=0;const canF=G.fuel<TANK_L-20&&!G.fuelDone;if(M&&M.ring)M.ring.visible=canF&&Math.abs(i-M.ri)<160;
  if(M&&canF&&!G.fuelHint&&M.ri-i>20&&M.ri-i<110){G.fuelHint=1;toast(T('t_yakitHint').replace('{m}',Math.round((M.ri-i)*ROADLEN/(NS-1)/10)*10),'#ffd08a',3.6)}
- const nearM=M&&M.ring&&Math.hypot(v.x-M.ring.position.x,v.z-M.ring.position.z)<7;if(nearM&&sp<.6&&canF&&!G.fuelT){if(!(actFn&&actFn.yakit)){const fn=()=>{const add=Math.max(10,Math.round(Math.min(TANK_L,Math.max(need*1.3+60,G.fuel+120))-G.fuel));G.fuel+=add;G.fuelLast=add;G.fuelTL+=add*DIZEL_TL;G.fuelT=0;G.fuelDone=1;setAct(null);$('fade').classList.add('on');toast(T('t_yakitAl'),'#bfe4ff',2.2);blip(260,330,.4)};fn.yakit=1;fn.blade=1;setAct(T('a_yakit'),fn)}return false}
+ const nearM=M&&M.ring&&cepteMi(v,M.ring.position,7,M.ri);if(nearM&&sp<.6&&canF&&!G.fuelT){if(!(actFn&&actFn.yakit)){const fn=()=>{const add=Math.max(10,Math.round(Math.min(TANK_L,Math.max(need*1.3+60,G.fuel+120))-G.fuel));G.fuel+=add;G.fuelLast=add;G.fuelTL+=add*DIZEL_TL;G.fuelT=0;G.fuelDone=1;setAct(null);$('fade').classList.add('on');toast(T('t_yakitAl'),'#bfe4ff',2.2);blip(260,330,.4)};fn.yakit=1;fn.blade=1;setAct(T('a_yakit'),fn)}return false}
  else if(actFn&&actFn.yakit)setAct(null);
  // kantar
  const K=PORTOPS.kantar;if(K&&K.ring)K.ring.visible=HEAVY.includes(G.job.type)&&!G.kantarOk&&Math.abs(i-K.ki)<160;if(K&&HEAVY.includes(G.job.type)){const d=i-K.ki;
   if(!G.kantarH&&d>-70&&d<-12){G.kantarH=1;toast(T('t_kantarHint').replace('{m}',Math.round(-d*ROADLEN/(NS-1)/10)*10),'#bfe4ff',3.4)}
-  if(!G.kantarOk&&Math.hypot(v.x-K.ring.position.x,v.z-K.ring.position.z)<6&&sp<.6){if(!(actFn&&actFn.kantar)){const fn=()=>{G.kantarOk=true;setAct(null);const AX={kanat:[3,4,37.5],kule:[3,6,44],nasel:[4,10,62],hub:[3,4,30],aktarma:[3,5,36]}[G.job.type]||[3,3,14];const cek=10.3,tare=cek+AX[2],cg=TON[G.job.type]||0,tot=tare+cg;const on=8,hat=(tot-on)/(AX[0]-1+AX[1]);const f1=x=>x.toLocaleString(L==='tr'?'tr-TR':'en-US',{maximumFractionDigits:1,minimumFractionDigits:1});toast(T('t_kantar').replace('{t}',f1(tot)).replace('{y}',f1(cg)).replace('{d}',f1(tare))+' '+T('t_aks').replace('{o}',f1(on)).replace('{a}',f1(hat)).replace('{n}',AX[1]).replace('{l}',f1(hat/4))+(hat>11.5?' '+T('t_aksIzin'):''),'#8ff0a4',6);blip(700,900,.25);G.bonus=(G.bonus||0)+5};fn.kantar=1;fn.blade=1;setAct(T('a_kantar'),fn)}}
+  if(!G.kantarOk&&cepteMi(v,K.ring.position,6,PLAN&&PLAN.ki)&&sp<.6){if(!(actFn&&actFn.kantar)){const fn=()=>{G.kantarOk=true;setAct(null);const AX={kanat:[3,4,37.5],kule:[3,6,44],nasel:[4,10,62],hub:[3,4,30],aktarma:[3,5,36]}[G.job.type]||[3,3,14];const cek=10.3,tare=cek+AX[2],cg=TON[G.job.type]||0,tot=tare+cg;const on=8,hat=(tot-on)/(AX[0]-1+AX[1]);const f1=x=>x.toLocaleString(L==='tr'?'tr-TR':'en-US',{maximumFractionDigits:1,minimumFractionDigits:1});toast(T('t_kantar').replace('{t}',f1(tot)).replace('{y}',f1(cg)).replace('{d}',f1(tare))+' '+T('t_aks').replace('{o}',f1(on)).replace('{a}',f1(hat)).replace('{n}',AX[1]).replace('{l}',f1(hat/4))+(hat>11.5?' '+T('t_aksIzin'):''),'#8ff0a4',6);blip(700,900,.25);G.bonus=(G.bonus||0)+5};fn.kantar=1;fn.blade=1;setAct(T('a_kantar'),fn)}}
   else if(actFn&&actFn.kantar)setAct(null);
   if(!G.kantarOk&&!G.kantarF&&d>8){G.kantarF=1;if(mode==='career'){G.fines=(G.fines||0)+5000;G.tickets=(G.tickets||0)+1;toast(T('t_kantarCeza'),'#ff8a5c',3.4)}else toast(T('t_kantarKacti'),'#ffe08a',2.6)}}
  return false}
@@ -663,7 +666,7 @@ function bultenLogic(dt){if(!G||phase!=='drive'||state!=='play')return;if(!windo
 function takoLogic(dt){if(mode!=='career'||!G.strapped||G.pst!=='yolda'&&G.pst!=='serbest')return false;const v=truck.v,sp=Math.abs(v.speed),i=roadIdx(v);
  if(G.molaT!=null){G.molaT+=dt;v.speed=0;if(G.molaT>3){G.molaT=null;G.drv=0;G.molaOk=true;G.deadline+=10;toast(T('t_molaOk'),'#8ff0a4',2.6);blip(523,784,.3);$('fade').classList.remove('on')}return true}
  if(sp>1)G.drv=(G.drv||0)+dt*TAKO_RATE;
- const M=PORTOPS.mola;const nearM=M&&M.ring&&Math.hypot(v.x-M.ring.position.x,v.z-M.ring.position.z)<7;
+ const M=PORTOPS.mola;const nearM=M&&M.ring&&cepteMi(v,M.ring.position,7,M.ri);
  if(nearM&&sp<.6&&(G.drv||0)>30){if(!(actFn&&(actFn.mola||actFn.yakit))){const fn=()=>{G.molaT=0;setAct(null);$('fade').classList.add('on');toast(T('t_mola'),'#bfe4ff',2.6);blip(300,420,.5)};fn.mola=1;fn.blade=1;setAct(T('a_mola'),fn)}}
  else if(actFn&&actFn.mola)setAct(null);
  const d=G.drv||0;
@@ -1223,6 +1226,16 @@ function updCamera(dt){
 // ---- işlemler
 let actFn=null;function setAct(label,fn){const b=$('act');if(label){if(b.textContent!==label)b.textContent=label;b.classList.add('on');actFn=fn}else{b.classList.remove('on');actFn=null}}
 $('act').addEventListener('click',()=>{actFn&&actFn()});
+// forklift tırın ve dorsenin içinden geçmez: gövdesi (yarıçap ~1 m) iki aracın yerel kutusunun dışına itilir
+const _fkB=new WeakMap(),_fkI=new THREE.Matrix4(),_fkM=new THREE.Matrix4(),_fkP=new THREE.Vector3();
+function yerelKutu(g){let c=_fkB.get(g);if(c)return c;g.updateMatrixWorld(true);_fkI.copy(g.matrixWorld).invert();const box=new THREE.Box3();
+ g.traverse(o=>{if(!o.isMesh||!o.geometry||!o.visible)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}o.geometry.computeBoundingBox&&o.geometry.boundingBox||o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.3)return;box.union(b)});
+ box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7);_fkB.set(g,box);return box}
+function forkCarp(){const f=fork.v,R=.95;for(const g of[truck.g,trailer.g]){if(!g||!g.visible)continue;const b=yerelKutu(g);g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
+  _fkP.set(f.x,g.position.y+1,f.z).applyMatrix4(_fkI);if(_fkP.x<b.min.x-R||_fkP.x>b.max.x+R||_fkP.z<b.min.z-R||_fkP.z>b.max.z+R)continue;
+  const dx1=_fkP.x-(b.min.x-R),dx2=(b.max.x+R)-_fkP.x,dz1=_fkP.z-(b.min.z-R),dz2=(b.max.z+R)-_fkP.z,m=Math.min(dx1,dx2,dz1,dz2);
+  if(m===dx1)_fkP.x=b.min.x-R;else if(m===dx2)_fkP.x=b.max.x+R;else if(m===dz1)_fkP.z=b.min.z-R;else _fkP.z=b.max.z+R;
+  _fkP.applyMatrix4(g.matrixWorld);f.x=_fkP.x;f.z=_fkP.z;if(Math.abs(f.speed)>1.5){blip(140,90,.08);titre&&titre(1)}f.speed*=-.15;fork.g.position.x=f.x;fork.g.position.z=f.z}}
 function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);
  if(G.carry<0&&G.loaded<3){let tgt=-1,bd=1e9;crates.forEach((c,i)=>{if(c.parent!==scene||!c.visible)return;const d=Math.hypot(c.position.x-tip.x,c.position.z-tip.z);if(d<bd){bd=d;tgt=i}});
   if(tgt>=0){arrow.position.set(crates[tgt].position.x,YARD_Y+3.4+Math.sin(G.t*4)*.25,crates[tgt].position.z);arrow.visible=true}
@@ -1264,7 +1277,7 @@ function bladeHit(dx,dz){if(!bladeOn()||!HOBS.length)return null;CARGO.kanat.upd
 function bladeAct(){if(actFn===rescue||actFn&&(actFn.port||actFn.akt||actFn.mola||actFn.kantar||actFn.yakit||actFn.dozer))return;const v=truck.v,sp=Math.abs(v.speed);
  const near=VZ&&(()=>{const i=roadIdx(v);return i>VZ.v0-70&&i<VZ.wi+6})();
  if(bladeOn()&&(!needLift()||G.lifter)&&(near||G.blT>.5)&&sp<1.4&&Math.abs(G.blT-G.bl)<.01){const up=G.blT<.5;const lb=up?T('bl_up'):T('bl_down');if(actFn&&actFn.blade&&$('act').textContent===lb)return;const fn=()=>{G.blT=up?1:0;setAct(null);blip(up?300:500,up?520:260,.5);toast(T(up?'t_blUp':'t_blDown'),'#ffe08a',1.6);coachHide()};fn.blade=1;setAct(lb,fn)}
- else if(CZ&&!G.chain&&!(G.chT>0)&&sp<1.4&&(Math.hypot(v.x-CZ.x,v.z-CZ.z)<6.5||(()=>{const i=roadIdx(v);return i>CZ.ci+16})())){const lb=T('ch_on');if(actFn&&actFn.chain&&$('act').textContent===lb)return;const fn=()=>{G.chT=4;setAct(null);toast(T('t_chFit'),'#ffe08a',3.6);blip(260,330,.6);coachHide()};fn.chain=1;fn.blade=1;setAct(lb,fn)}
+ else if(CZ&&!G.chain&&!(G.chT>0)&&sp<1.4&&(cepteMi(v,{x:CZ.x,z:CZ.z},6.5,CZ.ci)||(()=>{const i=roadIdx(v);return i>CZ.ci+16})())){const lb=T('ch_on');if(actFn&&actFn.chain&&$('act').textContent===lb)return;const fn=()=>{G.chT=4;setAct(null);toast(T('t_chFit'),'#ffe08a',3.6);blip(260,330,.6);coachHide()};fn.chain=1;fn.blade=1;setAct(lb,fn)}
  else if(actFn&&actFn!==rescue)setAct(null)}
 function chainLogic(dt){if(!CZ)return;const v=truck.v,sp=Math.abs(v.speed);
  if(G.chT>0){G.chT-=dt;v.speed=0;if(G.chT<=0){G.chain=1;truck.chains.forEach(c=>c.visible=true);toast(T('t_chOn'),'#8ff0a4',2);blip(400,800,.3)}return}
@@ -1477,7 +1490,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last
  if(!built){renderer.setClearColor(0x0b1410);renderer.clear();return}
  const run=state==='play';
  if(G&&run){G.t+=dt;if(G.warnT>0)G.warnT-=dt;
-  if(phase==='fork'){vehStep(fork.v,dt,input,G.carry>=0?.85:1);forkLogic()}
+  if(phase==='fork'){vehStep(fork.v,dt,input,G.carry>=0?.85:1);forkCarp();forkLogic()}
   else if(phase==='tahliye'){tahliyeStep(dt);if(PORTOPS.arm)PORTOPS.arm.rotation.z=0}
   else if(phase==='drive'){windStep(dt);trafficStep(dt);const lockGas=mode==='career'&&!G.strapped;const inp=lockGas?{left:input.left,right:input.right,gas:0,brake:input.brake}:input;vehStep(truck.v,dt,inp,mode==='career'?JT[G.job.type].acc:1);driveLogic(dt)}
   if(phase==='drive'&&input.gas&&Math.random()<.5){truck.g.updateMatrixWorld();for(const s of[1,-1]){_v.set(s*1.12,4.65,-2.86).applyMatrix4(truck.g.matrixWorld);emit(_v.x,_v.y,_v.z,(Math.random()-.5)*.6,2.2,(Math.random()-.5)*.6,.5,1.4,CUR_TOD==='gece'?'#2a2c30':'#55524e',.35)}}
