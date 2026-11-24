@@ -411,9 +411,9 @@ function buildWorld(){
   const hx=HG[j*(NX+1)+Math.min(NX,i+1)]-HG[j*(NX+1)+Math.max(0,i-1)],hz=HG[Math.min(NZ,j+1)*(NX+1)+i]-HG[Math.max(0,j-1)*(NX+1)+i];const sl=Math.hypot(hx,hz)/(2*SEG);const sl2=()=>sl;
   tc.copy(cG1).lerp(cG2,fbm(x*.02,z*.02,3)*.5+.5).lerp(cDry,clamp(fbm(x*.006+40,z*.006,3)*1.2+.15,0,.75));tc.lerp(cRock,sstep(.45,.85,sl));
   if(h<2.8)tc.lerp(cSand,sstep(2.8,0.6,h));if(h<-1.5)tc.copy(cUW);
-  if(RG().snow){const sl=RG().snowLine;const sn=sstep(sl-10,sl+6,h)*(1-sstep(.55,1.05,sl2(sl))*.75)*(.9+fbm(x*.03,z*.03,2)*.18);tc.lerp(cSnow,clamp(sn,0,1));tc.multiplyScalar(.9+fbm(x*.012+5,z*.012,3)*.16)}
+  if(RG().snow){const sl=RG().snowLine;const sn=sstep(sl-10,sl+6,h)*(1-sstep(.55,1.05,sl2(sl))*.75)*(.9+fbm(x*.03,z*.03,2)*.18);const pt=sstep(.37,.41,fbm(x*.03+11,z*.03-7,3));tc.lerp(cDirt,(1-pt)*sstep(sl-14,sl,h)*.85);tc.multiplyScalar(1-(1-pt)*sstep(sl-14,sl,h)*.28);tc.lerp(cSnow,clamp(sn*pt,0,1));tc.multiplyScalar(.9+fbm(x*.012+5,z*.012,3)*.16)}
   if(RG().fields&&h>3.5&&RDG[id]>9&&yardMask(x,z)<.1&&siteMask(x,z)<.1){const fc=fieldAt(x,z);if(fc){const k=sstep(9,16,RDG[id])*(1-sstep(.18,.32,sl));tc.lerp(fc==='ay'?cSun:fc==='bu'?cWheat:cPlow,k*.92)}}
-  tc.lerp(cDirt,(1-sstep(7,13,RDG[id]))*.8);if(RG().snow&&h>RG().snowLine-4){tc.lerp(cSnow,(sstep(7,12,RDG[id]))*.9);tc.lerp(cSlush,(1-sstep(5,9,RDG[id]))*.55)}tc.lerp(cCon,sstep(.4,.7,yardMask(x,z)));tc.lerp(RG().snow?cSlush:cGrav,sstep(.3,.8,siteMask(x,z)));
+  tc.lerp(cDirt,(1-sstep(7,13,RDG[id]))*.8);if(RG().snow&&h>RG().snowLine-4){const pt2=sstep(.37,.41,fbm(x*.03+11,z*.03-7,3));tc.lerp(cSnow,(sstep(7,12,RDG[id]))*(.3+.6*pt2));tc.lerp(cSlush,(1-sstep(5,9,RDG[id]))*.55)}tc.lerp(cCon,sstep(.4,.7,yardMask(x,z)));tc.lerp(RG().snow?cSlush:cGrav,sstep(.3,.8,siteMask(x,z)));
   {const hs={};tc.getHSL(hs);tc.setHSL(hs.h,Math.min(1,hs.s*1.22),hs.l)}const v=.92+hash2(i*7,j*13)*.16;cols[id*3]=tc.r*v;cols[id*3+1]=tc.g*v;cols[id*3+2]=tc.b*v}
  const idx=[];for(let j=0;j<NZ;j++)for(let i=0;i<NX;i++){const a=j*(NX+1)+i,b=a+1,c=a+NX+1,d=c+1;idx.push(a,c,b,b,c,d)}
  const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.BufferAttribute(pos,3));{const uv=new Float32Array(pos.length/3*2);for(let k=0;k<pos.length/3;k++){uv[k*2]=pos[k*3]/7;uv[k*2+1]=pos[k*3+2]/7}tg.setAttribute('uv',new THREE.BufferAttribute(uv,2))}tg.setAttribute('color',new THREE.BufferAttribute(cols,3));tg.setIndex(idx);tg.computeVertexNormals();
@@ -1518,5 +1518,6 @@ function fmSet(){const F=window.MrAnduvFM;if(!F)return;$('rowFM').hidden=!F.hazi
 <script src="js/genis.js"></script>
 <script src="js/araclar.js"></script>
 <script src="js/firma.js"></script>
+<script src="js/etut.js"></script>
 </body>
 </html>
