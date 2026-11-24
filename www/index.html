@@ -682,7 +682,7 @@ function windHoldLogic(dt){// limanda, kapıdan önce: rüzgâr sınırın üst�
 // Tır (çekici): şehirlerarası iki yönlü yolda 80, köy/yerleşim 50, liman ve şantiye 30; özel izinli ağır/geniş yük 60; zincirle 40.
 const HEAVY=['kanat','nasel','kule','aktarma','hub'];
 function baseLimit(i){if(i<45||i>NS-45)return 30;if(VZ&&i>=VZ.v0-8&&i<=VZ.v1+8)return 50;return 80}
-function curLimit(){if(!G)return 80;let l=baseLimit(G.ri||0);if(HEAVY.includes(G.job.type))l=l<=50?30:50;if(G.chain)l=Math.min(l,40);if(G.bl>.03)l=Math.min(l,18);return l}
+function curLimit(){if(!G)return 80;let l=baseLimit(G.ri||0);if(HEAVY.includes(G.job.type))l=l<=50?30:50;if(G.alcak)l=Math.min(l,40);if(G.chain)l=Math.min(l,40);if(G.bl>.03)l=Math.min(l,18);return l}
 function limTex(n){return ctex(128,128,(g,w,h)=>{g.fillStyle='#fff';g.beginPath();g.arc(64,64,62,0,7);g.fill();g.strokeStyle='#d0141a';g.lineWidth=16;g.beginPath();g.arc(64,64,52,0,7);g.stroke();g.fillStyle='#111';g.font='800 56px "Barlow Condensed",sans-serif';g.textAlign='center';g.fillText(n,64,84)})}
 function buildTrafficSigns(){CAMS.length=0;const post=(i,off,mat,w,h,y)=>{const p=sideAt(i,off);const g=new THREE.Group();g.position.set(p.x,getH(p.x,p.z),p.z);g.rotation.y=p.ang+Math.PI;scene.add(g);addBox(.12,y,.12,MAT.steel,0,y/2,0,g);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);m.position.y=y+h/2-.1;g.add(m);obsC(p.x,p.z,.5);return g};
  let prev=null;for(let i=2;i<NS-2;i++){const l=baseLimit(i);if(l!==prev){if(prev!==null||i<5){const n=l;post(Math.max(3,i),6.4,new THREE.MeshBasicMaterial({map:limTex(n),transparent:true,side:THREE.DoubleSide}),1.2,1.2,2.4)}prev=l}}
@@ -745,7 +745,7 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
   c.g.position.set(x,getH(x,z)+.05,z);c.g.rotation.set(0,h,0);if(window.vehAnim)vehAnim(c,dt,h);for(const w of c.W)w.g.rotation.x-=c.cur/0.4*dt;
   // çarpışma: çekici ya da dorse/yük
   const hitCab=!c.hit&&Math.hypot(x-(v.x-Math.sin(v.h)*3.5),z-(v.z-Math.cos(v.h)*3.5))<(c.len/2+1.6)&&inLane;
-  let hitTr=false;if(!hitCab&&!c.hit){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?[6,14,24,34,44,54,62,70]:G.job.type==='kule'?[3,8,13,18,22]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='tir'?4:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;const rr=kan?(zz<16?1.7:zz<40?1.1:.6):1.4;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+rr){hitTr=true;break}}}
+  let hitTr=false;if(!hitCab&&!c.hit){const kan=G.job.type==='kanat'&&CARGO.kanat.visible;const M=kan?(CARGO.kanat.updateMatrixWorld(true),CARGO.kanat.matrixWorld):(trailer.g.updateMatrixWorld(),trailer.g.matrixWorld);const zs=kan?(G.job.kl80?[6,14,24,34,44,54,62,70,78]:[6,14,24,34,44,54,62,70]):G.job.type==='kule'?[3,8,13,18,22]:[3,7,11];const ch=c.type==='otobus'?3.6:c.type==='tir'?4:c.type==='traktor'?2.9:2.3;for(const zz of zs){_v.set(0,kan?-1:0,zz).applyMatrix4(M);if(_v.y>getH(_v.x,_v.z)+ch+.4)continue;const rr=kan?(zz<16?1.7:zz<40?1.1:.6):1.4;if(Math.hypot(x-_v.x,z-_v.z)<c.wid/2+rr){hitTr=true;break}}}
   if(hitCab||hitTr){c.crashT=3;c.hit=1;c.cur=0;c.yield=true;hitMark(c);titre(2);const imp=Math.abs(v.speed)+c.spd*.5;v.speed*=-.15;if(mode==='career'){G.dmg=Math.min(100,G.dmg+6+imp*.6);G.fines=(G.fines||0)+(hitCab?4000:0);G.tickets=(G.tickets||0)+(hitCab?1:0)}toast(T(hitCab?'t_crashCar':'t_sweep').replace('{v}',T('vn_'+c.type)).replace('{w}',T(((x-v.x)*Math.cos(v.h)-(z-v.z)*Math.sin(v.h))<0?'w_sol':'w_sag')),'#ff8a7f',3.2);G.warnT=3;blip(120,60,.4)}}
  if(HMK&&HMK.visible&&HMK.userData.c){const P=HMK.userData.c.g.position;HMK.position.set(P.x,P.y+3.6,P.z);HMK.material.opacity=Math.sin(G.t*12)>0?1:.35}
  if(ESC){const on=HEAVY.includes(G.job.type);ESC.g.visible=on;if(on){const raw=tf+sgn*26,ei=clamp(raw,46,NS-46);const park=raw!==ei;onRoad(ESC,ei,(park?5.2:LANE)*sgn,sgn,dt);for(const w of ESC.W)w.g.rotation.x-=(park?0:v.speed)/.38*dt;const bl=Math.sin(G.t*9)>0;ESC.beac[0].visible=bl;ESC.beac[1].visible=!bl}}
@@ -995,7 +995,7 @@ function buildTrailer(){const g=new THREE.Group();g.rotation.order='YXZ';const W
 // Kanat dorsesi: teleskopik uzar (uç çerçevesi kanadın ~3/4'ünde, arkada ~16 m çıkıntı), arka boji uzaktan kumandayla/kendiliğinden döner.
 // Kanat kaldırıcıyla kanat havaya kalkınca dorse içeri kayar (kısa dingil mesafesi, dar virajlar).
 const TR_EXT=46;
-function trailerExt(dt){const kan=G&&G.job&&G.job.type==='kanat'&&CARGO.kanat&&CARGO.kanat.visible;const kul=G&&G.job&&G.job.type==='kule'&&CARGO.kule&&CARGO.kule.visible;const want=kan&&!G.lifter?TR_EXT*(1-(G.bl||0)):kul?11:0;trailer.ext+=clamp(want-trailer.ext,-dt*8,dt*8);const e=trailer.ext;
+function trailerExt(dt){const kan=G&&G.job&&G.job.type==='kanat'&&CARGO.kanat&&CARGO.kanat.visible;const kul=G&&G.job&&G.job.type==='kule'&&CARGO.kule&&CARGO.kule.visible;const want=kan&&!G.lifter?(TR_EXT+(G.job.kl80?8:0))*(1-(G.bl||0)):kul?11:0;trailer.ext+=clamp(want-trailer.ext,-dt*8,dt*8);const e=trailer.ext;
  trailer.bog.position.z=10.5+e;trailer.L=10.5+e*.17;trailer.tipF.visible=kan&&!G.lifter&&(G.bl||0)<.05;trailer.spine.visible=e>.3;if(e>.3){trailer.spine.scale.z=e+1;trailer.spine.position.z=12.8+e/2}
  const st=kan||kul?clamp(angDiff(truck.v.h,trailer.th)*1.6,-.9,.9):0;trailer.steer+=(st-trailer.steer)*Math.min(1,dt*3);trailer.bog.rotation.y=-trailer.steer*.35}
 function buildForklift(){const g=new THREE.Group();g.rotation.order='YXZ';const W=[],F=[];
@@ -1521,5 +1521,6 @@ function fmSet(){const F=window.MrAnduvFM;if(!F)return;$('rowFM').hidden=!F.hazi
 <script src="js/araclar.js"></script>
 <script src="js/firma.js"></script>
 <script src="js/etut.js"></script>
+<script src="js/santiye.js"></script>
 </body>
 </html>
