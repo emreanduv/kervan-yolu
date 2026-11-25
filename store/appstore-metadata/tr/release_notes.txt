@@ -1,1 +1,7 @@
-Gerçekçi kanat ve kule taşıması, liman ve gümrük işlemleri, yol izin belgeleri, gece konvoyu ve polis refakati, blade lifter aktarması, takograf, yakıt ve kantar, yağmur ve çamur, drone ile güzergâh keşfi, nakliye firması ve RES projesi, sekiz bölge, fotoğraf modu ve Mr. Anduv! FM.
+1.1 Şantiye güncellemesi:
+- Güzergâh etüdü ve deneme sürüşü: yol üstündeki dal, levha, enerji hattı, dar viraj gibi engeller sefer öncesi raporlanır, düzenlemesi seçilir.
+- Her teslimattan sonra vinç işi: kule, nasel, göbek ve kanat türbine monte edilir, ankraj kafesi temel çukuruna iner, diğer yükler istif sahasına indirilir.
+- Yol kenarı cepleri: akaryakıt, kantar ve zincir takma ana yolda değil, sağdaki asfalt cepte yapılır; öncesinde mavi P levhası.
+- 80 metrelik kanat, alçak uç çerçevesi, hemzemin geçit ve tren, dar sahada geri manevra.
+- Mevsime göre doğa: sonbaharda sararan ağaçlar, karda yer yer açılan toprak.
+- Dağ yollarında daha düzgün asfalt, forklift artık tırın içinden geçmiyor, yol düzenleme bedelleri navluna göre adil.
