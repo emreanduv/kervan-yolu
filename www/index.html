@@ -1231,7 +1231,11 @@ const _fkB=new WeakMap(),_fkI=new THREE.Matrix4(),_fkM=new THREE.Matrix4(),_fkP=
 function yerelKutu(g){let c=_fkB.get(g);if(c)return c;g.updateMatrixWorld(true);_fkI.copy(g.matrixWorld).invert();const box=new THREE.Box3();
  g.traverse(o=>{if(!o.isMesh||!o.geometry||!o.visible)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}o.geometry.computeBoundingBox&&o.geometry.boundingBox||o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.3)return;box.union(b)});
  box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7);_fkB.set(g,box);return box}
-function forkCarp(){const f=fork.v,R=.95;for(const g of[truck.g,trailer.g]){if(!g||!g.visible)continue;const b=yerelKutu(g);g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
+function forkCarp(){const f=fork.v,R=.95;
+ // yerdeki kasalar: forkliftin gövdesi kasanın içine giremez (çatal kasanın altına uzanır, gövde 1,9 m'den yaklaşamaz); taşınan kasa da öteki kasalara çarpar
+ const tsi=G.carry>=0?crates[G.carry]:null;let tw=null;if(tsi){tsi.updateMatrixWorld();tw=new THREE.Vector3().setFromMatrixPosition(tsi.matrixWorld)}
+ for(const c of crates){if(c.parent!==scene||!c.visible)continue;const pts=[[f.x,f.z,1.9]];if(tw)pts.push([tw.x,tw.z,1.75]);
+  for(const[px,pz,mn]of pts){const dx=px-c.position.x,dz=pz-c.position.z,d=Math.hypot(dx,dz);if(d<mn&&d>1e-3){const k=(mn-d)/d;f.x+=dx*k;f.z+=dz*k;if(Math.abs(f.speed)>1.5){blip(140,90,.08);titre&&titre(1)}f.speed*=-.15;fork.g.position.x=f.x;fork.g.position.z=f.z;if(tw){tw.x+=dx*k;tw.z+=dz*k}}}}for(const g of[truck.g,trailer.g]){if(!g||!g.visible)continue;const b=yerelKutu(g);g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
   _fkP.set(f.x,g.position.y+1,f.z).applyMatrix4(_fkI);if(_fkP.x<b.min.x-R||_fkP.x>b.max.x+R||_fkP.z<b.min.z-R||_fkP.z>b.max.z+R)continue;
   const dx1=_fkP.x-(b.min.x-R),dx2=(b.max.x+R)-_fkP.x,dz1=_fkP.z-(b.min.z-R),dz2=(b.max.z+R)-_fkP.z,m=Math.min(dx1,dx2,dz1,dz2);
   if(m===dx1)_fkP.x=b.min.x-R;else if(m===dx2)_fkP.x=b.max.x+R;else if(m===dz1)_fkP.z=b.min.z-R;else _fkP.z=b.max.z+R;
