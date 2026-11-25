@@ -1,7 +1,3 @@
-1.1 Site update:
-- Route survey and dummy run: branches, signs, power lines, tight bends and other obstacles are reported before the haul and you choose which to fix.
-- Crane work after every delivery: tower, nacelle, hub and blades are assembled on the turbine, the anchor cage goes into the foundation pit, other loads are craned onto the laydown area.
-- Roadside lay-bys: fuel, weigh station and chain-up are done in the paved lay-by on the right, announced by a blue P sign.
-- 80 m blades, low tip frame, level crossings with trains, reverse manoeuvre at tight sites.
-- Seasonal nature: autumn trees turn yellow, patchy snow on the ground.
-- Smoother mountain asphalt, the forklift no longer drives through the truck, fairer road work costs.
+1.1.1:
+- Nothing passes through anything: truck, trailer, forklift, crates and laydown loads now collide and stop. A raised crate clears the ones on the ground and the forks slide under a pallet.
+- The forklift no longer drives through crates or the truck.
