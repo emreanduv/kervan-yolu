@@ -93,3 +93,11 @@ Telefon değişince ya da iPhone, iPad, Mac arasında geçince oyunlar ve uygula
 - Varsayılan: localStorage'daki bütün kayıtlar eşitlenir; cihaza özgü olanlar (kumanda ölçüsü, VR görünüşü, ekran) `ESITLE_HARIC` ile dışarıda kalır. En son değişen kazanır; ilk eşitlemede çakışırsa daha uzun (daha ilerlemiş) kayıt kalır, öteki `anahtar·eski` olarak saklanır. "Verilerimi sil" iCloud'daki kopyayı da siler.
 - Android: `android:allowBackup="true"` (Google yedeği) açık kalır. Steam: Steam Cloud (Steamworks ayarı Emre'nin). Kayıt 1 MB'ı aşarsa (CBM kariyeri) iCloud Belgeler'e geçilir.
 - Gizlilik politikasında "Cihazlar arası kayıt" paragrafı (TR + EN) bulunur. Gelişim Defteri G84.
+
+### Katı cisimler: hiçbir şey hiçbir şeyin içinden geçmez (Emre'nin kuralı, 25 Kasım 2026)
+Hatalar tek tek değil kuralla çözülür. Hareket eden her araç (tır, dorse, forklift, ileride vinç yükü ve trafik), dünyadaki her katı cismin içine giremez.
+- Tek yer: `www/index.html` → "KATI CİSİMLER" bölümü. `katiListe()` katı cisimleri (tır, dorse, forklift, yerdeki kasa, istif yükü) verir; `katiVar(x,y,z,yokSay)` 3B yerel kutu sınamasıdır; `collides()` her aracın gövde noktalarını bununla sınar.
+- **Yeni bir katı cisim eklenince yalnız `katiListe()`'ye eklenir**; ayrı ayrı çarpışma kodu yazılmaz. Statik engeller `obsC`/`obsR` ile.
+- Sınama 3 boyutludur: yüksekte taşınan kasa yerdeki kasanın üstünden geçer, çatal kasanın altına uzanır, gövde giremez.
+- Denetim: `python3 araclar/testler/kati-denetimi.py` her aracı her katı cisme 8 yönden sürer; gövde cismin içine girerse başarısız olur. Yeni araç ya da cisim gelince bu denetime eklenir.
+- Aynı mantık bütün 3B oyunlara (Gelişim Defteri G102) uygulanır.

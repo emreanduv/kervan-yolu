@@ -176,5 +176,5 @@ const _st2=window.EXT&&EXT.step;
 // ---------- bölge kurulumu ----------
 const _br=buildRegion;buildRegion=function(r){_br(r);try{const root=new THREE.Group();scene.add(root);WOBJ.push(root);hzKur(root);manKur(root);kuleKur()}catch(e){console.log('santiye kur',e)}};
 setInterval(()=>{try{if(KULE&&KULE.hub.visible&&mtKayit().b>=3)KULE.hub.rotation.z+=.012}catch(e){}},33);
-window.SANTIYE={hzSkor:()=>HZ&&HZ.skor,HZ:()=>HZ,MR:()=>MR,KULE:()=>KULE,MT:()=>MT};
+window.SANTIYE={ISTIF:()=>ISTIF,hzSkor:()=>HZ&&HZ.skor,HZ:()=>HZ,MR:()=>MR,KULE:()=>KULE,MT:()=>MT};
 })();

@@ -1141,7 +1141,7 @@ function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;set
 }
 function cargoMarkers(type){if(type==='kule')return[[1.9,3.9,3],[1.9,3.9,9],[0,6.1,6],[-1.9,3.9,6]];if(type==='kanat')return[[.6,4.6,3],[.6,4.5,12],[.5,4.2,21],[.4,3.9,30],[.3,3.7,38]];if(type==='donus')return[[1.1,3.7,2.5],[1.1,3.7,8.5],[0,3.85,5.5]];if(type==='nasel')return[[2,3.6,2],[2,3.6,10],[0,5.6,6],[-2,3.6,6],[0,3.6,.7]];if(type==='hub')return[[0,6.1,5.5],[2,4,5.5],[-2,4,5.5],[0,4,2.6]];if(type==='aktarma')return[[1.5,3.8,8],[0,5.3,8],[.7,3.8,3.5],[0,3.8,1.2]];if(type==='ankraj')return[[2.2,3.4,6],[-2.2,3.4,6],[0,4.8,8.1],[0,4.8,3.9]];if(type==='konteyner')return[[1.25,3.2,4],[1.25,3.2,8],[0,4.3,6],[-1.25,3.2,6]];return null}
 
-function resetGame(m,n){if(trailer){trailer.ext=0;trailer.steer=0}mode=m;coachHide();const job=m==='career'?sefer(n):{type:'free',tod:SAVE.tod,fee:0,n:0};
+function resetGame(m,n){katiSifirla();if(trailer){trailer.ext=0;trailer.steer=0}mode=m;coachHide();const job=m==='career'?sefer(n):{type:'free',tod:SAVE.tod,fee:0,n:0};
  G={t:0,dmg:0,loaded:0,carry:-1,strapped:false,warnT:0,score:0,dist:0,scanned:0,toastT:0,bl:0,blT:0,chain:0,chT:0,fines:0,tickets:0,camDone:{},job,deadline:m==='career'?Math.round(ROADLEN/JT[job.type].v+50+(IMPORT.includes(job.type)?60:HEAVY.includes(job.type)?25:10)+(job.type==='kanat'&&REG==='ege'?40:0)+(REG==='ege'&&job.type==='kanat'?70:0)+(RG().snow?90:0)+(REG==='trakya'?40:0)):0,deliverT:0,t0:null,arr:false,lift:null};
  setTOD(job.tod);
  crates.forEach(c=>{if(c.parent!==scene)scene.add(c);c.visible=false;c.userData.dmg=false});
@@ -1182,9 +1182,20 @@ function vehStep(v,dt,inp,load){const p=v.p;let acc=0;const af=load||1;
  const nx=v.x-Math.sin(v.h)*v.speed*dt,nz=v.z-Math.cos(v.h)*v.speed*dt;
  if(v===truck.v&&v.speed>0&&phase==='drive'){const hk=bladeHit(nx-v.x,nz-v.z);if(hk){const imp=v.speed;v.speed=0;G.bhitT=1.5;if(mode==='career'&&imp>1.5)G.dmg=Math.min(100,G.dmg+imp*1.4);if(G.warnT<=0){toast(T(hk==='ev'?'t_hitHouse':'t_hitWire'),'#ff8a7f',2.4);G.warnT=2.5}return}}
  if(getH(nx,nz)<.4||nx<TX0+20||nx>TX1-20||nz<TZ0+20||nz>TZ1-20){v.speed*=-.2;if(G.warnT<=0){toast(T('t_water'),'#7fd0ff');G.warnT=2}}
- else if(collides(v,nx,nz)&&!collides(v,v.x,v.z)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
+ else if(engel(v,nx,nz)){const imp=Math.abs(v.speed);v.speed*=-.25;if(imp>1.5){if(G.strapped&&v===truck.v&&mode==='career')G.dmg=Math.min(100,G.dmg+imp*1.6);if(G.warnT<=0){toast(T('t_crash'),'#ff8a7f');G.warnT=1.5}}}
  else{v.x=nx;v.z=nz}}
-function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h);if(v===fork.v)return hitObs(nx+fx*1.2,nz+fz*1.2)||hitObs(nx-fx*2.1,nz-fz*2.1);
+// hareket engeli: yeni konum bir cisme giriyorsa durur. Araç zaten bir cismin içindeyse (ör. yükleme sonrası) yalnız o cisimden uzaklaşan hareket serbesttir; başka bir cisme giremez.
+function engel(v,nx,nz){const hn=collides(v,nx,nz);if(!hn)return false;const ho=collides(v,v.x,v.z);if(!ho)return true;if(hn!==ho)return true;if(hn===true)return false;
+ const c=hn.position;return Math.hypot(nx-c.x,nz-c.z)<=Math.hypot(v.x-c.x,v.z-c.z)}
+function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h),rx=-fz,rz=fx;
+ if(v===fork.v){if(hitObs(nx+fx*1.2,nz+fz*1.2)||hitObs(nx-fx*2.1,nz-fz*2.1))return true;
+  // gövde: ön (direk) ve arka köşeler gövde yüksekliğinde; çatal ucu sınanmaz (kasanın altına girer)
+  const gy=getH(nx,nz)+.8,ign=[fork.g];if(G.carry>=0)ign.push(crates[G.carry]);
+  for(const[a,b]of[[.45,.72],[.45,-.72],[.45,0],[-.8,.72],[-.8,-.72],[-2.05,.6],[-2.05,-.6]]){const k=katiVar(nx+fx*a+rx*b,gy,nz+fz*a+rz*b,ign);if(k)return k}
+  // taşınan kasa: tabanı ve önü, kendi yüksekliğinde (dorse kenarı yok sayılır, kasa dorsenin üstüne konur)
+  if(G.carry>=0){const cy=getH(nx,nz)+fork.car.position.y+.35;const ig2=[fork.g,crates[G.carry],trailer.g];for(const[a,b]of[[1.95,.75],[1.95,-.75],[1.25,.8],[1.25,-.8]]){const k=katiVar(nx+fx*a+rx*b,cy,nz+fz*a+rz*b,ig2);if(k)return k}}
+  return false}
+ {const gy=getH(nx,nz)+1,ign=[truck.g,trailer.g];for(const[a,b]of[[5.3,1.1],[5.3,-1.1],[5.3,0],[2.5,1.2],[2.5,-1.2]]){const k=katiVar(nx+fx*a+rx*b,gy,nz+fz*a+rz*b,ign);if(k)return k}}
  if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;if(mode!=='career')return false;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'&&!(G.bl>.05)?[4,10,18,26,34,42,50,56]:G&&G.job.type==='kule'?[4,9,14,19,23]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
 function orient(obj,v,fz,rz,half){const fx=-Math.sin(v.h),fzz=-Math.cos(v.h),rx=Math.cos(v.h),rzz=-Math.sin(v.h);
  const hF=getH(v.x-fx*fz,v.z-fzz*fz),hR=getH(v.x-fx*rz,v.z-fzz*rz),mc=-(fz+rz)/2,mx=v.x+fx*mc,mz=v.z+fzz*mc,hL=getH(mx-rx*half,mz-rzz*half),hRi=getH(mx+rx*half,mz+rzz*half);
@@ -1226,20 +1237,18 @@ function updCamera(dt){
 // ---- işlemler
 let actFn=null;function setAct(label,fn){const b=$('act');if(label){if(b.textContent!==label)b.textContent=label;b.classList.add('on');actFn=fn}else{b.classList.remove('on');actFn=null}}
 $('act').addEventListener('click',()=>{actFn&&actFn()});
-// forklift tırın ve dorsenin içinden geçmez: gövdesi (yarıçap ~1 m) iki aracın yerel kutusunun dışına itilir
-const _fkB=new WeakMap(),_fkI=new THREE.Matrix4(),_fkM=new THREE.Matrix4(),_fkP=new THREE.Vector3();
+// ---- KATI CİSİMLER (genel kural): hareket eden her araç, dünyadaki her katı cismin (tır, dorse, forklift, yerdeki kasa, istif yükü)
+// yerel kutusunun içine giremez. Yeni bir katı cisim eklemek için katiListe()'ye eklemek yeter; araç kendi parçalarını ve taşıdığını yok sayar.
+// Sınama 3 boyutludur: yüksekte taşınan kasa yerdeki kasanın üstünden geçer, çatallar kasanın altına uzanır, gövde giremez.
+let _fkB=new WeakMap();const _fkI=new THREE.Matrix4(),_fkM=new THREE.Matrix4(),_fkP=new THREE.Vector3();
 function yerelKutu(g){let c=_fkB.get(g);if(c)return c;g.updateMatrixWorld(true);_fkI.copy(g.matrixWorld).invert();const box=new THREE.Box3();
- g.traverse(o=>{if(!o.isMesh||!o.geometry||!o.visible)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}o.geometry.computeBoundingBox&&o.geometry.boundingBox||o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.3)return;box.union(b)});
- box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7);_fkB.set(g,box);return box}
-function forkCarp(){const f=fork.v,R=.95;
- // yerdeki kasalar: forkliftin gövdesi kasanın içine giremez (çatal kasanın altına uzanır, gövde 1,9 m'den yaklaşamaz); taşınan kasa da öteki kasalara çarpar
- const tsi=G.carry>=0?crates[G.carry]:null;let tw=null;if(tsi){tsi.updateMatrixWorld();tw=new THREE.Vector3().setFromMatrixPosition(tsi.matrixWorld)}
- for(const c of crates){if(c.parent!==scene||!c.visible)continue;const pts=[[f.x,f.z,1.9]];if(tw)pts.push([tw.x,tw.z,1.75]);
-  for(const[px,pz,mn]of pts){const dx=px-c.position.x,dz=pz-c.position.z,d=Math.hypot(dx,dz);if(d<mn&&d>1e-3){const k=(mn-d)/d;f.x+=dx*k;f.z+=dz*k;if(Math.abs(f.speed)>1.5){blip(140,90,.08);titre&&titre(1)}f.speed*=-.15;fork.g.position.x=f.x;fork.g.position.z=f.z;if(tw){tw.x+=dx*k;tw.z+=dz*k}}}}for(const g of[truck.g,trailer.g]){if(!g||!g.visible)continue;const b=yerelKutu(g);g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
-  _fkP.set(f.x,g.position.y+1,f.z).applyMatrix4(_fkI);if(_fkP.x<b.min.x-R||_fkP.x>b.max.x+R||_fkP.z<b.min.z-R||_fkP.z>b.max.z+R)continue;
-  const dx1=_fkP.x-(b.min.x-R),dx2=(b.max.x+R)-_fkP.x,dz1=_fkP.z-(b.min.z-R),dz2=(b.max.z+R)-_fkP.z,m=Math.min(dx1,dx2,dz1,dz2);
-  if(m===dx1)_fkP.x=b.min.x-R;else if(m===dx2)_fkP.x=b.max.x+R;else if(m===dz1)_fkP.z=b.min.z-R;else _fkP.z=b.max.z+R;
-  _fkP.applyMatrix4(g.matrixWorld);f.x=_fkP.x;f.z=_fkP.z;if(Math.abs(f.speed)>1.5){blip(140,90,.08);titre&&titre(1)}f.speed*=-.15;fork.g.position.x=f.x;fork.g.position.z=f.z}}
+ g.traverse(o=>{if(!o.isMesh||!o.geometry)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.25)return;box.union(b)});
+ if(g===truck.g||g===trailer.g){box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7)}_fkB.set(g,box);return box}
+function katiSifirla(){_fkB=new WeakMap()}
+function katiListe(){const L=[];if(truck&&truck.g)L.push(truck.g);if(trailer&&trailer.g)L.push(trailer.g);if(fork&&fork.g&&fork.g.visible)L.push(fork.g);
+ for(const c of crates)if(c.parent===scene&&c.visible)L.push(c);if(window.SANTIYE&&SANTIYE.ISTIF)for(const o of SANTIYE.ISTIF())if(o.parent===scene)L.push(o);return L}
+function katiVar(x,y,z,ign,pay){pay=pay||0;for(const g of katiListe()){if(!g.visible||(ign&&ign.includes(g)))continue;const b=yerelKutu(g);if(b.isEmpty())continue;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();_fkP.set(x,y,z).applyMatrix4(_fkI);
+  if(_fkP.x>b.min.x-pay&&_fkP.x<b.max.x+pay&&_fkP.z>b.min.z-pay&&_fkP.z<b.max.z+pay&&_fkP.y>b.min.y-.05&&_fkP.y<b.max.y+.05)return g}return null}
 function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);
  if(G.carry<0&&G.loaded<3){let tgt=-1,bd=1e9;crates.forEach((c,i)=>{if(c.parent!==scene||!c.visible)return;const d=Math.hypot(c.position.x-tip.x,c.position.z-tip.z);if(d<bd){bd=d;tgt=i}});
   if(tgt>=0){arrow.position.set(crates[tgt].position.x,YARD_Y+3.4+Math.sin(G.t*4)*.25,crates[tgt].position.z);arrow.visible=true}
@@ -1494,7 +1503,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last
  if(!built){renderer.setClearColor(0x0b1410);renderer.clear();return}
  const run=state==='play';
  if(G&&run){G.t+=dt;if(G.warnT>0)G.warnT-=dt;
-  if(phase==='fork'){vehStep(fork.v,dt,input,G.carry>=0?.85:1);forkCarp();forkLogic()}
+  if(phase==='fork'){vehStep(fork.v,dt,input,G.carry>=0?.85:1);forkLogic()}
   else if(phase==='tahliye'){tahliyeStep(dt);if(PORTOPS.arm)PORTOPS.arm.rotation.z=0}
   else if(phase==='drive'){windStep(dt);trafficStep(dt);const lockGas=mode==='career'&&!G.strapped;const inp=lockGas?{left:input.left,right:input.right,gas:0,brake:input.brake}:input;vehStep(truck.v,dt,inp,mode==='career'?JT[G.job.type].acc:1);driveLogic(dt)}
   if(phase==='drive'&&input.gas&&Math.random()<.5){truck.g.updateMatrixWorld();for(const s of[1,-1]){_v.set(s*1.12,4.65,-2.86).applyMatrix4(truck.g.matrixWorld);emit(_v.x,_v.y,_v.z,(Math.random()-.5)*.6,2.2,(Math.random()-.5)*.6,.5,1.4,CUR_TOD==='gece'?'#2a2c30':'#55524e',.35)}}
