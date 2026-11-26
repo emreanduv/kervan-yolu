@@ -80,7 +80,7 @@ function cakilG(g,i,ic){const t=new THREE.Group();g.add(t);const m=new THREE.Mes
  const pos=[],idx=[];for(let k=-6;k<=6;k++){const j=clamp(i+k,1,NS-2);const w=4.6+(1-Math.abs(k)/6)*3.2;const a=sideAt(j,ic*4.2),b=sideAt(j,ic*w);pos.push(a.x,getH(a.x,a.z)+.24,a.z,b.x,getH(b.x,b.z)+.16,b.z);if(k<6){const n=(k+6)*2;idx.push(n,n+1,n+2,n+1,n+3,n+2)}}
  const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));ge.setIndex(idx);ge.computeVertexNormals();const me=new THREE.Mesh(ge,m);me.receiveShadow=true;t.add(me);return t}
 
-function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R=rng('etut-'+REG);const lo=70,hi=NS-1-64-14;
+function kur(){EN=[];const g=new THREE.Group();g.userData.gecirgen=1;scene.add(g);WOBJ.push(g);const R=rng('etut-'+REG);const lo=70,hi=NS-1-64-14;
  const egr=[];for(let i=lo;i<hi;i+=3){if(yasak(i))continue;const e=egri(i);egr.push([i,e.k,e.ic])}egr.sort((a,b)=>b[1]-a[1]);
  const al=(n,uz)=>{const out=[];for(const e of egr){if(out.length>=n)break;if(EN.some(o=>Math.abs(o.i-e[0])<uz)||out.some(o=>Math.abs(o[0]-e[0])<uz))continue;out.push(e)}return out};
  let id=0;const ekle=(tip,i,ic)=>{const o={id:tip+'-'+(id++),tip,i,ic,km:(i/(NS-1)*ROADLENS[REG]/1000)};EN.push(o);return o};

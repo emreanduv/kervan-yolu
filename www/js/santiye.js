@@ -96,13 +96,13 @@ function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&
  for(const yon of[-1,1]){const q=sideAt(ri-yon*7,yon*5.4);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang+(yon>0?0:Math.PI);g.add(t);
   addBox(.14,3.4,.14,MAT.steel,0,1.7,0,t);for(const r of[.62,-.62]){const x=addBox(1.5,.22,.04,yuk,0,3.1,0,t);x.rotation.z=r;const kr=addBox(1.5,.08,.045,P('#c91d1d'),0,3.1,0,t);kr.rotation.z=r}
   for(const dx of[-.35,.35]){const l=new THREE.Mesh(new THREE.CircleGeometry(.16,12),new THREE.MeshBasicMaterial({color:0x3a0c0c}));l.position.set(dx,2.45,.09);t.add(l);isik.push(l)}
-  const pv=new THREE.Group();pv.position.set(0,1.05,0);t.add(pv);const arm=new THREE.Group();pv.add(arm);for(let k=0;k<7;k++)addBox(.62,.16,.12,k%2?P('#c91d1d'):yuk,-.35-k*.62,0,0,arm);arm.rotation.z=Math.PI/2*.95;kol.push(arm)
+  const pv=new THREE.Group();pv.position.set(0,1.05,0);t.add(pv);const arm=new THREE.Group();arm.userData.gecirgen=1;pv.add(arm);for(let k=0;k<7;k++)addBox(.62,.16,.12,k%2?P('#c91d1d'):yuk,-.35-k*.62,0,0,arm);arm.rotation.z=Math.PI/2*.95;kol.push(arm)
   const dl=sideAt(ri-yon*9,yon*LANE);const dur=new THREE.Mesh(new THREE.PlaneGeometry(.35,4.2),new THREE.MeshBasicMaterial({color:0xf4f4f0,polygonOffset:true,polygonOffsetFactor:-6}));dur.rotation.x=-Math.PI/2;dur.rotation.z=dl.ang+Math.PI/2;dur.position.set(dl.x,getH(dl.x,dl.z)+.25,dl.z);g.add(dur)}
  // tren: lokomotif + 4 vagon
  const tr=new THREE.Group();const kir=P('#b8322a',{shininess:40}),gri=P('#5d6266',{shininess:20}),cam=MAT.glass;
  const lok=new THREE.Group();tr.add(lok);rbox(3,3.6,17,.3,kir,0,2.6,0,lok);addBox(2.9,1,16,gri,0,.8,0,lok);addBox(2.6,.9,.05,cam,0,3.6,8.52,lok);addBox(3.05,.25,17.1,P('#f2f2ee'),0,2.2,0,lok);
  for(let k=1;k<=4;k++){const w=new THREE.Group();w.position.z=-k*15.5;tr.add(w);rbox(2.9,3,14.5,.15,k%2?P('#6a6f4e'):P('#7b5d45'),0,2.4,0,w);addBox(2.8,.8,13.5,gri,0,.7,0,w)}
- tr.visible=false;g.add(tr);window.KATI_EK.push(tr);
+ tr.visible=false;tr.userData.dinamik=1;g.add(tr);window.KATI_EK.push(tr);
  HZ={skor:bs,ri,g,kol,isik,train:tr,ang,nx,nz,st:'acik',s:-999,tetik:false,kol0:Math.PI/2*.95,kolA:Math.PI/2*.95}}
 function hzAdim(dt,run){const H=HZ;const v=truck.v;const tf=(typeof roadF==='function')?roadF(v):roadIdx(v);const ds=ROADLEN/(NS-1);const ileri=(H.ri-tf)*ds;// tıra göre ileride +
  if(run&&phase==='drive'&&!H.tetik&&ileri>0&&ileri<140&&Math.abs(v.speed)>1){H.tetik=true;if(mode==='career'||Math.random()<.6){H.st='kapaniyor';H.t=0;H.s=-260;toast(T('t_hzKapi'),'#ffb36b',3);if(HEAVY.includes(G.job.type)&&mode==='career')telsiz(T('hzTz'))}}

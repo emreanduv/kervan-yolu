@@ -1,6 +1,6 @@
 # Kervan Yolu — Gizlilik Politikası
 
-*Son güncelleme: 24 Kasım 2026 · Geliştirici: Mr. Anduv!*
+*Son güncelleme: 26 Kasım 2026 · Geliştirici: Mr. Anduv!*
 
 Kervan Yolu çevrim dışı çalışan, tek oyunculu bir tır simülasyonu oyunudur. Hesap, giriş, reklam ya da analiz aracı yoktur.
 
@@ -11,6 +11,10 @@ Oyun hiçbir kişisel veri toplamaz, sunucuya göndermez ve üçüncü taraflarl
 ## Cihazlar arası kayıt
 
 iPhone, iPad ve Mac'te ilerlemen kendi iCloud hesabında (Apple'ın anahtar-değer deposu) saklanır; telefon değiştirince ya da cihazlar arasında geçince kaldığın yerden devam edersin. Bu kopyayı yalnızca sen görürsün, bize ulaşmaz. "Verilerimi sil" iCloud'daki kopyayı da siler. Android'de Google yedeği kullanılır.
+
+## Bildirimler
+
+İzin verirsen oyun, sahadan acil çağrıları ("türbin durdu, yedek parça bekleniyor" gibi) cihazının kendi yerel bildirimleriyle haber verir. Bildirimler cihazda planlanır; sunucu, hesap ya da bildirim kimliği kullanılmaz, hiçbir veri gönderilmez. Ayarlar → "Sahadan acil çağrılar" ile kapatabilirsin; "Verilerimi sil" planlanmış bildirimleri de iptal eder.
 
 ## Satın alma
 

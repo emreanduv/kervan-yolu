@@ -96,6 +96,8 @@ Telefon değişince ya da iPhone, iPad, Mac arasında geçince oyunlar ve uygula
 
 ### Katı cisimler: hiçbir şey hiçbir şeyin içinden geçmez (Emre'nin kuralı, 25 Kasım 2026)
 Hatalar tek tek değil kuralla çözülür. Hareket eden her araç (tır, dorse, forklift, ileride vinç yükü ve trafik), dünyadaki her katı cismin içine giremez.
+- **Kökten kural (26 Kasım 2026): sahnedeki her fiziksel nesne varsayılan olarak katıdır.** `katiDunyaKur()` bölge kurulunca (`js/kati.js`, en son yüklenen modül) bütün sahneyi tarar; her ağın ve InstancedMesh örneğinin yerel kutusu bir ızgaraya girer (`katiDunyaVar`). Katı sayılmayanlar kuralla: arazi/yol/su/gök, yarı saydam, yassı (<0,35 m), çok ince (<0,22 m), çok büyük (>120 m), araç boyunun üstündeki (köprü, hat, kanopi çatısı), serbest biçimli şerit (`BufferGeometry` >10 m), `userData.gecirgen` (etüt engeli, bariyer kolu) ve `userData.dinamik` (araç, tren, köpek; bunlar `katiListe` ile her karede). Yani yeni bir nesne eklemek için hiçbir şey yapmak gerekmez, kendiliğinden katıdır; geçilecekse `gecirgen`, hareket ediyorsa `dinamik` işaretlenir.
+- Denetim: bölge kurulunca yol şeridinde, cep halkalarında ve teslim noktasında katı nesne var mı bakılır (bu oturumdaki tarama: 8 bölgede 0).
 - Tek yer: `www/index.html` → "KATI CİSİMLER" bölümü. `katiListe()` katı cisimleri (tır, dorse, forklift, yerdeki kasa, istif yükü) verir; `katiVar(x,y,z,yokSay)` 3B yerel kutu sınamasıdır; `collides()` her aracın gövde noktalarını bununla sınar.
 - **Yeni bir katı cisim eklenince yalnız `katiListe()`'ye eklenir**; ayrı ayrı çarpışma kodu yazılmaz. Statik engeller `obsC`/`obsR` ile.
 - Sınama 3 boyutludur: yüksekte taşınan kasa yerdeki kasanın üstünden geçer, çatal kasanın altına uzanır, gövde giremez.

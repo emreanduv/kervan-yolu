@@ -53,7 +53,7 @@ function malakli(root){const i0=Math.floor(NS*.45),side=1;const ap=sideAt(i0,sid
  for(const z of[.28,-.28]){const k=new THREE.Mesh(new THREE.BoxGeometry(.12,.32,.2),mask);k.position.set(-.02,-.06,z);k.rotation.x=z>0?.25:-.25;bas.add(k)}// sarkık kulak
  const sb=new THREE.Mesh(new THREE.CylinderGeometry(.07,.04,.6,6),kurk);sb.position.set(-1.0,1.15,0);sb.rotation.z=-1.0;dg.add(sb);
  const legs=[];for(const[a,c]of[[.62,.24],[.62,-.24],[-.6,.24],[-.6,-.24]]){const l=new THREE.Group();l.position.set(a,.8,c);dg.add(l);const m=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.78,6),kurk);m.position.y=-.39;l.add(m);const pa=new THREE.Mesh(new THREE.BoxGeometry(.18,.08,.16),mask);pa.position.set(.03,-.78,0);l.add(pa);legs.push(l)}
- dg.scale.setScalar(1.08);const p0=sideAt(i0,side*9);dg.position.set(p0.x,getH(p0.x,p0.z),p0.z);dg.rotation.y=p0.ang;
+ dg.scale.setScalar(1.08);dg.userData.dinamik=1;const p0=sideAt(i0,side*9);dg.position.set(p0.x,getH(p0.x,p0.z),p0.z);dg.rotation.y=p0.ang;
  MK={dg,legs,i0,side,ci:i0,run:false,done:false,ph:0}}
 const _br2=buildRegion;buildRegion=function(r){MK=null;_br2(r);try{if(r==='kapadokya'){const root=new THREE.Group();scene.add(root);if(typeof WOBJ!=='undefined')WOBJ.push(root);malakli(root)}}catch(e){console.log(e)}};
 addEventListener('load',()=>{if(!window.EXT)return;const _st=EXT.step;EXT.step=function(dt,run){const r=_st?_st(dt,run):false;try{if(MK&&truck&&G&&run){const v=truck.v,ti=roadIdx(v);

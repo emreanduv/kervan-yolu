@@ -172,6 +172,7 @@ body.fotom #speedo,body.fotom #cl,body.fotom #cr,body.fotom #bcam,body.fotom #hS
   <div class="setrow"><span id="sFeedL"></span><button class="btn sm" id="setFeed"></button></div>
   <div class="setrow"><span id="sShareL"></span><button class="btn sm" id="sShare"></button></div>
   <div class="setrow" id="setFullRow" hidden><span id="sFullL"></span><span><button class="btn sm gold" id="setBuy"></button> <button class="btn sm" id="setRestore"></button></span></div>
+  <div class="setrow" id="rowBil" hidden><span id="sBilL"></span><button class="btn sm" id="sBil"></button></div>
   <div class="setrow"><span id="sEraseL"></span><button class="btn sm" id="setErase"></button></div>
   <div class="setrow"><span class="sig">Bir Mr. Anduv! yapımıdır.</span><span class="sig" id="sVer"></span></div>
 </div></div></div>
@@ -482,7 +483,7 @@ function buildPortOps(){const g=new THREE.Group();scene.add(g);
  let gi=ci+8;for(let i=ci+4;i<ci+120;i++)if(Math.hypot(RS[i].x,RS[i].z-2)>52){gi=i;break}PORTOPS.s0=s0;
  const gp=sideAt(gi,0),gy=getH(gp.x,gp.z);const gate=new THREE.Group();gate.position.set(gp.x,gy,gp.z);gate.rotation.y=gp.ang;g.add(gate);
  addBox(2.6,2.8,2.6,P('#dfe3e6'),6.6,1.4,0,gate);addBox(2.8,.3,2.8,P('#c0392b'),6.6,2.95,0,gate);addBox(.6,1.1,.6,MAT.dark2,5,.55,0,gate);
- const arm=new THREE.Group();arm.position.set(5,1.05,0);gate.add(arm);for(let k=0;k<9;k++)addBox(1.1,.16,.16,k%2?MAT.white:P('#d32f2a'),-.55-k*1.1,0,0,arm);
+ const arm=new THREE.Group();arm.userData.gecirgen=1;arm.position.set(5,1.05,0);gate.add(arm);for(let k=0;k<9;k++)addBox(1.1,.16,.16,k%2?MAT.white:P('#d32f2a'),-.55-k*1.1,0,0,arm);
  const gt=new THREE.Mesh(new THREE.PlaneGeometry(4.2,.9),new THREE.MeshBasicMaterial({map:ctex(256,56,(q,w,h)=>{q.fillStyle='#c0392b';q.fillRect(0,0,w,h);q.fillStyle='#fff';q.font='800 36px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'LİMAN ÇIKIŞ':'PORT EXIT',w/2,41)}),side:THREE.DoubleSide}));gt.position.set(6.6,3.7,0);gate.add(gt);
  worker(gate,4.4,1.6,Math.PI);obsC(sideAt(gi,6.6).x,sideAt(gi,6.6).z,2);
  PORTOPS.gi=gi;PORTOPS.arm=arm;PORTOPS.armA=0;PORTOPS.g=g;
@@ -595,9 +596,9 @@ function buildMola(){const ri=PLAN.ri||Math.round(NS*.5);const pd=PADS[0];const 
  PORTOPS.mola={ri,g,ring:stopRing(0xff9a1f,L==='tr'?'⛽︎ YAKIT':'⛽︎ FUEL')};ringAt(PORTOPS.mola.ring,ri,CEP.yakit)}
 // ===== YAKIT VE KANTAR (1.1) =====
 // Motorin 20 Kasım 2026 İstanbul pompa fiyatına yakın; ağır nakliye çekici ~60 L/100 km; gerçek güzergâh uzunlukları
-const CEP={yakit:13,kantar:10.5,zincir:8.4};// uzun yükte (kanat, kule) tır cebe tam sığmaz: cebin ağzında, yolun sağına çekilip halkanın hizasında durmak yeter
+const CEP={yakit:11.5,kantar:10.5,zincir:8.4};// uzun yükte (kanat, kule) tır cebe tam sığmaz: cebin ağzında, yolun sağına çekilip halkanın hizasında durmak yeter
 function uzunYuk(){return G&&G.job&&['kanat','kule'].includes(G.job.type)}
-function cepteMi(v,R,r,ri){if(!R)return false;if(Math.hypot(v.x-R.x,v.z-R.z)<r)return true;if(!uzunYuk())return false;const i=roadIdx(v);if(ri==null)ri=roadIdx(R);const d=RS[i].distanceTo(RS[Math.max(0,Math.min(NS-1,ri))]);if(d>18)return false;const a=sideAt(i,0),b=sideAt(i,1);return (v.x-a.x)*(b.x-a.x)+(v.z-a.z)*(b.z-a.z)>LANE+1.2}
+function cepteMi(v,R,r,ri){if(!R)return false;if(Math.hypot(v.x-R.x,v.z-R.z)<r)return true;if(!uzunYuk())return false;const i=roadIdx(v);if(ri==null)ri=roadIdx(R);const d=RS[i].distanceTo(RS[Math.max(0,Math.min(NS-1,ri))]);if(d>18)return false;const a=sideAt(i,0),b=sideAt(i,1);return (v.x-a.x)*(b.x-a.x)+(v.z-a.z)*(b.z-a.z)>LANE+.25}
 const DIZEL_TL=89,TANK_L=800,REAL_KM={marmara:105,ege:55,sivas:340,trakya:65};
 const TON={nasel:90,hub:38,aktarma:56,ankraj:24,konteyner:24,kasa:12,kule:64,kanat:28.5,yedek:6,donus:0};
 function lPerKm(){const t=G&&G.job?G.job.type:'donus';return t==='donus'?.32:HEAVY.includes(t)?.6:.42}
@@ -696,7 +697,7 @@ function buildTrafficSigns(){CAMS.length=0;const post=(i,off,mat,w,h,y)=>{const 
 const CAMS=[];
 // ---- Karşı şeritten gelen trafik: otomobil, dolmuş, otobüs, pikap, traktör
 const TRAF=[];const LANE=2.3;
-function makeVeh(type){const g=new THREE.Group();g.rotation.order='YXZ';const W=[];const col=['#f2f2ee','#c9ccd0','#9a1f1f','#1f3a66','#2d2d2d','#e8e1cf'][Math.floor(Math.random()*6)];const pm=P(col,{shininess:90,specular:0x666666});let L2=4.4,wid=1.8,len=4.4,spd=19;
+function makeVeh(type){const g=new THREE.Group();g.userData.dinamik=1;g.rotation.order='YXZ';const W=[];const col=['#f2f2ee','#c9ccd0','#9a1f1f','#1f3a66','#2d2d2d','#e8e1cf'][Math.floor(Math.random()*6)];const pm=P(col,{shininess:90,specular:0x666666});let L2=4.4,wid=1.8,len=4.4,spd=19;
  const lights=(z,w,y)=>{for(const s2 of[1,-1]){addBox(.32,.16,.06,MAT.head,s2*w,y,-z,g);addBox(.3,.14,.06,MAT.tail,s2*w,y,z,g)}};
  if(type==='oto'){addBox(1.8,.7,4.4,pm,0,.75,0,g);addBox(1.6,.6,2.2,pm,0,1.38,.25,g);addBox(1.62,.5,2.0,MAT.glass,0,1.38,.25,g);for(const z of[-1.35,1.35])for(const x of[-.85,.85])wheel(.33,.24,x,.33,z,g,W);lights(2.21,.6,.8)}
  else if(type==='dolmus'){addBox(2,2.15,5.9,P('#f1ead2',{shininess:70}),0,1.45,0,g);addBox(2.02,.7,4.6,MAT.glass,0,1.95,.4,g);addBox(2.02,.25,5.92,P('#d9a21b'),0,.75,0,g);const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.32),new THREE.MeshBasicMaterial({map:ctex(256,64,(q,w,h)=>{q.fillStyle='#f2c230';q.fillRect(0,0,w,h);q.fillStyle='#111';q.font='800 40px "Barlow Condensed",sans-serif';q.textAlign='center';q.fillText(L==='tr'?'DOLMUŞ':'SHARED TAXI',w/2,48)})}));sg.position.set(0,2.72,-2.6);g.add(sg);for(const z of[-1.9,1.9])for(const x of[-.92,.92])wheel(.38,.26,x,.38,z,g,W);lights(2.96,.75,1);len=5.9;wid=2;spd=17}
@@ -1195,7 +1196,7 @@ function collides(v,nx,nz){const fx=-Math.sin(v.h),fz=-Math.cos(v.h),rx=-fz,rz=f
   // taşınan kasa: tabanı ve önü, kendi yüksekliğinde (dorse kenarı yok sayılır, kasa dorsenin üstüne konur)
   if(G.carry>=0){const cy=getH(nx,nz)+fork.car.position.y+.35;const ig2=[fork.g,crates[G.carry],trailer.g];for(const[a,b]of[[1.95,.75],[1.95,-.75],[1.25,.8],[1.25,-.8]]){const k=katiVar(nx+fx*a+rx*b,cy,nz+fz*a+rz*b,ig2);if(k)return k}}
   return false}
- {const gy=getH(nx,nz)+1,ign=[truck.g,trailer.g];for(const[a,b]of[[5.3,1.1],[5.3,-1.1],[5.3,0],[2.5,1.2],[2.5,-1.2]]){const k=katiVar(nx+fx*a+rx*b,gy,nz+fz*a+rz*b,ign);if(k)return k}}
+ {const g0=getH(nx,nz),ign=[truck.g,trailer.g];for(const dy of[1,2.4])for(const[a,b]of[[5.3,1.1],[5.3,-1.1],[5.3,0],[2.5,1.2],[2.5,-1.2]]){const k=katiVar(nx+fx*a+rx*b,g0+dy,nz+fz*a+rz*b,ign);if(k)return k}}
  if(hitObs(nx+fx*5.3,nz+fz*5.3)||hitObs(nx+fx*2.5,nz+fz*2.5))return true;if(mode!=='career')return false;const bx=Math.sin(trailer.th),bz=Math.cos(trailer.th);const ds=G&&G.job.type==='kanat'&&!(G.bl>.05)?[4,10,18,26,34,42,50,56]:G&&G.job.type==='kule'?[4,9,14,19,23]:[4,8,12];for(const d of ds)if(hitObs(nx+bx*d,nz+bz*d))return true;return false}
 function orient(obj,v,fz,rz,half){const fx=-Math.sin(v.h),fzz=-Math.cos(v.h),rx=Math.cos(v.h),rzz=-Math.sin(v.h);
  const hF=getH(v.x-fx*fz,v.z-fzz*fz),hR=getH(v.x-fx*rz,v.z-fzz*rz),mc=-(fz+rz)/2,mx=v.x+fx*mc,mz=v.z+fzz*mc,hL=getH(mx-rx*half,mz-rzz*half),hRi=getH(mx+rx*half,mz+rzz*half);
@@ -1245,6 +1246,25 @@ function yerelKutu(g){let c=_fkB.get(g);if(c)return c;g.updateMatrixWorld(true);
  g.traverse(o=>{if(!o.isMesh||!o.geometry)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.25)return;box.union(b)});
  if(g===truck.g){box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7)}_fkB.set(g,box);return box}
 function katiSifirla(){_fkB=new WeakMap()}
+// ---- KATI DÜNYA (kökten kural): sahnedeki HER fiziksel nesne varsayılan olarak katıdır; listeye elle eklemek gerekmez.
+// Bölge kurulunca sahne taranır, her ağın (InstancedMesh örnekleri dahil) yerel kutusu bir ızgaraya konur. Katı SAYILMAYANLAR kuralla belirlenir:
+// arazi/yol/su/gök, yarı saydam (halka, ışık), yassı (çizgi, işaret, ped <0,35 m), çok ince (<0,22 m: delinatör, tel), çok büyük (>120 m: dağ, gemi),
+// araç boyunun üstünde kalan (köprü, enerji hattı, kanopi çatısı; bunlar yük yüksekliği sınamasında), userData.gecirgen (etüt engeli, bariyer kolu)
+// ve userData.dinamik (araçlar, tren, köpek: bunlar katiListe ile her karede sınanır).
+const KD={h:new Map(),n:0,cs:16};
+function katiDunyaKur(){KD.h=new Map();KD.n=0;const skip=new Set([world.terrain,world.roadMesh,world.water,world.sky,truck&&truck.g,trailer&&trailer.g,fork&&fork.g,...crates]);
+ const m4=new THREE.Matrix4(),bx=new THREE.Box3(),gb=new THREE.Box3();
+ const ekle=(mw,geo)=>{if(!geo.boundingBox)geo.computeBoundingBox();gb.copy(geo.boundingBox);bx.copy(gb).applyMatrix4(mw);const sx=bx.max.x-bx.min.x,sy=bx.max.y-bx.min.y,sz=bx.max.z-bx.min.z;
+  if(sy<.35||Math.max(sx,sz)<.22||Math.max(sx,sz)>120||!isFinite(sx))return;if(geo.type==='BufferGeometry'&&Math.max(sx,sz)>10)return;// serbest biçimli şerit (korkuluk, yarma, şantiye yolu): kutusu anlamsız, atlanır
+  const gh=getH((bx.min.x+bx.max.x)/2,(bx.min.z+bx.max.z)/2);if(bx.min.y>gh+4.3||bx.max.y<gh+.15)return;
+  const e={inv:mw.clone().invert(),b:gb.clone(),position:{x:(bx.min.x+bx.max.x)/2,z:(bx.min.z+bx.max.z)/2},tip:geo.type,boy:[Math.round(sx),Math.round(sy),Math.round(sz)]};const c=KD.cs;for(let x=Math.floor(bx.min.x/c);x<=Math.floor(bx.max.x/c);x++)for(let z=Math.floor(bx.min.z/c);z<=Math.floor(bx.max.z/c);z++){const k=x+','+z;let a=KD.h.get(k);if(!a)KD.h.set(k,a=[]);a.push(e)}KD.n++};
+ const yuru=o=>{if(skip.has(o)||!o.visible||o.userData.gecirgen||o.userData.dinamik||o.isSprite||o.isPoints||o.isLine||o.isLight||o.isCamera)return;
+  if(o.isMesh&&o.geometry){const ms=Array.isArray(o.material)?o.material:[o.material];if(!ms.some(m=>m&&(!m.transparent||m.opacity>=.95)&&m.visible!==false))return;
+   if(o.isInstancedMesh){for(let k=0;k<o.count;k++){o.getMatrixAt(k,m4);if(m4.elements[0]===0&&m4.elements[5]===0)continue;ekle(m4.clone().premultiply(o.matrixWorld),o.geometry)}}else ekle(o.matrixWorld,o.geometry)}
+  for(const c of o.children)yuru(c)};
+ scene.updateMatrixWorld(true);for(const o of scene.children)yuru(o);return KD.n}
+const _kdP=new THREE.Vector3();
+function katiDunyaVar(x,y,z){const a=KD.h.get(Math.floor(x/KD.cs)+','+Math.floor(z/KD.cs));if(!a)return null;for(const e of a){_kdP.set(x,y,z).applyMatrix4(e.inv);const b=e.b;if(_kdP.x>b.min.x&&_kdP.x<b.max.x&&_kdP.y>b.min.y&&_kdP.y<b.max.y&&_kdP.z>b.min.z&&_kdP.z<b.max.z)return e}return null}
 // Modüller kendi katı cisimlerini buraya ekler (ör. hemzemin geçitteki tren): window.KATI_EK.push(grup)
 window.KATI_EK=window.KATI_EK||[];
 function katiListe(){const L=[];for(const o of KATI_EK)if(o&&o.visible&&o.parent)L.push(o);
@@ -1256,7 +1276,7 @@ function aracaDegiyor(g){const b=yerelKutu(g);if(b.isEmpty())return false;g.upda
  for(const a of[truck.g,trailer.g]){if(!a||!a.visible)continue;const k=yerelKutu(a);if(k.isEmpty())continue;a.updateMatrixWorld();const y=(k.min.y+k.max.y)/2;
   for(let i=0;i<=8;i++){const z=k.min.z+(k.max.z-k.min.z)*i/8;for(const x of[k.min.x,0,k.max.x]){_fkP.set(x,y,z).applyMatrix4(a.matrixWorld).applyMatrix4(_fkI);if(_fkP.x>b.min.x&&_fkP.x<b.max.x&&_fkP.z>b.min.z&&_fkP.z<b.max.z&&_fkP.y>b.min.y-.3&&_fkP.y<b.max.y)return true}}}return false}
 function katiVar(x,y,z,ign,pay){pay=pay||0;for(const g of katiListe()){if(!g.visible||(ign&&ign.includes(g)))continue;const b=yerelKutu(g);if(b.isEmpty())continue;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();_fkP.set(x,y,z).applyMatrix4(_fkI);
-  if(_fkP.x>b.min.x-pay&&_fkP.x<b.max.x+pay&&_fkP.z>b.min.z-pay&&_fkP.z<b.max.z+pay&&_fkP.y>b.min.y-.05&&_fkP.y<b.max.y+.05)return g}return null}
+  if(_fkP.x>b.min.x-pay&&_fkP.x<b.max.x+pay&&_fkP.z>b.min.z-pay&&_fkP.z<b.max.z+pay&&_fkP.y>b.min.y-.05&&_fkP.y<b.max.y+.05)return g}return katiDunyaVar(x,y,z)}
 function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);
  if(G.carry<0&&G.loaded<3){let tgt=-1,bd=1e9;crates.forEach((c,i)=>{if(c.parent!==scene||!c.visible)return;const d=Math.hypot(c.position.x-tip.x,c.position.z-tip.z);if(d<bd){bd=d;tgt=i}});
   if(tgt>=0){arrow.position.set(crates[tgt].position.x,YARD_Y+3.4+Math.sin(G.t*4)*.25,crates[tgt].position.z);arrow.visible=true}
@@ -1557,5 +1577,7 @@ function fmSet(){const F=window.MrAnduvFM;if(!F)return;$('rowFM').hidden=!F.hazi
 <script src="js/etut.js"></script>
 <script src="js/santiye.js"></script>
 <script src="js/cep.js"></script>
+<script src="js/kati.js"></script>
+<script src="js/bildirim.js"></script>
 </body>
 </html>
