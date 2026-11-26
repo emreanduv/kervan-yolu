@@ -1243,10 +1243,18 @@ $('act').addEventListener('click',()=>{actFn&&actFn()});
 let _fkB=new WeakMap();const _fkI=new THREE.Matrix4(),_fkM=new THREE.Matrix4(),_fkP=new THREE.Vector3();
 function yerelKutu(g){let c=_fkB.get(g);if(c)return c;g.updateMatrixWorld(true);_fkI.copy(g.matrixWorld).invert();const box=new THREE.Box3();
  g.traverse(o=>{if(!o.isMesh||!o.geometry)return;let p=o;while(p&&p!==g){if(crates.includes(p)||!p.visible)return;p=p.parent}if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox.clone().applyMatrix4(_fkM.multiplyMatrices(_fkI,o.matrixWorld));if(b.max.y<.25)return;box.union(b)});
- if(g===truck.g||g===trailer.g){box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7)}_fkB.set(g,box);return box}
+ if(g===truck.g){box.min.x=Math.max(box.min.x,-1.7);box.max.x=Math.min(box.max.x,1.7)}_fkB.set(g,box);return box}
 function katiSifirla(){_fkB=new WeakMap()}
-function katiListe(){const L=[];if(truck&&truck.g)L.push(truck.g);if(trailer&&trailer.g)L.push(trailer.g);if(fork&&fork.g&&fork.g.visible)L.push(fork.g);
+// Modüller kendi katı cisimlerini buraya ekler (ör. hemzemin geçitteki tren): window.KATI_EK.push(grup)
+window.KATI_EK=window.KATI_EK||[];
+function katiListe(){const L=[];for(const o of KATI_EK)if(o&&o.visible&&o.parent)L.push(o);
+ if(typeof TRAF!=='undefined')for(const c of TRAF)if(c.on&&c.g&&c.g.visible)L.push(c.g);
+ for(const e of[typeof ESC!=='undefined'&&ESC,typeof ESC2!=='undefined'&&ESC2,typeof POL!=='undefined'&&POL])if(e&&e.g&&e.g.visible&&e.g.parent)L.push(e.g);if(truck&&truck.g)L.push(truck.g);if(trailer&&trailer.g)L.push(trailer.g);if(fork&&fork.g&&fork.g.visible)L.push(fork.g);
  for(const c of crates)if(c.parent===scene&&c.visible)L.push(c);if(window.SANTIYE&&SANTIYE.ISTIF)for(const o of SANTIYE.ISTIF())if(o.parent===scene)L.push(o);return L}
+// Hareket eden bir cisim (tren, ileride vinç yükü) tıra ya da dorseye değiyor mu? Tırın ve dorsenin kutu köşeleri ve kenar noktaları sınanır.
+function aracaDegiyor(g){const b=yerelKutu(g);if(b.isEmpty())return false;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
+ for(const a of[truck.g,trailer.g]){if(!a||!a.visible)continue;const k=yerelKutu(a);if(k.isEmpty())continue;a.updateMatrixWorld();const y=(k.min.y+k.max.y)/2;
+  for(let i=0;i<=8;i++){const z=k.min.z+(k.max.z-k.min.z)*i/8;for(const x of[k.min.x,0,k.max.x]){_fkP.set(x,y,z).applyMatrix4(a.matrixWorld).applyMatrix4(_fkI);if(_fkP.x>b.min.x&&_fkP.x<b.max.x&&_fkP.z>b.min.z&&_fkP.z<b.max.z&&_fkP.y>b.min.y-.3&&_fkP.y<b.max.y)return true}}}return false}
 function katiVar(x,y,z,ign,pay){pay=pay||0;for(const g of katiListe()){if(!g.visible||(ign&&ign.includes(g)))continue;const b=yerelKutu(g);if(b.isEmpty())continue;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();_fkP.set(x,y,z).applyMatrix4(_fkI);
   if(_fkP.x>b.min.x-pay&&_fkP.x<b.max.x+pay&&_fkP.z>b.min.z-pay&&_fkP.z<b.max.z+pay&&_fkP.y>b.min.y-.05&&_fkP.y<b.max.y+.05)return g}return null}
 function forkLogic(){const tip=forkTip();const sp=Math.abs(fork.v.speed);

@@ -102,20 +102,23 @@ function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&
  const tr=new THREE.Group();const kir=P('#b8322a',{shininess:40}),gri=P('#5d6266',{shininess:20}),cam=MAT.glass;
  const lok=new THREE.Group();tr.add(lok);rbox(3,3.6,17,.3,kir,0,2.6,0,lok);addBox(2.9,1,16,gri,0,.8,0,lok);addBox(2.6,.9,.05,cam,0,3.6,8.52,lok);addBox(3.05,.25,17.1,P('#f2f2ee'),0,2.2,0,lok);
  for(let k=1;k<=4;k++){const w=new THREE.Group();w.position.z=-k*15.5;tr.add(w);rbox(2.9,3,14.5,.15,k%2?P('#6a6f4e'):P('#7b5d45'),0,2.4,0,w);addBox(2.8,.8,13.5,gri,0,.7,0,w)}
- tr.visible=false;g.add(tr);
+ tr.visible=false;g.add(tr);window.KATI_EK.push(tr);
  HZ={skor:bs,ri,g,kol,isik,train:tr,ang,nx,nz,st:'acik',s:-999,tetik:false,kol0:Math.PI/2*.95,kolA:Math.PI/2*.95}}
 function hzAdim(dt,run){const H=HZ;const v=truck.v;const tf=(typeof roadF==='function')?roadF(v):roadIdx(v);const ds=ROADLEN/(NS-1);const ileri=(H.ri-tf)*ds;// tıra göre ileride +
  if(run&&phase==='drive'&&!H.tetik&&ileri>0&&ileri<140&&Math.abs(v.speed)>1){H.tetik=true;if(mode==='career'||Math.random()<.6){H.st='kapaniyor';H.t=0;H.s=-260;toast(T('t_hzKapi'),'#ffb36b',3);if(HEAVY.includes(G.job.type)&&mode==='career')telsiz(T('hzTz'))}}
  if(H.st!=='acik'){H.t+=dt;if(run&&G&&G.deadline&&Math.abs(v.speed)<1&&ileri>0&&ileri<90)G.deadline+=dt;const f=Math.floor(H.t*2.4)%2;H.isik.forEach((l,k)=>l.material.color.setHex((k%2)===f?0xff2a1a:0x3a0c0c));if(H.t%0.84<dt)blip(1100,1100,.05)}
  const hedef=(H.st==='kapaniyor'||H.st==='kapali')?0:H.kol0;H.kolA+=clamp(hedef-H.kolA,-dt*.6,dt*.6);H.kol.forEach(a=>a.rotation.z=H.kolA);
  if(H.st==='kapaniyor'&&H.t>3.5){H.st='kapali'}
- if(H.st==='kapali'){H.train.visible=true;H.s+=dt*24;const p=sideAt(H.ri,H.s),q=sideAt(H.ri,H.s+1);H.train.position.set(p.x,Math.max(RY[H.ri]+.45,getH(p.x,p.z)+.35),p.z);H.train.rotation.y=Math.atan2(q.x-p.x,q.z-p.z);
+ if(H.st==='kapali'){H.train.visible=true;const s0=H.s;
+  // tren katı cisimdir: önünde tır varsa içinden geçmez; acil fren yapar, çarpar ve yol açılana kadar bekler
+  const koy=ss=>{const p=sideAt(H.ri,ss),q=sideAt(H.ri,ss+1);H.train.position.set(p.x,Math.max(RY[H.ri]+.45,getH(p.x,p.z)+.35),p.z);H.train.rotation.y=Math.atan2(q.x-p.x,q.z-p.z)};
+  H.s+=dt*(H.fren?6:24);koy(H.s);if(aracaDegiyor(H.train)){H.s=s0;koy(s0);if(!H.fren){H.fren=true;blip(330,260,.6)}if(!H.kaza&&run){H.kaza=true;if(mode==='career')G.dmg=Math.min(100,G.dmg+20);toast(T('t_hzKaza'),'#ff5a5a',3);titre&&titre(2)}}else H.fren=false;
   if(Math.abs(H.s)<45&&H.s>-45&&H.s%6<dt*24)blip(140,120,.18);
   if(H.s>200){H.st='aciliyor';H.t2=0;H.train.visible=false}}
  if(H.st==='aciliyor'){H.t2+=dt;if(H.t2>3){H.st='acik';H.isik.forEach(l=>l.material.color.setHex(0x3a0c0c));toast(T('t_hzAcik'),'#8ff0a4',1.8)}}
  // kural: kapalıyken dur çizgisini geçme
  if(run&&phase==='drive'&&H.st!=='acik'&&!H.ceza&&ileri<6.5&&ileri>-4&&v.speed>.4){H.ceza=true;if(mode==='career'){G.fines=(G.fines||0)+5000;G.ext.push(['k_hemzemin',-5000])}toast(T('t_hzCeza'),'#ff8a7f',3);titre&&titre(2)}
- if(run&&H.st==='kapali'&&!H.kaza&&Math.abs(ileri)<8&&Math.abs(H.s)<30){H.kaza=true;if(mode==='career')G.dmg=Math.min(100,G.dmg+20);toast(T('t_hzKaza'),'#ff5a5a',3);titre&&titre(2)}}
+}
 
 // ---------- manevra alanı ----------
 function manKur(root){MR=null;if(!MAN.includes(REG))return;const i=NS-1-64-6;const ring=stopRing(0x3d8bff,T('manRing'));ringAt(ring,i);WOBJ.push(ring);MR={i,ring}}

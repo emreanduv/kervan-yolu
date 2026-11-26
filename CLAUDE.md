@@ -100,4 +100,7 @@ Hatalar tek tek değil kuralla çözülür. Hareket eden her araç (tır, dorse,
 - **Yeni bir katı cisim eklenince yalnız `katiListe()`'ye eklenir**; ayrı ayrı çarpışma kodu yazılmaz. Statik engeller `obsC`/`obsR` ile.
 - Sınama 3 boyutludur: yüksekte taşınan kasa yerdeki kasanın üstünden geçer, çatal kasanın altına uzanır, gövde giremez.
 - Denetim: `python3 araclar/testler/kati-denetimi.py` her aracı her katı cisme 8 yönden sürer; gövde cismin içine girerse başarısız olur. Yeni araç ya da cisim gelince bu denetime eklenir.
+- **İki yön de kapalı:** araç cisme giremez (`collides`), hareket eden cisim de araca giremez (`aracaDegiyor(g)`; örnek: hemzemin geçitte tren tıra değerse acil fren yapar, durur, yol açılınca devam eder).
+- Bugünkü katı cisimler: tır, dorse (yüküyle birlikte, tam genişlik), forklift, yerdeki kasalar, istif yükleri, tren (`window.KATI_EK`), trafik araçları, eskort ve polis aracı. Modüller kendi cisimlerini `window.KATI_EK.push(grup)` ile ekler.
+- **Yeni hareketli bir şey eklerken üç adım:** (1) katı cisim listesine ekle, (2) kendi hareketinde `aracaDegiyor` ya da `collides` ile sına, (3) `araclar/testler/`'deki denetime bir senaryo ekle (örnek: `tren-denetimi.py`). Üçü yapılmadan özellik bitmiş sayılmaz.
 - Aynı mantık bütün 3B oyunlara (Gelişim Defteri G102) uygulanır.
