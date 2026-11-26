@@ -93,7 +93,7 @@ function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&
  [trav,ray,bal].forEach(m=>m.instanceMatrix.needsUpdate=true);
  // levhalar, bariyer, ışıklar (iki yaklaşım)
  const kol=[],isik=[];const yuk=P('#e9e9e6');
- for(const yon of[-1,1]){const q=sideAt(ri-yon*7,yon*5.4);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang+(yon>0?0:Math.PI);g.add(t);
+ for(const yon of[-1,1]){const q=sideAt(ri-yon*7,yon*6.4);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang+(yon>0?0:Math.PI);g.add(t);
   addBox(.14,3.4,.14,MAT.steel,0,1.7,0,t);for(const r of[.62,-.62]){const x=addBox(1.5,.22,.04,yuk,0,3.1,0,t);x.rotation.z=r;const kr=addBox(1.5,.08,.045,P('#c91d1d'),0,3.1,0,t);kr.rotation.z=r}
   for(const dx of[-.35,.35]){const l=new THREE.Mesh(new THREE.CircleGeometry(.16,12),new THREE.MeshBasicMaterial({color:0x3a0c0c}));l.position.set(dx,2.45,.09);t.add(l);isik.push(l)}
   const pv=new THREE.Group();pv.position.set(0,1.05,0);t.add(pv);const arm=new THREE.Group();arm.userData.gecirgen=1;pv.add(arm);for(let k=0;k<7;k++)addBox(.62,.16,.12,k%2?P('#c91d1d'):yuk,-.35-k*.62,0,0,arm);arm.rotation.z=Math.PI/2*.95;kol.push(arm)

@@ -2,5 +2,6 @@
 - Urgent calls from the site: when a turbine stops or the assembly crew waits for parts, a notification arrives and the driver who answers earns a bonus. Can be turned off in Settings.
 - The whole truck is solid: cab, trailer and load no longer pass through signs, poles, rocks or buildings.
 - At level crossings the train never touches the truck and brakes hard if it must.
+- Nothing over the road hangs lower than the load: customs sign, fuel canopy, chain-up gantry, village eaves, trees and road signs now clear the tallest load or sit off the road.
 - Overhead wires now hang relative to the road: an empty truck passes under them, and an unfixed survey wire only touches tall loads such as towers and blades.
 - A waiting escort no longer drives into the truck.

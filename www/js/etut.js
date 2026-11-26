@@ -56,7 +56,8 @@ let EN=[],DEK=null;
 function rng(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296}}
 function egri(i){const a=RS[Math.max(0,i-6)],b=RS[i],c=RS[Math.min(NS-1,i+6)];const ux=b.x-a.x,uz=b.z-a.z,vx=c.x-b.x,vz=c.z-b.z;const an=Math.atan2(ux*vz-uz*vx,ux*vx+uz*vz);
  const mx=(a.x+c.x)/2-b.x,mz=(a.z+c.z)/2-b.z;const s=sideAt(i,1);const ic=((s.x-b.x)*mx+(s.z-b.z)*mz)>0?1:-1;return{k:Math.abs(an),ic}}
-function yasak(i){if(VZ&&i>VZ.v0-80&&i<VZ.wi+10)return true;if(CZ&&CZ.ci&&Math.abs(i-CZ.ci)<20)return true;return false}
+function yasak(i){if(VZ&&i>VZ.v0-80&&i<VZ.wi+10)return true;if(CZ&&CZ.ci&&Math.abs(i-CZ.ci)<20)return true;// cep (yakıt, kantar) giriş-çıkışına engel konmaz
+ if(typeof PORTOPS!=='undefined'&&PORTOPS.mola&&Math.abs(i-PORTOPS.mola.ri)<25)return true;if(typeof PLAN!=='undefined'&&PLAN&&PLAN.ki&&Math.abs(i-PLAN.ki)<25)return true;return false}
 function dsYapildi(){return !!(SAVE.ds&&SAVE.ds[REG])}
 function gizli(o){if(dsYapildi()||TUR[o.tip].c!=='sari')return false;let h=0;for(const ch of o.id+REG)h=(h*31+ch.charCodeAt(0))>>>0;return h%4===0}
 function hazir(){const s=(SAVE.etut&&SAVE.etut[REG])||[];return new Set(s)}
@@ -96,7 +97,7 @@ function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R
  if(VZ){const i=clamp(VZ.v0-90,lo,hi);if(!EN.some(o=>Math.abs(o.i-i)<12))ekle('koykablo',i,1)}
  EN.sort((a,b)=>a.i-b.i);
  for(const o of EN){const p=sideAt(o.i,o.ic*7.6),ic=o.ic;
-  if(o.tip==='dal'){const r=agacG(g,p.x,p.z,p.ang,ic,4.4);o.bad=r.bad;o.ok=r.ok}
+  if(o.tip==='dal'){const q=sideAt(o.i,ic*9.4);const r=agacG(g,q.x,q.z,q.ang,ic,6.2);o.bad=r.bad;o.ok=r.ok}
   else if(o.tip==='levha'){o.bad=levhaG(g,sideAt(o.i,ic*5.1),p.ang);o.ok=levhaG(g,sideAt(o.i,ic*9.5),p.ang)}
   else if(o.tip==='tel'){o.bad=telG(g,o.i,6.0);o.ok=telG(g,o.i,8.6)}
   else if(o.tip==='genis'){o.bad=sevG(g,o.i,ic,5.4);o.ok=new THREE.Group();g.add(o.ok);o.ok.add(cakilG(g,o.i,ic));o.ok.add(sevG(g,o.i,ic,9.2))}
@@ -107,7 +108,8 @@ function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R
   else if(o.tip==='dolgu'){const mk=(c,h)=>{const t=new THREE.Group();g.add(t);const m=P(c,{shininess:2});for(let k=-3;k<=3;k++){const q=sideAt(clamp(o.i+k,1,NS-2),ic*6.4);addBox(4.4,h,3.6,m,0,0,0,t).position.set(q.x,getH(q.x,q.z)+h/2-.1,q.z)}return t};o.bad=mk('#a08462',.7);o.ok=mk('#8f7f6a',.25)}
   else if(o.tip==='toprak'){const mk=()=>{const t=new THREE.Group();g.add(t);const m=P('#7a6248',{shininess:2});for(let k=-1;k<=1;k++){const q=sideAt(clamp(o.i+k*2,1,NS-2),ic*5.0);const r=new THREE.Mesh(new THREE.DodecahedronGeometry(1.3,0),m);r.scale.set(1.4,.6,1.8);r.position.set(q.x,getH(q.x,q.z)+.3,q.z);t.add(r)}return t};o.bad=mk();o.ok=null}
   else if(o.tip==='bom'||o.tip==='yanal'){o.bad=null;o.ok=null}
-  else if(o.tip==='og'){const c=P('#b8b6ae',{shininess:6});o.bad=direk(g,sideAt(o.i,ic*5),9,c,1);o.ok=direk(g,sideAt(o.i,ic*10.5),9,c,1)}}
+  else if(o.tip==='og'){const c=P('#b8b6ae',{shininess:6});o.bad=direk(g,sideAt(o.i,ic*5),9,c,1);o.ok=direk(g,sideAt(o.i,ic*10.5),9,c,1)}
+  if(o.bad)o.bad.userData.etutKotu=1}
  gecirgenYap();gorsel();dekor(g)}
 function gecirgenYap(){}// etüt engelleri de katı: yalnız havadaki teller (yükseklik kuralıyla) ve kanadın taşan ucu (etüt hasar kuralıyla) ayrı işlenir
 function gorsel(){const H=hazir();const free=typeof mode!=='undefined'&&mode!=='career';for(const o of EN){const f=free||H.has(o.id)||(G&&G.etutSec&&G.etutSec.has(o.id)&&G.docs)||o.acil;if(o.bad)o.bad.visible=!f;if(o.ok)o.ok.visible=!!f||o.bad===null}}

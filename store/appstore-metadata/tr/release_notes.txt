@@ -2,5 +2,6 @@
 - Sahadan acil çağrılar: türbin durduğunda ya da montaj malzeme beklediğinde bildirim gelir; çağrıya koşan şoför ek ücret alır. Ayarlardan kapatılabilir.
 - Tırın bütün gövdesi gerçek: kabin, dorse ve yük levhaların, direklerin, kayaların ve binaların içinden geçmiyor.
 - Hemzemin geçitte tren tıra değmez; gerekirse acil fren yapar.
+- Yolun üstündeki hiçbir şey yükten alçak değil: gümrük tabelası, akaryakıt kanopisi, zincir istasyonu, köy evlerinin saçakları, ağaçlar ve yol tabelaları en yüksek yükün üstünde ya da yolun dışında.
 - Yolun üstündeki teller yola göre asılı: boş tır altlarından rahatça geçer, düzeltilmemiş etüt teli yalnız kule ve kanat gibi yüksek yüklere değer.
 - Bekleyen eskort artık tırın içine girmiyor.
