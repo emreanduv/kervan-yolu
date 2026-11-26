@@ -1,3 +1,6 @@
-1.1.1:
-- Hiçbir şey hiçbir şeyin içinden geçmiyor: tır, dorse, forklift, yerdeki kasalar ve istif yükleri birbirine çarpıp durur. Yüksekte taşınan kasa yerdekilerin üstünden geçer, çatal kasanın altına girer.
-- Forklift artık kasaların ve tırın içinden geçmiyor.
+1.1.2:
+- Sahadan acil çağrılar: türbin durduğunda ya da montaj malzeme beklediğinde bildirim gelir; çağrıya koşan şoför ek ücret alır. Ayarlardan kapatılabilir.
+- Tırın bütün gövdesi gerçek: kabin, dorse ve yük levhaların, direklerin, kayaların ve binaların içinden geçmiyor.
+- Hemzemin geçitte tren tıra değmez; gerekirse acil fren yapar.
+- Yolun üstündeki teller yola göre asılı: boş tır altlarından rahatça geçer, düzeltilmemiş etüt teli yalnız kule ve kanat gibi yüksek yüklere değer.
+- Bekleyen eskort artık tırın içine girmiyor.

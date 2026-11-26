@@ -1,3 +1,6 @@
-1.1.1:
-- Nothing passes through anything: truck, trailer, forklift, crates and laydown loads now collide and stop. A raised crate clears the ones on the ground and the forks slide under a pallet.
-- The forklift no longer drives through crates or the truck.
+1.1.2:
+- Urgent calls from the site: when a turbine stops or the assembly crew waits for parts, a notification arrives and the driver who answers earns a bonus. Can be turned off in Settings.
+- The whole truck is solid: cab, trailer and load no longer pass through signs, poles, rocks or buildings.
+- At level crossings the train never touches the truck and brakes hard if it must.
+- Overhead wires now hang relative to the road: an empty truck passes under them, and an unfixed survey wire only touches tall loads such as towers and blades.
+- A waiting escort no longer drives into the truck.
