@@ -519,9 +519,15 @@ function portSetup(){if(PORTOPS.arm){PORTOPS.armA=0;PORTOPS.arm.rotation.z=0}if(
 function tahliyeStart(){// rıhtımdaki liman vinci yükü gemiden dorseye indirir (sinematik)
  const v=truck.v;G.th={t:0,x0:v.x,z0:v.z,h0:v.h};v.x=-68;v.z=-26;v.h=0;v.speed=0;trailer.th=0;placeVehicles(0);
  trailer.cargo.position.set(-14,18,0);G.thCam=true;phase='tahliye';setObj(T('o_tahliye'));setAct(null);toast(T('t_tahliye'),'#bfe4ff',3.2);blip(180,240,.8)}
-function tahliyeStep(dt){const s=G.th;s.t+=dt;const k=Math.min(1,s.t/5.2),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;trailer.cargo.position.set(-14*(1-Math.min(1,k*1.6)),18*(1-e),0);
- const r=PORTOPS.rope;if(r){trailer.g.updateMatrixWorld();const p=new THREE.Vector3(0,trailer.cargo.position.y+3,trailer.cargo.position.z+8).applyMatrix4(trailer.g.matrixWorld);const top=YARD_Y+30.5;r.visible=k<.98;r.scale.y=Math.max(.1,top-p.y);r.position.set(p.x,(top+p.y)/2,p.z)}
- if(s.t>5.8){trailer.cargo.position.set(0,0,0);if(r)r.visible=false;const v=truck.v;v.x=s.x0;v.z=s.z0;v.h=s.h0;trailer.th=v.h;placeVehicles(0);G.thCam=false;snapCam();phase='drive';G.pst='gumruk';setObj(T('o_prep'));toast(T('t_tahliyeOk'),'#8ff0a4',2.4);blip(400,700,.2)}}
+function tahliyeStep(dt){const s=G.th;s.t+=dt;const LV=PORTOPS.lv;const par=trailer.cargo.parent;
+ if(!s.E){trailer.cargo.position.set(0,0,0);par.updateWorldMatrix(true,false);s.E=par.localToWorld(new THREE.Vector3(0,0,0));s.S=par.localToWorld(new THREE.Vector3(-14,18,0));s.H=Math.max(s.S.y,s.E.y)+3;
+  const c=LV?LV.cg.position:new THREE.Vector3(-70.5,YARD_Y,-40);s.c=c.clone();s.a0=Math.atan2(s.S.z-c.z,s.S.x-c.x);s.a1=Math.atan2(s.E.z-c.z,s.E.x-c.x);s.r0=Math.hypot(s.S.x-c.x,s.S.z-c.z);s.r1=Math.hypot(s.E.x-c.x,s.E.z-c.z)}
+ const k=Math.min(1,s.t/6.2),e=t=>t<0?0:t>1?1:t*t*(3-2*t);const a=e(k/.2),b=e((k-.2)/.55),c2=e((k-.75)/.25);
+ let da=s.a1-s.a0;da=Math.atan2(Math.sin(da),Math.cos(da));const an=s.a0+da*b,r=s.r0+(s.r1-s.r0)*b;
+ const P=new THREE.Vector3(s.c.x+Math.cos(an)*r,k<.75?s.S.y+(s.H-s.S.y)*a:s.H+(s.E.y-s.H)*c2,s.c.z+Math.sin(an)*r);
+ trailer.cargo.position.copy(par.worldToLocal(P.clone()));
+ if(LV){vincYonel(P,dt,LV);const ust=P.clone();ust.y+=4;halatCiz(bomUcu(LV),ust,LV)}
+ if(s.t>6.8){trailer.cargo.position.set(0,0,0);if(LV)sahaVincHal(LV);const v=truck.v;v.x=s.x0;v.z=s.z0;v.h=s.h0;trailer.th=v.h;placeVehicles(0);G.thCam=false;snapCam();phase='drive';G.pst='gumruk';setObj(T('o_prep'));toast(T('t_tahliyeOk'),'#8ff0a4',2.4);blip(400,700,.2)}}
 function canopyFade(){const c=PORTOPS&&PORTOPS.can;if(!c||!c.roof||!truck)return;const d=Math.hypot(truck.g.position.x-c.position.x,truck.g.position.z-c.position.z);const o=clamp((d-6)/14,.18,1);for(const m of c.roof){m.material.opacity=o;m.material.depthWrite=o>.95}}
 function portLogic(dt){canopyFade();// true dönerse sürüş mantığının geri kalanı bekler
  const v=truck.v,sp=Math.abs(v.speed),i=roadIdx(v);
@@ -882,12 +888,24 @@ function buildPort(){
  addBox(22,9,120,P('#1d3b5c',{shininess:40}),0,1,0,ship);addBox(22.2,2.2,120.2,P('#8c2a22'),0,-2.6,0,ship);
  addBox(16,10,12,MAT.white,0,10.5,46,ship);addBox(17,1.5,3,P('#2a2f33'),0,14,40.5,ship);addCyl(1.4,1.6,6,12,P('#c7362b'),0,18,48,ship);
  for(let r=0;r<3;r++)for(let s=0;s<6;s++)for(let k=0;k<2;k++){const m=new THREE.MeshPhongMaterial({map:ctx[(r+s*2+k)%6],shininess:30});addBox(2.44,2.59,6.06,m,-6+r*6,6.8+k*2.6,-40+s*12,ship)}
- const cr=new THREE.Group();cr.position.set(-68,YARD_Y,-14);scene.add(cr);const cm=P('#c7362b',{shininess:50});
- for(const x of[-6,6])for(const z of[-5,5])addBox(1,30,1,cm,x,15,z,cr);addBox(14,1.4,1.4,cm,0,30,-5,cr);addBox(14,1.4,1.4,cm,0,30,5,cr);
- const boom=addBox(1.4,1.4,70,cm,-22,33,0,cr);boom.rotation.y=Math.PI/2;addBox(5,4,6,MAT.white,-10,30,0,cr);
+ // mobil liman vinci (rüzgâr türbini parçaları gemiden böyle indirilir): portal yok, yük kaldırılır, vinç döner, dorseye indirilir
+ {const cm=P('#c7362b',{shininess:50}),cd=P('#8f241c',{shininess:30});const LV=vincYap(scene,cm,cd,64);LV.cg.position.set(-70.5,YARD_Y,-40);LV.cg.rotation.y=0;LV.bm.rotation.z=.5;obsC(-70.5,-40,5);PORTOPS.lv=LV;sahaVincHal(LV)}
  // depot teslim alanı işareti (dönüş seferleri)
  const pad=new THREE.Mesh(new THREE.PlaneGeometry(14,18),new THREE.MeshLambertMaterial({color:0x6a6a62}));pad.rotation.x=-Math.PI/2;pad.position.set(DEPOT.x,YARD_Y+.05,DEPOT.z);pad.receiveShadow=true;scene.add(pad);
 }
+// ---- VİNÇ (saha paletli vinci ve liman vinci aynı yapı): alt şasi sabit, üst yapı döner, bom açısı değişir, halat bom ucundan ----
+const BOM_L=90;
+function vincYap(par,renk,renkD,bomL){const cg=new THREE.Group();par.add(cg);for(const z of[-3.4,3.4])addBox(7.6,1.2,2.2,MAT.dark,0,.6,z,cg);addBox(4,1,6,MAT.dark2,0,1.2,0,cg);
+ const ust=new THREE.Group();ust.position.y=1.6;ust.userData.dinamik=1;cg.add(ust);addBox(6,2.4,5.6,renk,.6,1.4,0,ust);addBox(2.6,2.6,2.2,renkD,-1.6,2.6,-2.2,ust);addBox(2.4,1.2,2.06,MAT.glass,-1.7,3,-2.2,ust);addBox(2.4,3,5,P('#4a4d50',{shininess:20}),3.8,1.8,0,ust);
+ const bm=new THREE.Group();bm.position.set(-2.4,2.4,0);ust.add(bm);for(const dz of[-.7,.7])addBox(.3,bomL,.3,renk,0,bomL/2,dz,bm);for(let y=2;y<bomL;y+=3){addBox(.2,.2,1.6,renkD,0,y,0,bm);const d=addBox(.14,2.2,.14,renkD,0,y+1.5,0,bm);d.rotation.x=.75}addBox(1.2,1.4,1.8,renkD,0,bomL,0,bm);bm.rotation.z=.22;
+ const ip=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,1,4),new THREE.MeshBasicMaterial({color:0x111111}));cg.add(ip);const kanca=new THREE.Group();addBox(.5,.7,.35,P('#d3261d',{shininess:50}),0,0,0,kanca);cg.add(kanca);
+ for(const o of[ip,kanca])o.userData.gecirgen=1;return{cg,ust,bm,ip,kanca,L:bomL}}
+function bomUcu(V){V=V||window.SAHA_VINC;V.cg.updateWorldMatrix(true,true);return V.bm.localToWorld(new THREE.Vector3(0,V.L+.4,0))}
+// noktayı (dünya) kanca altına alacak şekilde üst yapıyı döndürür ve bomu indirir/kaldırır; gerçek açılarla sınırlı
+function vincYonel(P,dt,V){V=V||window.SAHA_VINC;if(!V)return;V.cg.updateWorldMatrix(true,false);const L=V.cg.worldToLocal(P.clone());const th=Math.atan2(L.z,-L.x);const pr=Math.max(0,Math.hypot(L.x,L.z)-2.4);
+ const luf=Math.asin(Math.min(.82,Math.max(.12,pr/V.L)));const k=dt?Math.min(1,dt*2.5):1;let d=th-V.ust.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));V.ust.rotation.y+=d*k;V.bm.rotation.z+=(luf-V.bm.rotation.z)*k}
+function halatCiz(a,b,V){V=V||window.SAHA_VINC;if(!V)return;V.cg.updateWorldMatrix(true,false);const la=V.cg.worldToLocal(a.clone()),lb=V.cg.worldToLocal(b.clone());const d=lb.clone().sub(la);const L=Math.max(.3,d.length());V.ip.position.copy(la).add(lb).multiplyScalar(.5);V.ip.scale.set(1,L,1);V.ip.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());V.kanca.position.copy(lb);V.kanca.position.y+=.35;V.kanca.rotation.set(0,V.ust.rotation.y,0)}
+function sahaVincHal(V){V=V||window.SAHA_VINC;if(!V)return;const u=bomUcu(V);halatCiz(u,u.clone().add(new THREE.Vector3(0,-24,0)),V)}
 function buildSite(){
  const s=new THREE.Group();s.position.set(SITE.x,SITE_Y,SITE.z);scene.add(s);world.site=s;const SX=SITE.x,SZ=SITE.z;world.siteSign=null;
  // saha yerleşimi yola göre: u = gelen yol yönü, w = yanı. Ortada 34 m yarıçaplı boş dönüş alanı bırakılır.
@@ -897,9 +915,9 @@ function buildSite(){
  const OC=(u,w,r)=>{const[x,z]=L(u,w);obsC(SX+x,SZ+z,r)};
  // yarım kule + paletli vinç (dönüş alanının arkasında)
  const tb=new THREE.Group();addCyl(4.2,4.4,1.2,24,MAT.concrete,0,.6,0,tb);addCyl(2.3,2.5,24,24,MAT.turb,0,13,0,tb);put(tb,-46,-10);OC(-46,-10,5);
- const cg=new THREE.Group();addBox(6,2.4,9,MAT.yellow,0,2.2,0,cg);addBox(7,1,11,MAT.dark,0,.5,0,cg);addBox(3,2.6,3,MAT.yellowD,1.2,4.6,-2.8,cg);
- const bm=new THREE.Group();bm.position.set(0,3.6,0);cg.add(bm);addBox(1.4,90,1.4,MAT.yellow,0,45,0,bm);bm.rotation.z=.22;for(let y=4;y<90;y+=6)addBox(1.6,.15,1.6,MAT.yellowD,0,y,0,bm);
- addCyl(.05,.05,58,4,MAT.dark,-19.8,58,0,cg);put(cg,-44,12,Math.PI/2);OC(-44,12,6);
+ // paletli vinç: alt şasi (paletler) sabit, üst yapı (gövde, kabin, karşı ağırlık, bom) döner; bom açısı (luff) değişir. Montajda santiye.js sürer (window.SAHA_VINC).
+ const V=vincYap(s,MAT.yellow,MAT.yellowD,BOM_L);const cg=V.cg;
+ put(cg,-44,12,Math.PI/2);OC(-44,12,6);window.SAHA_VINC=V;sahaVincHal(V);
  // yerde yatan kule segmentleri (sol yanda)
  for(let k=0;k<3;k++){const g=new THREE.Group();const c=addCyl(2.2,2.4,22,24,MAT.turb,0,2.6,0,g);c.rotation.x=Math.PI/2;addBox(4,1.2,1,MAT.wood,0,.6,-8,g);addBox(4,1.2,1,MAT.wood,0,.6,8,g);put(g,-6+k*0,38+k*7);for(let u=-10;u<=10;u+=4)OC(-6+u,38+k*7,2.7)}
  // kanat rafları (sağ yanda)
@@ -1275,7 +1293,7 @@ function katiDunyaKur(){KD.h=new Map();KD.n=0;const skip=new Set([world.terrain,
  const m4=new THREE.Matrix4(),bx=new THREE.Box3(),gb=new THREE.Box3();
  const ekle=(mw,geo)=>{if(!geo.boundingBox)geo.computeBoundingBox();gb.copy(geo.boundingBox);bx.copy(gb).applyMatrix4(mw);const sx=bx.max.x-bx.min.x,sy=bx.max.y-bx.min.y,sz=bx.max.z-bx.min.z;
   if(sy<.35||Math.max(sx,sz)<.22||Math.max(sx,sz)>120||!isFinite(sx))return;if(geo.type==='BufferGeometry'&&Math.max(sx,sz)>10)return;// serbest biçimli şerit (korkuluk, yarma, şantiye yolu): kutusu anlamsız, atlanır
-  const gh=getH((bx.min.x+bx.max.x)/2,(bx.min.z+bx.max.z)/2);if(bx.min.y>gh+4.3||bx.max.y<gh+.15)return;
+  const gh=zeminY((bx.min.x+bx.max.x)/2,(bx.min.z+bx.max.z)/2);if(bx.min.y>gh+4.3||bx.max.y<gh+.15)return;
   const lb=gb.clone();for(const ax of['x','y','z']){const d=lb.max[ax]-lb.min[ax];if(d<.3){const m=(lb.max[ax]+lb.min[ax])/2;lb.min[ax]=m-.15;lb.max[ax]=m+.15}}// levha gibi kalınlıksız yüzeyler 30 cm kalınlıkta sayılır
   const e={o:_kdO,inv:mw.clone().invert(),b:lb,position:{x:(bx.min.x+bx.max.x)/2,z:(bx.min.z+bx.max.z)/2},tip:geo.type,boy:[Math.round(sx),Math.round(sy),Math.round(sz)]};const c=KD.cs;for(let x=Math.floor(bx.min.x/c);x<=Math.floor(bx.max.x/c);x++)for(let z=Math.floor(bx.min.z/c);z<=Math.floor(bx.max.z/c);z++){const k=x+','+z;let a=KD.h.get(k);if(!a)KD.h.set(k,a=[]);a.push(e)}KD.n++};
  const yuru=o=>{if(skip.has(o)||o.userData.gecirgen||o.userData.dinamik||o.isSprite||o.isPoints||o.isLine||o.isLight||o.isCamera)return;
@@ -1287,6 +1305,8 @@ const _kdP=new THREE.Vector3();
 function katiDunyaVar(x,y,z){const a=KD.h.get(Math.floor(x/KD.cs)+','+Math.floor(z/KD.cs));if(!a)return null;for(const e of a){if(e.o&&!kdGorunur(e.o))continue;_kdP.set(x,y,z).applyMatrix4(e.inv);const b=e.b;if(_kdP.x>b.min.x&&_kdP.x<b.max.x&&_kdP.y>b.min.y&&_kdP.y<b.max.y&&_kdP.z>b.min.z&&_kdP.z<b.max.z)return e}return null}
 // Modüller kendi katı cisimlerini buraya ekler (ör. hemzemin geçitteki tren): window.KATI_EK.push(grup)
 window.KATI_EK=window.KATI_EK||[];
+// zemin: arazi, limanda rıhtım üstü (rıhtım kutusu x -75..-65, z -47..57, üstü YARD_Y)
+function zeminY(x,z){const h=getH(x,z);return(x>-75.2&&x<-64.8&&z>-47.2&&z<57.2)?Math.max(h,YARD_Y):h}
 // ---- YOL ZARFI: şeritte giden en geniş/yüksek yükün kapladığı hacim (yol ekseninden ±ZARF_YAN, yoldan ZARF_UST'e kadar).
 // Yol kenarına konan her yapı bu hacmin dışında kalmalı; yolZarfDisi(g,i,yan) yapıyı gerekirse yandan dışarı iter. Denetim: ust-aciklik-denetimi.py
 const ZARF_YAN=5.0,ZARF_UST=7.8;

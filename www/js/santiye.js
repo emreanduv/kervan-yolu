@@ -153,31 +153,64 @@ function kuleKur(){KULE=null;ISTIF.length=0;try{const s=world.site;if(!s)return;
  KULE={g,seg,nac,hub,bls,top,cuk,tem,tg};kuleGoster()}catch(e){console.log('kule',e)}}
 function kuleGoster(){if(!KULE)return;const m=mtKayit();KULE.seg.forEach((s,k)=>{s.visible=k<m.k;s.userData.fl.visible=k<m.k});KULE.nac.visible=!!m.n;KULE.hub.visible=!!(m.n&&(m.h||m.b>0));KULE.bls.forEach((b,k)=>b.visible=k<m.b);if(KULE.cuk){KULE.cuk.visible=!m.a;KULE.tem.visible=!!m.a}}
 const ISTIF=[];
+// taşıma hattı boyunca (yükün genişliğiyle) en yüksek katı nesnenin tepesi; hedef kule sayılmaz
+function yolUstuEngel(a,b,parca,haric){parca.updateMatrixWorld(true);const sz=new THREE.Box3().setFromObject(parca).getSize(new THREE.Vector3());const w=Math.max(sz.x,sz.z)/2;let top=-1e9;const L=Math.hypot(b.x-a.x,b.z-a.z),n=Math.max(2,Math.ceil(L/3));
+ for(let i=0;i<=n;i++){const t=i/n,x0=a.x+(b.x-a.x)*t,z0=a.z+(b.z-a.z)*t;for(const dx of[-w,0,w])for(const dz of[-w,0,w]){const x=x0+dx,z=z0+dz;const g=getH(x,z);top=Math.max(top,g);for(let y=g+.5;y<g+45;y+=1){const e=katiDunyaVar(x,y,z);if(e&&!(haric&&(()=>{for(let q=e.o;q;q=q.parent)if(q===haric)return true;return false})()))top=Math.max(top,y+1)}}}return top}
 function montajBasla(tip,bitti,ind){if(!KULE){bitti();return}const m=mtKayit();phase='montaj';showHud(false);showCtl&&showCtl(true);
  const parca=new THREE.Group();scene.add(parca);let hedefY,hedef=new THREE.Vector3();
- const govde=()=>{if(tip==='kule'){const c=addCyl(2.1,2.3,22,24,MAT.turb,0,0,0,parca);if(ind)c.rotation.z=Math.PI/2}else if(tip==='nasel')rbox(3.9,3.9,10.4,.6,MAT.turb,0,0,0,parca);else if(tip==='kanat'){const b=new THREE.Mesh(bladeGeom(56),MAT.turb);b.rotation.x=Math.PI/2;if(ind)b.rotation.set(0,0,Math.PI/2);parca.add(b)}
+ const srcK={kasa:'raf',yedek:'raf'}[tip]||tip,src=CARGO[srcK];const gizle=src&&src.visible&&!['kasa','yedek'].includes(tip);
+ const govde=()=>{if(ind&&src&&src.visible){// tırın üstündeki yükün kendisi kaldırılır
+   const c=src.clone(true);c.position.set(0,0,0);c.rotation.set(0,0,0);c.scale.copy(src.scale);c.traverse(o=>{o.visible=true});parca.add(c);src.updateWorldMatrix(true,false);const q=new THREE.Quaternion();src.getWorldQuaternion(q);parca.quaternion.copy(q);parca.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(c),cc=b.getCenter(new THREE.Vector3());parca.worldToLocal(cc);c.position.sub(cc);return}
+  if(tip==='kule'){const c=addCyl(2.1,2.3,22,24,MAT.turb,0,0,0,parca);if(ind)c.rotation.z=Math.PI/2}else if(tip==='nasel')rbox(3.9,3.9,10.4,.6,MAT.turb,0,0,0,parca);else if(tip==='kanat'){const b=new THREE.Mesh(bladeGeom(56),MAT.turb);b.rotation.x=Math.PI/2;if(ind)b.rotation.set(0,0,Math.PI/2);parca.add(b)}
   else{const src=CARGO[{kasa:'raf',yedek:'raf'}[tip]||tip];if(src){const c=src.clone(true);c.position.set(0,0,0);c.rotation.set(0,0,0);c.traverse(o=>{o.visible=true});parca.add(c)}else rbox(2.4,2.4,6,.1,P('#8a6b3c'),0,1.2,0,parca)}};govde();
  const KP=KULE.g.position;const ax=KP.x-SITE.x,az=KP.z-SITE.z;const al=Math.hypot(ax,az)||1;
  if(ind){const n=ISTIF.length%4;hedef.set(KP.x+(-az/al)*(34+n*7)+(ax/al)*14,KP.y+1.2,KP.z+(ax/al)*(34+n*7)+(az/al)*14)}
  else if(tip==='ankraj'){const t=KULE.tg.position;hedef.set(t.x,t.y-.4,t.z)}
- else{hedefY=tip==='kule'?25+m.k*22+11:KULE.top+2;if(tip==='hub')hedef.set(KP.x,KP.y+hedefY,KP.z-4.6);else hedef.set(KP.x,KP.y+hedefY,KP.z)}const bas=new THREE.Vector3(KULE.g.position.x+18,KULE.g.position.y+3,KULE.g.position.z+10);parca.position.copy(bas);
- const hook=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1,4),new THREE.MeshBasicMaterial({color:0x111111}));scene.add(hook);
+ else{hedefY=tip==='kule'?25+m.k*22+11:KULE.top+2;if(tip==='hub')hedef.set(KP.x,KP.y+hedefY,KP.z-4.6);else hedef.set(KP.x,KP.y+hedefY,KP.z)}let bas=new THREE.Vector3(KULE.g.position.x+18,KULE.g.position.y+3,KULE.g.position.z+10);
+ if(src&&src.visible){src.updateWorldMatrix(true,true);bas=new THREE.Box3().setFromObject(src).getCenter(new THREE.Vector3())}parca.position.copy(bas);
+ if(gizle)src.visible=false;// yük dorseden kalkar
+ parca.updateMatrixWorld(true);const pb=new THREE.Box3().setFromObject(parca),yari=(pb.max.y-pb.min.y)/2;
+ if(ind){hedef.y=getH(hedef.x,hedef.z)+yari+.55}// (aşağıda boş yer aranır)
+ const yatik=!ind&&tip==='kule';let q0=null,q1=null;
+ if(ind){// istif sırasına paralel yatırılır
+  q0=parca.quaternion.clone();const ek=new THREE.Vector3(0,0,1).applyQuaternion(q0),ek2=new THREE.Vector3(1,0,0).applyQuaternion(q0);const bz=new THREE.Box3().setFromObject(parca).getSize(new THREE.Vector3());const uz=Math.abs(ek.y)<.7?ek:ek2;const y0=Math.atan2(uz.x,uz.z),y1=Math.atan2(ax,az);q1=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),y1-y0).multiply(q0)}
+ if(ind){// istif yeri: katı bir şeye (temel çukuru, toprak yığını, kule, eski istif) değmeyen ilk boş yer
+  const pos0=parca.position.clone(),qq=parca.quaternion.clone();parca.quaternion.copy(q1||qq);const v=new THREE.Vector3(),B=new THREE.Box3();
+  const dolu=()=>{parca.updateMatrixWorld(true);let d=false;parca.traverse(o=>{if(d||!o.isMesh||!o.geometry)return;if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox;
+    for(const fx of[0,.5,1])for(const fy of[0,.5,1])for(const fz of[0,.5,1]){v.set(b.min.x+(b.max.x-b.min.x)*fx,b.min.y+(b.max.y-b.min.y)*fy,b.min.z+(b.max.z-b.min.z)*fz).applyMatrix4(o.matrixWorld);for(let h=-.3;h<24;h+=1.5)if(katiDunyaVar(v.x,v.y+h,v.z)){d=true;return}/* iniş sütunu da boş olmalı */}});
+   if(d)return true;B.setFromObject(parca).expandByScalar(.6);for(const x of ISTIF){if(new THREE.Box3().setFromObject(x).intersectsBox(B))return true}return false};
+  let bul=false;for(let n=0;n<16&&!bul;n++){const sira=34+((ISTIF.length+n)%4)*7+Math.floor(n/4)*4,yan=14+Math.floor(n/4)*9*(n%8<4?1:-1);const hx=KP.x+(-az/al)*sira+(ax/al)*yan,hz=KP.z+(ax/al)*sira+(az/al)*yan;
+   parca.position.set(hx,getH(hx,hz)+yari+.55,hz);if(!dolu()){hedef.copy(parca.position);bul=true}}
+  // sıra doluysa kulenin çevresinde halka halka ara (vinç erişimi içinde)
+  for(let r=30;r<=66&&!bul;r+=6)for(let a=0;a<24&&!bul;a++){const an=a/24*Math.PI*2;const hx=KP.x+Math.cos(an)*r,hz=KP.z+Math.sin(an)*r;const V=window.SAHA_VINC;if(V&&Math.hypot(hx-V.cg.getWorldPosition(new THREE.Vector3()).x,hz-V.cg.getWorldPosition(new THREE.Vector3()).z)>70)continue;
+   parca.position.set(hx,getH(hx,hz)+yari+.55,hz);if(!dolu()){hedef.copy(parca.position);bul=true}}
+  parca.position.copy(pos0);parca.quaternion.copy(qq)}if(yatik)parca.rotation.z=Math.PI/2;
+ const hook=null;
  const ov=document.createElement('div');ov.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translateX(-50%);z-index:40;background:rgba(12,16,14,.86);color:#fff;padding:10px 14px;border-radius:10px;text-align:center;font:600 14px "Barlow Condensed",sans-serif;max-width:88vw';document.body.appendChild(ov);
- MT={tip,ind:!!ind,p:0,parca,bas,hedef,hook,ov,ruz:7,bitti,durT:0,oto:false};const ab=document.createElement('button');ab.className='btn sm';ab.id='mtAtla';ab.textContent=T('mtAtla');ab.style.cssText='position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:41';ab.onclick=()=>{if(MT){MT.oto=true;ab.remove()}};document.body.appendChild(ab);MT.ab=ab;const KCT=window.camTarget;MT.kct=KCT;
+ MT={tip,ind:!!ind,p:0,parca,bas,hedef,hook,ov,ruz:7,bitti,durT:0,oto:false,yatik,yari,q0,q1,H:Math.max(bas.y,hedef.y)+(ind?7:5)};
+ // taşıma yüksekliği: yol üstündeki her katı nesnenin üstünden
+ MT.H=Math.max(MT.H,yolUstuEngel(bas,hedef,parca,KULE.g)+yari+1.5);const ab=document.createElement('button');ab.className='btn sm';ab.id='mtAtla';ab.textContent=T('mtAtla');ab.style.cssText='position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:41';ab.onclick=()=>{if(MT){MT.oto=true;ab.remove()}};document.body.appendChild(ab);MT.ab=ab;const KCT=window.camTarget;MT.kct=KCT;
  window.camTarget=()=>{const c=MT?MT.parca.position:hedef;return{p:new THREE.Vector3(KULE.g.position.x+70,KULE.g.position.y+60,KULE.g.position.z+70),l:new THREE.Vector3((KULE.g.position.x+c.x)/2,c.y*.6+KULE.g.position.y*.4,(KULE.g.position.z+c.z)/2)}};snapCam&&snapCam()}
 function mtAdim(dt){const M=MT;M.ruz=clamp(M.ruz+(Math.random()-.5)*dt*6+Math.sin(G.t*.5)*dt*1.4,4,14.5);const ruzgar=M.ruz>12;
  const bas=input.gas>0||M.oto;if(M.oto)M.p=Math.min(1,M.p+dt*.5);else if(bas&&!ruzgar)M.p=Math.min(1,M.p+dt*(M.ind||M.tip==='ankraj'?.24:.15));if(bas&&ruzgar&&!M.oto){M.durT+=dt;if(M.durT>1.2&&mode==='career'){G.dmg=Math.min(100,G.dmg+dt*4)}}else M.durT=0;
- const k=M.p;const P2=new THREE.Vector3().lerpVectors(M.bas,M.hedef,k);P2.y=(M.ind||M.tip==='ankraj')?M.bas.y+(M.hedef.y-M.bas.y)*k+Math.sin(Math.PI*k)*12:M.bas.y+(M.hedef.y-M.bas.y)*Math.min(1,k*1.25);M.parca.position.copy(P2);M.parca.rotation.y=Math.sin(G.t*.8)*(ruzgar?.12:.04);
- const ust=M.parca.position.clone();ust.y+=14;M.hook.position.copy(ust).add(M.parca.position).multiplyScalar(.5);M.hook.scale.y=14;
+ const k=M.p,e=t=>t<0?0:t>1?1:t*t*(3-2*t);const P2=new THREE.Vector3();
+ const a=e(k/.25),b=e((k-.25)/.5),c=e((k-.75)/.25);// kaldır · taşı · indir
+ P2.x=M.bas.x+(M.hedef.x-M.bas.x)*b;P2.z=M.bas.z+(M.hedef.z-M.bas.z)*b;P2.y=k<.75?M.bas.y+(M.H-M.bas.y)*a:M.H+(M.hedef.y-M.H)*c;
+ const sal=(ruzgar?.09:.035)*M.ruz*Math.min(a,1-c);P2.x+=Math.sin(G.t*1.3)*sal;P2.z+=Math.cos(G.t*1.1)*sal*.6;// rüzgârda yük sallanır
+ M.parca.position.copy(P2);if(M.yatik)M.parca.rotation.z=Math.PI/2*(1-e(k/.3));if(M.ind){if(M.q0)M.parca.quaternion.slerpQuaternions(M.q0,M.q1,b)}else M.parca.rotation.y=Math.sin(G.t*.8)*(ruzgar?.12:.04);
+ try{vincYonel(P2,dt);const uc=bomUcu();const ust=P2.clone();ust.y+=M.yatik&&k<.3?2.4:M.yari;halatCiz(uc,ust)}catch(e){}
  M.ov.innerHTML=`<b style="letter-spacing:.06em">${T(M.ind?'mtH2':'mtH')}</b> · ${Math.round(k*100)}%<br><span style="opacity:.85">${T(M.ind?'mtTxtI':M.tip==='ankraj'?'mtTxtA':M.tip==='hub'?'mtTxtH':'mtTxt')}</span><br><b style="color:${ruzgar?'#ff8a7f':'#8ff0a4'}">${T('mtRuz').replace('{w}',M.ruz.toFixed(1))}</b>${ruzgar&&bas?'<br><b style="color:#ff8a7f">'+T('mtDur')+'</b>':''}`;
  if(k>=1){const m=mtKayit();let p='';if(M.ind)p=T('pIndir');else if(M.tip==='kule'){m.k++;p=T('pKule').replace('{k}',m.k)}else if(M.tip==='nasel'){m.n=1;p=T('pNasel')}else if(M.tip==='hub'){m.h=1;p=T('pHub')}else if(M.tip==='ankraj'){m.a=1;p=T('pAnk')}else{m.h=1;m.b++;p=m.b>=3?T('pTur'):T('pKanat').replace('{k}',m.b)}if(!M.ind)save();kuleGoster();
   if(mode==='career'&&!M.oto)G.ext.push(M.ind?['k_indirme',1000]:['k_montaj',2500]);if(M.ab)M.ab.remove();blip(392,523,.25);setTimeout(()=>blip(523,784,.3),220);toast(T(M.ind?'mtOkI':'mtOk').replace('{p}',p),'#8ff0a4',3);
-  if(M.ind){WOBJ.push(M.parca);ISTIF.push(M.parca);if(ISTIF.length>4){scene.remove(ISTIF.shift())}M.parca.rotation.y=0}else scene.remove(M.parca);scene.remove(M.hook);M.ov.remove();window.camTarget=M.kct;const fn=M.bitti;MT=null;G.mont=true;setTimeout(fn,1400)}}
+  try{sahaVincHal()}catch(e){}
+  if(M.ind){M.parca.position.copy(M.hedef);M.parca.updateMatrixWorld(true);const bx=new THREE.Box3().setFromObject(M.parca),sz=bx.getSize(new THREE.Vector3()),cx=bx.getCenter(new THREE.Vector3());const uzX=sz.x>=sz.z,L2=Math.max(sz.x,sz.z);
+   for(const f of[-.3,.3]){const t=addBox(uzX?.6:Math.min(3.2,sz.x+.4),.55,uzX?Math.min(3.2,sz.z+.4):.6,MAT.wood,0,0,0,scene);t.position.set(cx.x+(uzX?f*L2:0),getH(cx.x,cx.z)+.27,cx.z+(uzX?0:f*L2));M.parca.attach(t)}
+   WOBJ.push(M.parca);ISTIF.push(M.parca);if(ISTIF.length>4){scene.remove(ISTIF.shift())}}else scene.remove(M.parca);M.ov.remove();window.camTarget=M.kct;const fn=M.bitti;MT=null;G.mont=true;setTimeout(fn,1400)}}
 // türbin tamamlanınca rotor döner
 const _st2=window.EXT&&EXT.step;
 
 // ---------- bölge kurulumu ----------
 const _br=buildRegion;buildRegion=function(r){_br(r);try{const root=new THREE.Group();scene.add(root);WOBJ.push(root);hzKur(root);manKur(root);kuleKur()}catch(e){console.log('santiye kur',e)}};
 setInterval(()=>{try{if(KULE&&KULE.hub.visible&&mtKayit().b>=3)KULE.hub.rotation.z+=.012}catch(e){}},33);
-window.SANTIYE={ISTIF:()=>ISTIF,hzSkor:()=>HZ&&HZ.skor,HZ:()=>HZ,MR:()=>MR,KULE:()=>KULE,MT:()=>MT};
+window.SANTIYE={montajBasla:(t,f,i)=>montajBasla(t,f,i),mtAdim:(dt)=>mtAdim(dt),ISTIF:()=>ISTIF,hzSkor:()=>HZ&&HZ.skor,HZ:()=>HZ,MR:()=>MR,KULE:()=>KULE,MT:()=>MT};
 })();
