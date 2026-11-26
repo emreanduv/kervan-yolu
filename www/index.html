@@ -839,13 +839,13 @@ function buildVillage(){
  const sgn=(i,txt,off)=>{const p=sideAt(i,off);const g=new THREE.Group();g.position.set(p.x,getH(p.x,p.z),p.z);g.rotation.y=p.ang+Math.PI;scene.add(g);addBox(.15,3.6,.15,MAT.steel,0,1.8,0,g);const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.6,1.35),new THREE.MeshBasicMaterial({map:signTex(txt),side:THREE.DoubleSide}));pl.position.y=3.7;g.add(pl);obsC(p.x,p.z,.6)};
  sgn(v0-34,L==='tr'?'Dar sokak · Kanadı kaldır':'Narrow street · Raise blade',7.8);sgn(wi-30,L==='tr'?'Enerji hattı · Kanadı indir':'Power line · Lower blade',7.8);
  // enerji hattı: yolun iki yanında direkler, 13 m yükseklikte teller
- const pa=sideAt(wi,-11),pb=sideAt(wi,11);const ya=getH(pa.x,pa.z),yb=getH(pb.x,pb.z);const pm=P('#6b6458');
- for(const[q,y]of[[pa,ya],[pb,yb]]){const g=new THREE.Group();g.position.set(q.x,y,q.z);g.rotation.y=q.ang;scene.add(g);addCyl(.22,.32,15,8,pm,0,7.5,0,g);addBox(4,.25,.25,pm,0,14.4,0,g);obsC(q.x,q.z,.8)}
- const wm=new THREE.MeshBasicMaterial({color:0x1b1b1b});for(const dx of[-1.6,0,1.6]){const ax=new THREE.Vector3(pa.x,ya+14.4,pa.z),bx=new THREE.Vector3(pb.x,yb+14.4,pb.z);const tx=-(RS[wi+1].z-RS[wi-1].z),tz=(RS[wi+1].x-RS[wi-1].x);const tl=Math.hypot(tx,tz);
+ const pa=sideAt(wi,-11),pb=sideAt(wi,11);const ya=getH(pa.x,pa.z),yb=getH(pb.x,pb.z);const HY=Math.max(ya+14.4,yb+14.4,yolTepe(wi)+13+1.2);const pm=P('#6b6458');
+ for(const[q,y]of[[pa,ya],[pb,yb]]){const h=HY-y;const g=new THREE.Group();g.position.set(q.x,y,q.z);g.rotation.y=q.ang;scene.add(g);addCyl(.22,.32,h+.6,8,pm,0,(h+.6)/2,0,g);addBox(4,.25,.25,pm,0,h,0,g);obsC(q.x,q.z,.8)}
+ const wm=new THREE.MeshBasicMaterial({color:0x1b1b1b});for(const dx of[-1.6,0,1.6]){const ax=new THREE.Vector3(pa.x,HY,pa.z),bx=new THREE.Vector3(pb.x,HY,pb.z);const tx=-(RS[wi+1].z-RS[wi-1].z),tz=(RS[wi+1].x-RS[wi-1].x);const tl=Math.hypot(tx,tz);
    const pts=[];for(let k=0;k<=10;k++){const t=k/10;const q=ax.clone().lerp(bx,t);q.x+=tx/tl*dx*0+0;q.y-=Math.sin(t*Math.PI)*1.2;pts.push(q)}
    const off=new THREE.Vector3(-(RS[wi+1].x-RS[wi-1].x),0,-(RS[wi+1].z-RS[wi-1].z)).normalize().multiplyScalar(dx*.0);const tube=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(q=>q.add(off))),20,.05,4),wm);
    const along=new THREE.Vector3(RS[wi+1].x-RS[wi-1].x,0,RS[wi+1].z-RS[wi-1].z).normalize().multiplyScalar(dx);tube.position.add(along);scene.add(tube)}
- for(let k=-12;k<=12;k+=2){const q=sideAt(wi,k);const g=getH(q.x,q.z);HOBS.push({x:q.x,z:q.z,r:2.2,lo:g+12.4,hi:g+90,k:'tel'})}
+ for(let k=-12;k<=12;k+=2){const q=sideAt(wi,k);HOBS.push({x:q.x,z:q.z,r:2.2,lo:HY-1.8,hi:HY+80,k:'tel'})}
 }
 // ---- Ege ağaçları: zeytinlik sıraları, yamaçlarda kızılçam, köy çevresinde servi
 function buildTreesEge(){const N=MOBILE?1500:2200;const d=new THREE.Object3D(),col=new THREE.Color();
@@ -1287,6 +1287,10 @@ const _kdP=new THREE.Vector3();
 function katiDunyaVar(x,y,z){const a=KD.h.get(Math.floor(x/KD.cs)+','+Math.floor(z/KD.cs));if(!a)return null;for(const e of a){if(e.o&&!kdGorunur(e.o))continue;_kdP.set(x,y,z).applyMatrix4(e.inv);const b=e.b;if(_kdP.x>b.min.x&&_kdP.x<b.max.x&&_kdP.y>b.min.y&&_kdP.y<b.max.y&&_kdP.z>b.min.z&&_kdP.z<b.max.z)return e}return null}
 // Modüller kendi katı cisimlerini buraya ekler (ör. hemzemin geçitteki tren): window.KATI_EK.push(grup)
 window.KATI_EK=window.KATI_EK||[];
+// ---- HAVA HATLARI: yolun üstünden geçen her tel, şeridin en yüksek noktasına göre ölçülür (yolTelAlt), araç tepesi tele değerse temas ----
+const _tb=new THREE.Box3();
+function aracTepe(){let y=-1e9;for(const g of[truck&&truck.g,trailer&&trailer.g]){if(!g||!g.visible)continue;g.updateMatrixWorld(true);g.traverseVisible(o=>{if(!o.isMesh||!o.geometry)return;const m=o.material;if(m&&m.transparent)return;if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();_tb.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld);if(_tb.max.y>y)y=_tb.max.y})}return y}
+function yolTepe(i){let y=-1e9;for(let k=-6;k<=6;k++){const p=sideAt(Math.max(1,Math.min(NS-2,i)),k);y=Math.max(y,getH(p.x,p.z))}return y}
 function katiListe(){const L=[];for(const o of KATI_EK)if(o&&o.visible&&o.parent)L.push(o);
  if(typeof TRAF!=='undefined')for(const c of TRAF)if(c.on&&c.g&&c.g.visible)L.push(c.g);
  for(const e of[typeof ESC!=='undefined'&&ESC,typeof ESC2!=='undefined'&&ESC2,typeof POL!=='undefined'&&POL])if(e&&e.g&&e.g.visible&&e.g.parent)L.push(e.g);if(truck&&truck.g)L.push(truck.g);if(trailer&&trailer.g)L.push(trailer.g);if(fork&&fork.g&&fork.g.visible)L.push(fork.g);

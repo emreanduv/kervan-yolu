@@ -71,9 +71,11 @@ function levhaG(g,p,ang){const t=new THREE.Group();t.position.set(p.x,getH(p.x,p
  const tx=ctex(128,128,(q,w,h)=>{q.fillStyle='#fff';q.beginPath();q.moveTo(64,8);q.lineTo(122,116);q.lineTo(6,116);q.closePath();q.fill();q.strokeStyle='#d0141a';q.lineWidth=12;q.stroke();q.fillStyle='#111';q.font='900 54px sans-serif';q.textAlign='center';q.fillText('!',64,104)});
  const m=new THREE.Mesh(new THREE.PlaneGeometry(.9,.9),new THREE.MeshBasicMaterial({map:tx,side:THREE.DoubleSide,transparent:true}));m.position.y=2.5;t.add(m);return t}
 function direk(g,p,h,mat,kol){const t=new THREE.Group();t.position.set(p.x,getH(p.x,p.z),p.z);t.rotation.y=p.ang;g.add(t);addCyl(.14,.2,h,7,mat,0,h/2,0,t);if(kol)addBox(2.2,.12,.12,MAT.steel,0,h-.4,0,t);return t}
+// yuk = telin yol üstündeki en alçak noktasının şeridin en yüksek yerine göre yüksekliği (sarkma dahil)
 function telG(g,i,yuk){const a=sideAt(i,-8.5),b=sideAt(i,8.5);const ah=getH(a.x,a.z),bh=getH(b.x,b.z);const md=P('#6b5236',{shininess:4});
- const grp=new THREE.Group();g.add(grp);const pa=direk(grp,a,yuk+1,md),pb=direk(grp,b,yuk+1,md);
- const pts=[];for(let k=0;k<=12;k++){const f=k/12;pts.push(new THREE.Vector3(a.x+(b.x-a.x)*f,ah+yuk+(bh-ah)*f-Math.sin(f*Math.PI)*.6,a.z+(b.z-a.z)*f))}
+ const SAG=.6,alt=yolTepe(i)+yuk,HY=Math.max(alt+SAG,ah+1.5,bh+1.5);
+ const grp=new THREE.Group();g.add(grp);direk(grp,a,HY-ah+.8,md);direk(grp,b,HY-bh+.8,md);grp.userData.alt=alt;
+ const pts=[];for(let k=0;k<=12;k++){const f=k/12;pts.push(new THREE.Vector3(a.x+(b.x-a.x)*f,HY-Math.sin(f*Math.PI)*SAG,a.z+(b.z-a.z)*f))}
  const tb=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,.025,4,false),new THREE.MeshBasicMaterial({color:0x111111}));grp.add(tb);return grp}
 function sevG(g,i,ic,off){const t=new THREE.Group();g.add(t);const m=P('#7d6a52',{shininess:3});for(let k=-3;k<=3;k++){const p=sideAt(clamp(i+k,1,NS-2),ic*(off+Math.abs(k)*.35));const r=new THREE.Mesh(new THREE.DodecahedronGeometry(1.6+Math.random()*.6,0),m);r.position.set(p.x,getH(p.x,p.z)+.6,p.z);r.scale.y=.7;r.castShadow=true;t.add(r)}return t}
 function cakilG(g,i,ic){const t=new THREE.Group();g.add(t);const m=new THREE.MeshStandardMaterial({color:0x9b8f7c,roughness:1,polygonOffset:true,polygonOffsetFactor:-3});
@@ -96,11 +98,11 @@ function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R
  for(const o of EN){const p=sideAt(o.i,o.ic*7.6),ic=o.ic;
   if(o.tip==='dal'){const r=agacG(g,p.x,p.z,p.ang,ic,4.4);o.bad=r.bad;o.ok=r.ok}
   else if(o.tip==='levha'){o.bad=levhaG(g,sideAt(o.i,ic*5.1),p.ang);o.ok=levhaG(g,sideAt(o.i,ic*9.5),p.ang)}
-  else if(o.tip==='tel'){o.bad=telG(g,o.i,5.1);o.ok=telG(g,o.i,8.6)}
+  else if(o.tip==='tel'){o.bad=telG(g,o.i,6.0);o.ok=telG(g,o.i,8.6)}
   else if(o.tip==='genis'){o.bad=sevG(g,o.i,ic,5.4);o.ok=new THREE.Group();g.add(o.ok);o.ok.add(cakilG(g,o.i,ic));o.ok.add(sevG(g,o.i,ic,9.2))}
   else if(o.tip==='tarama'){const ca=P('#4f6b34',{shininess:4});const mk=(h)=>{const t=new THREE.Group();g.add(t);for(let k=-4;k<=4;k++){const q=sideAt(clamp(o.i+k,1,NS-2),ic*(6.4+Math.abs(k)*.2));const b=new THREE.Mesh(new THREE.IcosahedronGeometry(1,0),ca);b.scale.set(1.4,h,1.4);b.position.set(q.x,getH(q.x,q.z)+h*.6,q.z);t.add(b)}return t};o.bad=mk(2.6);o.ok=mk(.6)}
   else if(o.tip==='durak'){const mk=(off)=>{const q=sideAt(o.i,ic*off);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang;g.add(t);const m=P('#3a6fb0',{shininess:30}),gl=MAT.glass;for(const x of[-1.4,1.4])addBox(.08,2.5,.08,MAT.steel,x,1.25,0,t);addBox(3.1,.1,1.5,m,0,2.55,.2,t);addBox(2.8,1.6,.04,gl,0,1.4,-.5,t);addBox(2.4,.08,.4,P('#7a5a3a'),0,.5,-.25,t);return t};o.bad=mk(5.7);o.ok=new THREE.Group();g.add(o.ok)}
-  else if(o.tip==='koykablo'){o.bad=telG(g,o.i,4.8);o.ok=telG(g,o.i,7.4)}
+  else if(o.tip==='koykablo'){o.bad=telG(g,o.i,5.85);o.ok=telG(g,o.i,7.4)}
   else if(o.tip==='elektrik'){const grp=telG(g,o.i,9.5);o.bad=null;o.ok=grp}
   else if(o.tip==='dolgu'){const mk=(c,h)=>{const t=new THREE.Group();g.add(t);const m=P(c,{shininess:2});for(let k=-3;k<=3;k++){const q=sideAt(clamp(o.i+k,1,NS-2),ic*6.4);addBox(4.4,h,3.6,m,0,0,0,t).position.set(q.x,getH(q.x,q.z)+h/2-.1,q.z)}return t};o.bad=mk('#a08462',.7);o.ok=mk('#8f7f6a',.25)}
   else if(o.tip==='toprak'){const mk=()=>{const t=new THREE.Group();g.add(t);const m=P('#7a6248',{shininess:2});for(let k=-1;k<=1;k++){const q=sideAt(clamp(o.i+k*2,1,NS-2),ic*5.0);const r=new THREE.Mesh(new THREE.DodecahedronGeometry(1.3,0),m);r.scale.set(1.4,.6,1.8);r.position.set(q.x,getH(q.x,q.z)+.3,q.z);t.add(r)}return t};o.bad=mk();o.ok=null}
@@ -175,7 +177,7 @@ addEventListener('load',()=>{
   for(const o of EN){if(!acik(o))continue;const t=TUR[o.tip];
    if(t.dur){if(ti>=o.i-6&&ti<=o.i&&!o.acil){if(v.speed>0)v.speed=0;if(G.deadline)G.deadline+=dt;if(!o.vur){o.vur=1;titre(1);toast((gizli(o)?T('t_bilinmeyen'):'')+T('t_dur').replace('{e}',T('e_'+o.tip)),'#ff8a3c',3.2);}
      if(!(actFn&&actFn.etut)){const p=acilBedel(t);const fn=()=>{setAct(null);if(p>0)G.ext.push(['k_etutAcil',-p]);toast(T('t_acilGel'),'#ffe08a',2.4);blip(300,420,.3);setTimeout(()=>{o.acil=1;gorsel();toast(T('t_acilOk'),'#8ff0a4',2.4);blip(523,784,.3)},4500)};fn.etut=1;setAct(p>0?T('a_acil').replace('{p}',fmt(p)):T('a_acil0'),fn)}}}
-   else if(!o.vur&&Math.abs(ti-o.i)<=2&&Math.abs(v.speed)>.5){o.vur=1;if(G.alcak&&(o.tip==='tel'||o.tip==='koykablo'))continue;G.dmg=Math.min(100,G.dmg+t.d);titre(1);toast((gizli(o)?T('t_bilinmeyen'):'')+T('t_'+o.tip),'#ff8a7f',3);if(o.tip==='levha'&&o.bad)o.bad.rotation.z=1.2}}}catch(e){}return r};
+   else if(!o.vur&&Math.abs(ti-o.i)<=2&&Math.abs(v.speed)>.5){if((o.tip==='tel'||o.tip==='koykablo')&&o.bad&&o.bad.userData.alt!=null&&aracTepe()<o.bad.userData.alt-.05)continue;o.vur=1;G.dmg=Math.min(100,G.dmg+t.d);titre(1);toast((gizli(o)?T('t_bilinmeyen'):'')+T('t_'+o.tip),'#ff8a7f',3);if(o.tip==='levha'&&o.bad)o.bad.rotation.z=1.2}}}catch(e){}return r};
  // mini harita: keşiften sonra açık engeller
  const _mn=EXT.mini;EXT.mini=function(c,v,sc,S){if(_mn)_mn(c,v,sc,S);try{if(!G||!G.kesif||!agirIs())return;for(const o of EN){if(!acik(o))continue;const p=RS[o.i];const x=(p.x-v.x)*sc,z=(p.z-v.z)*sc;if(Math.hypot(x,z)>S/2-6)continue;c.fillStyle=RK[TUR[o.tip].c];c.beginPath();c.arc(x,z,4.5,0,7);c.fill();c.strokeStyle='#000';c.lineWidth=1;c.stroke()}}catch(e){}};
 });
