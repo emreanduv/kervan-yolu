@@ -1341,8 +1341,8 @@ function katiListe(){const L=[];for(const o of KATI_EK)if(o&&o.visible&&o.parent
  for(const e of[typeof ESC!=='undefined'&&ESC,typeof ESC2!=='undefined'&&ESC2,typeof POL!=='undefined'&&POL])if(e&&e.g&&e.g.visible&&e.g.parent)L.push(e.g);if(truck&&truck.g)L.push(truck.g);if(trailer&&trailer.g)L.push(trailer.g);if(fork&&fork.g&&fork.g.visible)L.push(fork.g);
  for(const c of crates)if(c.parent===scene&&c.visible)L.push(c);if(window.SANTIYE&&SANTIYE.ISTIF)for(const o of SANTIYE.ISTIF())if(o.parent===scene)L.push(o);return L}
 // Hareket eden bir cisim (tren, ileride vinç yükü) tıra ya da dorseye değiyor mu? Tırın ve dorsenin kutu köşeleri ve kenar noktaları sınanır.
-function aracaDegiyor(g){const b=yerelKutu(g);if(b.isEmpty())return false;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
- for(const a of[truck.g,trailer.g]){if(!a||!a.visible)continue;const k=yerelKutu(a);if(k.isEmpty())continue;a.updateMatrixWorld();const y=(k.min.y+k.max.y)/2;
+function aracaDegiyor(g){const b=yerelKutu(g);if(b.isEmpty())return false;const KS=[truck.g,trailer.g].map(a=>a&&a.visible?yerelKutu(a):null);/* önce kutular: yerelKutu ortak _fkI'yı bozar */g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();
+ for(const[ai,a]of[truck.g,trailer.g].entries()){if(!a||!a.visible)continue;const k=KS[ai];if(!k||k.isEmpty())continue;a.updateMatrixWorld();const y=(k.min.y+k.max.y)/2;
   for(let i=0;i<=8;i++){const z=k.min.z+(k.max.z-k.min.z)*i/8;for(const x of[k.min.x,0,k.max.x]){_fkP.set(x,y,z).applyMatrix4(a.matrixWorld).applyMatrix4(_fkI);if(_fkP.x>b.min.x&&_fkP.x<b.max.x&&_fkP.z>b.min.z&&_fkP.z<b.max.z&&_fkP.y>b.min.y-.3&&_fkP.y<b.max.y)return true}}}return false}
 function katiVar(x,y,z,ign,pay){pay=pay||0;for(const g of katiListe()){if(!g.visible||(ign&&ign.includes(g)))continue;const b=yerelKutu(g);if(b.isEmpty())continue;g.updateMatrixWorld();_fkI.copy(g.matrixWorld).invert();_fkP.set(x,y,z).applyMatrix4(_fkI);
   if(_fkP.x>b.min.x-pay&&_fkP.x<b.max.x+pay&&_fkP.z>b.min.z-pay&&_fkP.z<b.max.z+pay&&_fkP.y>b.min.y-.05&&_fkP.y<b.max.y+.05)return g}return katiDunyaVar(x,y,z)}

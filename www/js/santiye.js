@@ -39,7 +39,7 @@ const _rs=resetGame;resetGame=function(m,n){const dummy=m==='career'&&n>=DSN&&n<
  const bm=bladeMesh();if(bm)bm.scale.y=j.kl80?80/72:1;TON.kanat=j.kl80?28.5:24;
  const ix2=BLZ.indexOf(76);if(j.kl80&&ix2<0)BLZ.push(76);if(!j.kl80&&ix2>=0)BLZ.splice(ix2,1);
  if(j.dummy&&CARGO.kanat){CARGO.kanat.visible=true;CARGO.kanat.children.forEach(c=>{c.userData._dsv=c.visible;c.visible=false});setTimeout(()=>toast(T('dsIpucu'),'#bfe4ff',4.5),1200)}
- if(HZ){HZ.st='acik';HZ.tetik=false;HZ.ceza=false;HZ.kaza=false;HZ.s=-999;HZ.train.visible=false;HZ.kolA=HZ.kol0;HZ.isik.forEach(l=>l.material.color.setHex(0x3a0c0c))}
+ if(HZ){HZ.st='acik';HZ.tetik=false;HZ.ceza=false;HZ.kaza=false;HZ.s=-999;HZ.train.visible=false;HZ.cars&&HZ.cars.forEach(w=>w.visible=false);HZ.kolA=HZ.kol0;HZ.isik.forEach(l=>l.material.color.setHex(0x3a0c0c))}
  if(MR){MR.ring.visible=false}};
 
 // ---------- menü: deneme sürüşü kartı ----------
@@ -80,17 +80,30 @@ function dsAdim(){const E=window.ETUT&&ETUT.EN();if(!E||!E.length)return;const v
 
 // ---------- hemzemin geçit ----------
 function inst(geo,mat,n){const m=new THREE.InstancedMesh(geo,mat,n);m.count=0;return m}
+// hemzemin geçit hattı: yola dik, ±HAT_L m; hattın yolu başka bir yerde kesmemesi, sahaya ve limana girmemesi gerekir
+const HAT_L=420;
+function hatTemiz(i){for(let s=-HAT_L;s<=HAT_L;s+=6){if(Math.abs(s)<14)continue;const p=sideAt(i,s);if(Math.hypot(p.x-SITE.x,p.z-SITE.z)<110||Math.hypot(p.x,p.z)<160)return false;
+  for(let j=2;j<NS-2;j+=2){if(Math.abs(j-i)<22)continue;const r=RS[j];if((r.x-p.x)**2+(r.z-p.z)**2<15*15)return false}}return true}
+// hat yüksekliği: geçitte yol düzeyi, dışarıda yumuşatılmış arazi; eğim en çok %2 (demiryolu)
+function hatProfil(ri){const P=new Map();const yol=RY[ri]+.2;P.set(0,yol);for(const yon of[1,-1]){let y=yol;for(let s=1.25;s<=HAT_L+60;s+=1.25){const ss=s*yon;let m=0,n=0;for(let k=-16;k<=16;k+=4){const q=sideAt(ri,ss+k);m+=getH(q.x,q.z);n++}let hd=m/n+.12;if(s<7)hd=yol;y=clamp(hd,y-.025,y+.025);P.set(Math.round(ss/1.25),y)}}return P}
+function hatY(H,ss){const k=ss/1.25,a=Math.floor(k),b=a+1,f=k-a;const ya=H.prof.get(a),yb=H.prof.get(b);if(ya==null||yb==null)return RY[H.ri]+.2;return ya+(yb-ya)*f}
 function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&&ETUT.EN())||[];let best=-1,bs=1e9;
  for(let i=Math.round(NS*.09);i<Math.round(NS*.62);i+=2){if(VZ&&i>VZ.v0-60&&i<VZ.wi+10)continue;if(CZ&&CZ.ci&&Math.abs(i-CZ.ci)<25)continue;if(E.some(o=>Math.abs(o.i-i)<16))continue;if(PORTOPS.kantar&&Math.abs(PORTOPS.kantar.ki-i)<25)continue;if(PLAN&&((PLAN.ri&&Math.abs(PLAN.ri-i)<40)||(PLAN.ki&&Math.abs(PLAN.ki-i)<30)))continue;if(PORTOPS.dz&&Math.abs(PORTOPS.dz.i-i)<30)continue;
-  const a=sideAt(i-8,0).ang,b=sideAt(i+8,0).ang;let d=Math.abs(angDiff(a,b))*20;for(const off of[-60,-35,-15,15,35,60]){const q=sideAt(i,off);d+=Math.abs(getH(q.x,q.z)-RY[i])}if(d<bs){bs=d;best=i}}
+  const a=sideAt(i-8,0).ang,b=sideAt(i+8,0).ang;let d=Math.abs(angDiff(a,b))*20;for(const off of[-60,-35,-15,15,35,60]){const q=sideAt(i,off);d+=Math.abs(getH(q.x,q.z)-RY[i])}if(d<bs&&hatTemiz(i)){bs=d;best=i}}
  window._hzBs=bs; if(best<0||bs>HZ_ESIK)return;const ri=best,c=sideAt(ri,0),ang=c.ang;const nx=Math.cos(ang),nz=-Math.sin(ang);// yola dik doğrultu
  const g=new THREE.Group();root.add(g);const pt=(s)=>{const p=sideAt(ri,s);return p};
- const trav=inst(new THREE.BoxGeometry(2.6,.16,.26),P('#5b4632',{shininess:2}),200),ray=inst(new THREE.BoxGeometry(.09,.14,1.25),P('#8c8f93',{shininess:60}),400),bal=inst(new THREE.BoxGeometry(3.4,.3,1.25),P('#77746e',{shininess:2}),420);g.add(trav,ray,bal);
+ const prof=hatProfil(ri);const HP={prof,ri};const N=Math.ceil(2*HAT_L/1.25)+4;
+ const trav=inst(new THREE.BoxGeometry(2.6,.16,.26),P('#5b4632',{shininess:2}),N),ray=inst(new THREE.BoxGeometry(.09,.14,1.25),P('#8c8f93',{shininess:60}),2*N),bal=inst(new THREE.BoxGeometry(3.4,.3,1.25),P('#77746e',{shininess:2}),2*N);g.add(trav,ray,bal);
  const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),S=new THREE.Vector3(1,1,1),V=new THREE.Vector3();
- for(let s=-90;s<=90;s+=1.25){const p=pt(s);const y=Math.abs(s)<5.5?getH(p.x,p.z)+.22:Math.max(RY[ri]+.2,getH(p.x,p.z)+.12);Q.setFromAxisAngle(new THREE.Vector3(0,1,0),ang);
-  V.set(p.x,y,p.z);M.compose(V,Q,S);if(Math.abs(s)>=5.5){bal.setMatrixAt(bal.count++,M);trav.setMatrixAt(trav.count++,M);const gh=getH(p.x,p.z);if(gh<y-1){V.set(p.x,(y+gh)/2,p.z);M.compose(V,Q,new THREE.Vector3(1.3,(y-gh)/.3,1));bal.setMatrixAt(bal.count++,M)}}
+ for(let s=-HAT_L;s<=HAT_L;s+=1.25){const p=pt(s);const y=hatY(HP,s);const y2=hatY(HP,s+1.25);Q.setFromEuler(new THREE.Euler(0,ang,0));const eg=Math.atan2(y2-y,1.25);Q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-eg));
+  V.set(p.x,y,p.z);M.compose(V,Q,S);if(Math.abs(s)>=5.5){bal.setMatrixAt(bal.count++,M);trav.setMatrixAt(trav.count++,M);const gh=getH(p.x,p.z);if(gh<y-.8){V.set(p.x,(y+gh)/2-.1,p.z);M.compose(V,Q,new THREE.Vector3(1.6,(y-gh)/.3,1));bal.setMatrixAt(bal.count++,M)}}
   for(const k of[-.72,.72]){V.set(p.x+Math.sin(ang)*k,y+.12,p.z+Math.cos(ang)*k);M.compose(V,Q,S);ray.setMatrixAt(ray.count++,M)}}
  [trav,ray,bal].forEach(m=>m.instanceMatrix.needsUpdate=true);
+ // geçitte yolla aynı düzeyde beton geçit plakaları (raylar plakaların arasında)
+ {const pl=P('#a9a7a0',{shininess:6});for(let s=-6;s<=6;s+=2.4){const q=pt(s);const b=addBox(1.2,.12,2.3,pl,0,0,0,g);b.position.set(q.x,hatY(HP,s)+.12,q.z);b.rotation.y=ang;for(const k of[-1.55,1.55]){const e=addBox(.6,.12,2.3,pl,0,0,0,g);e.position.set(q.x+Math.sin(ang)*k,hatY(HP,s)+.12,q.z+Math.cos(ang)*k);e.rotation.y=ang}}}
+ // geçitten 150 m önce uyarı levhası (üçgen, buharlı tren simgesi yerine bugünkü lokomotif)
+ {const tx=new THREE.CanvasTexture((()=>{const c=document.createElement('canvas');c.width=c.height=128;const q=c.getContext('2d');q.fillStyle='#fff';q.beginPath();q.moveTo(64,6);q.lineTo(124,118);q.lineTo(4,118);q.closePath();q.fill();q.strokeStyle='#d0141a';q.lineWidth=12;q.stroke();q.fillStyle='#111';q.fillRect(36,64,56,26);q.fillRect(44,52,22,14);q.beginPath();q.arc(46,94,7,0,7);q.arc(82,94,7,0,7);q.fill();return c})());
+  const dsm=ROADLEN/(NS-1);for(const yon of[-1,1]){const i=Math.max(3,Math.min(NS-3,Math.round(ri-yon*150/dsm)));const q=sideAt(i,yon*6.6);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang+(yon>0?0:Math.PI);g.add(t);addBox(.1,2.4,.1,MAT.steel,0,1.2,0,t);const m=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),new THREE.MeshBasicMaterial({map:tx,transparent:true,side:THREE.DoubleSide}));m.position.y=2.8;t.add(m)}}
  // levhalar, bariyer, ışıklar (iki yaklaşım)
  const kol=[],isik=[];const yuk=P('#e9e9e6');
  for(const yon of[-1,1]){const q=sideAt(ri-yon*7,yon*6.4);const t=new THREE.Group();t.position.set(q.x,getH(q.x,q.z),q.z);t.rotation.y=q.ang+(yon>0?0:Math.PI);g.add(t);
@@ -98,23 +111,33 @@ function hzKur(root){HZ=null;if(!RAIL.includes(REG))return;const E=(window.ETUT&
   for(const dx of[-.35,.35]){const l=new THREE.Mesh(new THREE.CircleGeometry(.16,12),new THREE.MeshBasicMaterial({color:0x3a0c0c}));l.position.set(dx,2.45,.09);t.add(l);isik.push(l)}
   const pv=new THREE.Group();pv.position.set(0,1.05,0);t.add(pv);const arm=new THREE.Group();arm.userData.gecirgen=1;pv.add(arm);for(let k=0;k<7;k++)addBox(.62,.16,.12,k%2?P('#c91d1d'):yuk,-.35-k*.62,0,0,arm);arm.rotation.z=Math.PI/2*.95;kol.push(arm)
   const dl=sideAt(ri-yon*9,yon*LANE);const dur=new THREE.Mesh(new THREE.PlaneGeometry(.35,4.2),new THREE.MeshBasicMaterial({color:0xf4f4f0,polygonOffset:true,polygonOffsetFactor:-6}));dur.rotation.x=-Math.PI/2;dur.rotation.z=dl.ang+Math.PI/2;dur.position.set(dl.x,getH(dl.x,dl.z)+.25,dl.z);g.add(dur)}
- // tren: lokomotif + 4 vagon
- const tr=new THREE.Group();const kir=P('#b8322a',{shininess:40}),gri=P('#5d6266',{shininess:20}),cam=MAT.glass;
- const lok=new THREE.Group();tr.add(lok);rbox(3,3.6,17,.3,kir,0,2.6,0,lok);addBox(2.9,1,16,gri,0,.8,0,lok);addBox(2.6,.9,.05,cam,0,3.6,8.52,lok);addBox(3.05,.25,17.1,P('#f2f2ee'),0,2.2,0,lok);
- for(let k=1;k<=4;k++){const w=new THREE.Group();w.position.z=-k*15.5;tr.add(w);rbox(2.9,3,14.5,.15,k%2?P('#6a6f4e'):P('#7b5d45'),0,2.4,0,w);addBox(2.8,.8,13.5,gri,0,.7,0,w)}
- tr.visible=false;tr.userData.dinamik=1;g.add(tr);window.KATI_EK.push(tr);
- HZ={skor:bs,ri,g,kol,isik,train:tr,ang,nx,nz,st:'acik',s:-999,tetik:false,kol0:Math.PI/2*.95,kolA:Math.PI/2*.95}}
+ // tren: dizel lokomotif + yük vagonları (kapalı, tanker, konteyner). Her taşıt ayrı katı cisimdir, rayın eğimine göre oturur.
+ const tr=new THREE.Group();g.add(tr);tr.visible=false;const kir=P('#b8322a',{shininess:40}),gri=P('#5d6266',{shininess:20}),koyu=P('#2b2e30',{shininess:20}),cam=MAT.glass;const cars=[];
+ const boji=(w,z)=>{addBox(2.4,.5,2.6,koyu,0,.55,z,w);for(const dz of[-.8,.8])for(const s2 of[-1,1]){const t=addCyl(.46,.46,.16,14,koyu,s2*.78,.48,z+dz,w);t.rotation.z=Math.PI/2}};
+ {const w=new THREE.Group();tr.add(w);rbox(3,3.3,17,.3,kir,0,2.75,0,w);addBox(2.9,.9,17.2,gri,0,1.15,0,w);addBox(2.6,.9,.05,cam,0,3.5,8.52,w);addBox(3.05,.25,17.1,P('#f2f2ee'),0,2.3,0,w);addBox(1.2,.5,4,koyu,0,4.6,-2,w);boji(w,-5.5);boji(w,5.5);
+  for(const s2 of[-.9,.9]){const f=new THREE.Mesh(new THREE.CircleGeometry(.18,12),new THREE.MeshBasicMaterial({color:0xfff2c4}));f.position.set(s2,1.9,8.62);w.add(f)}const fa=new THREE.PointLight(0xfff0c8,1.2,60);fa.position.set(0,2,10);w.add(fa);w.userData.boy=17;cars.push(w)}
+ const tip=[['kapali','#7b5d45'],['tanker','#c9ccd0'],['konteyner','#3b6ea5'],['kapali','#6a6f4e'],['tanker','#2f3133'],['konteyner','#b04a2e']];
+ for(const[tt,c] of tip){const w=new THREE.Group();tr.add(w);addBox(2.8,.5,15,koyu,0,1.05,0,w);boji(w,-5.4);boji(w,5.4);const m=P(c,{shininess:30});
+  if(tt==='kapali'){rbox(2.9,2.7,14.4,.15,m,0,2.7,0,w);addBox(.06,2.2,2.4,koyu,1.48,2.6,0,w)}else if(tt==='tanker'){const k=addCyl(1.35,1.35,13.6,18,m,0,2.6,0,w);k.rotation.x=Math.PI/2;addBox(.9,.3,.9,koyu,0,4,0,w)}else{addBox(2.44,2.59,6.06,m,0,2.6,-3.4,w);addBox(2.44,2.59,6.06,P('#8a8f6a',{shininess:30}),0,2.6,3.4,w)}
+  w.userData.boy=15.5;cars.push(w)}
+ cars.forEach(w=>{w.userData.dinamik=1;window.KATI_EK.push(w)});
+ HZ={prof,cars,skor:bs,ri,g,kol,isik,train:tr,ang,nx,nz,st:'acik',s:-999,tetik:false,kol0:Math.PI/2*.95,kolA:Math.PI/2*.95}}
+function trenDegiyor(H){return H.cars.some(w=>w.visible&&aracaDegiyor(w))}
+window.trenDegiyor=()=>HZ?trenDegiyor(HZ):false;
 function hzAdim(dt,run){const H=HZ;const v=truck.v;const tf=(typeof roadF==='function')?roadF(v):roadIdx(v);const ds=ROADLEN/(NS-1);const ileri=(H.ri-tf)*ds;// tıra göre ileride +
- if(run&&phase==='drive'&&!H.tetik&&ileri>0&&ileri<140&&Math.abs(v.speed)>1){H.tetik=true;if(mode==='career'||Math.random()<.6){H.st='kapaniyor';H.t=0;H.s=-260;toast(T('t_hzKapi'),'#ffb36b',3);if(HEAVY.includes(G.job.type)&&mode==='career')telsiz(T('hzTz'))}}
+ if(run&&phase==='drive'&&!H.tetik&&ileri>0&&ileri<140&&Math.abs(v.speed)>1){H.tetik=true;if(mode==='career'||Math.random()<.6){H.st='kapaniyor';H.t=0;H.s=-HAT_L+20;H.korna=0;toast(T('t_hzKapi'),'#ffb36b',3);if(HEAVY.includes(G.job.type)&&mode==='career')telsiz(T('hzTz'))}}
  if(H.st!=='acik'){H.t+=dt;if(run&&G&&G.deadline&&Math.abs(v.speed)<1&&ileri>0&&ileri<90)G.deadline+=dt;const f=Math.floor(H.t*2.4)%2;H.isik.forEach((l,k)=>l.material.color.setHex((k%2)===f?0xff2a1a:0x3a0c0c));if(H.t%0.84<dt)blip(1100,1100,.05)}
  const hedef=(H.st==='kapaniyor'||H.st==='kapali')?0:H.kol0;H.kolA+=clamp(hedef-H.kolA,-dt*.6,dt*.6);H.kol.forEach(a=>a.rotation.z=H.kolA);
  if(H.st==='kapaniyor'&&H.t>3.5){H.st='kapali'}
  if(H.st==='kapali'){H.train.visible=true;const s0=H.s;
   // tren katı cisimdir: önünde tır varsa içinden geçmez; acil fren yapar, çarpar ve yol açılana kadar bekler
-  const koy=ss=>{const p=sideAt(H.ri,ss),q=sideAt(H.ri,ss+1);H.train.position.set(p.x,Math.max(RY[H.ri]+.45,getH(p.x,p.z)+.35),p.z);H.train.rotation.y=Math.atan2(q.x-p.x,q.z-p.z)};
-  H.s+=dt*(H.fren?6:24);koy(H.s);if(aracaDegiyor(H.train)){H.s=s0;koy(s0);if(!H.fren){H.fren=true;blip(330,260,.6)}if(!H.kaza&&run){H.kaza=true;if(mode==='career')G.dmg=Math.min(100,G.dmg+20);toast(T('t_hzKaza'),'#ff5a5a',3);titre&&titre(2)}}else H.fren=false;
-  if(Math.abs(H.s)<45&&H.s>-45&&H.s%6<dt*24)blip(140,120,.18);
-  if(H.s>200){H.st='aciliyor';H.t2=0;H.train.visible=false}}
+  const koy=ss=>{let z=ss;for(const w of H.cars){const L=w.userData.boy;const zc=z-L/2;const p=sideAt(H.ri,zc),q=sideAt(H.ri,zc+1);const y=hatY(H,zc),y2=hatY(H,zc+1);w.position.set(p.x,y+.08,p.z);w.rotation.set(0,0,0);w.rotation.order='YXZ';w.rotation.y=Math.atan2(q.x-p.x,q.z-p.z);w.rotation.x=-Math.atan2(y2-y,1);w.visible=Math.abs(zc)<HAT_L-10;w.updateMatrixWorld(true);z-=L+.6}};
+  H.s+=dt*(H.fren?6:24);koy(H.s);if(trenDegiyor(H)){H.s=s0;koy(s0);if(!H.fren){H.fren=true;blip(330,260,.6)}if(!H.kaza&&run){H.kaza=true;if(mode==='career')G.dmg=Math.min(100,G.dmg+20);toast(T('t_hzKaza'),'#ff5a5a',3);titre&&titre(2)}}
+  else if(H.fren){koy(H.s+3);const hala=trenDegiyor(H);koy(H.s);if(!hala)H.fren=false}/* tır raydan çekilene kadar fren bırakılmaz */
+  if(!H.korna&&H.s>-230){H.korna=1;blip(196,196,.8);setTimeout(()=>blip(196,196,1.1),1000)}// geçide yaklaşırken iki uzun korna
+  if(Math.abs(H.s)<60&&H.s%6<dt*24)blip(140,120,.18);
+  const kuy=H.s-H.cars.reduce((a,w)=>a+w.userData.boy+.6,0);if(kuy>16){if(H.st!=='aciliyor'){H.st='aciliyor';H.t2=0}}if(H.s>HAT_L+130){H.train.visible=false;H.cars.forEach(w=>w.visible=false)}}
+ if(H.st==='aciliyor'&&H.train.visible&&H.s<=HAT_L+130){H.s+=dt*24;const koy2=ss=>{let z=ss;for(const w of H.cars){const L=w.userData.boy;const zc=z-L/2;const p=sideAt(H.ri,zc),q=sideAt(H.ri,zc+1);const y=hatY(H,zc),y2=hatY(H,zc+1);w.position.set(p.x,y+.08,p.z);w.rotation.order='YXZ';w.rotation.y=Math.atan2(q.x-p.x,q.z-p.z);w.rotation.x=-Math.atan2(y2-y,1);w.visible=Math.abs(zc)<HAT_L-10;w.updateMatrixWorld(true);z-=L+.6}};koy2(H.s);if(H.s>HAT_L+130){H.train.visible=false}}
  if(H.st==='aciliyor'){H.t2+=dt;if(H.t2>3){H.st='acik';H.isik.forEach(l=>l.material.color.setHex(0x3a0c0c));toast(T('t_hzAcik'),'#8ff0a4',1.8)}}
  // kural: kapalıyken dur çizgisini geçme
  if(run&&phase==='drive'&&H.st!=='acik'&&!H.ceza&&ileri<6.5&&ileri>-4&&v.speed>.4){H.ceza=true;if(mode==='career'){G.fines=(G.fines||0)+5000;G.ext.push(['k_hemzemin',-5000])}toast(T('t_hzCeza'),'#ff8a7f',3);titre&&titre(2)}
@@ -187,9 +210,10 @@ function montajBasla(tip,bitti,ind){if(!KULE){bitti();return}const m=mtKayit();p
   parca.position.copy(pos0);parca.quaternion.copy(qq)}if(yatik)parca.rotation.z=Math.PI/2;
  const hook=null;
  const ov=document.createElement('div');ov.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translateX(-50%);z-index:40;background:rgba(12,16,14,.86);color:#fff;padding:10px 14px;border-radius:10px;text-align:center;font:600 14px "Barlow Condensed",sans-serif;max-width:88vw';document.body.appendChild(ov);
- MT={tip,ind:!!ind,p:0,parca,bas,hedef,hook,ov,ruz:7,bitti,durT:0,oto:false,yatik,yari,q0,q1,H:Math.max(bas.y,hedef.y)+(ind?7:5)};
+ MT={tip,ind:!!ind,p:0,parca,bas,hedef,hook,ov,ruz:7,bitti,durT:0,oto:false,yatik,yari,q0,q1,qs:null,qe:null,H:Math.max(bas.y,hedef.y)+(ind?7:5)};
  // taşıma yüksekliği: yol üstündeki her katı nesnenin üstünden
- MT.H=Math.max(MT.H,yolUstuEngel(bas,hedef,parca,KULE.g)+yari+1.5);const ab=document.createElement('button');ab.className='btn sm';ab.id='mtAtla';ab.textContent=T('mtAtla');ab.style.cssText='position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:41';ab.onclick=()=>{if(MT){MT.oto=true;ab.remove()}};document.body.appendChild(ab);MT.ab=ab;const KCT=window.camTarget;MT.kct=KCT;
+ MT.H=Math.max(MT.H,yolUstuEngel(bas,hedef,parca,KULE.g)+yari+1.5);
+ if(!ind&&!yatik&&src&&['kanat','nasel','hub'].includes(tip)){/* montaj parçası dorsedeki yönüyle kalkar, havada montaj yönüne döner */const qy=new THREE.Quaternion();src.getWorldQuaternion(qy);const e2=new THREE.Euler().setFromQuaternion(qy,'YXZ');MT.qe=parca.quaternion.clone();MT.qs=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),e2.y).multiply(MT.qe);parca.quaternion.copy(MT.qs)}const ab=document.createElement('button');ab.className='btn sm';ab.id='mtAtla';ab.textContent=T('mtAtla');ab.style.cssText='position:fixed;left:calc(env(safe-area-inset-left) + 14px);top:calc(env(safe-area-inset-top) + 14px);z-index:41';ab.onclick=()=>{if(MT){MT.oto=true;ab.remove()}};document.body.appendChild(ab);MT.ab=ab;const KCT=window.camTarget;MT.kct=KCT;
  window.camTarget=()=>{const c=MT?MT.parca.position:hedef;return{p:new THREE.Vector3(KULE.g.position.x+70,KULE.g.position.y+60,KULE.g.position.z+70),l:new THREE.Vector3((KULE.g.position.x+c.x)/2,c.y*.6+KULE.g.position.y*.4,(KULE.g.position.z+c.z)/2)}};snapCam&&snapCam()}
 function mtAdim(dt){const M=MT;M.ruz=clamp(M.ruz+(Math.random()-.5)*dt*6+Math.sin(G.t*.5)*dt*1.4,4,14.5);const ruzgar=M.ruz>12;
  const bas=input.gas>0||M.oto;if(M.oto)M.p=Math.min(1,M.p+dt*.5);else if(bas&&!ruzgar)M.p=Math.min(1,M.p+dt*(M.ind||M.tip==='ankraj'?.24:.15));if(bas&&ruzgar&&!M.oto){M.durT+=dt;if(M.durT>1.2&&mode==='career'){G.dmg=Math.min(100,G.dmg+dt*4)}}else M.durT=0;
@@ -197,7 +221,7 @@ function mtAdim(dt){const M=MT;M.ruz=clamp(M.ruz+(Math.random()-.5)*dt*6+Math.si
  const a=e(k/.25),b=e((k-.25)/.5),c=e((k-.75)/.25);// kaldır · taşı · indir
  P2.x=M.bas.x+(M.hedef.x-M.bas.x)*b;P2.z=M.bas.z+(M.hedef.z-M.bas.z)*b;P2.y=k<.75?M.bas.y+(M.H-M.bas.y)*a:M.H+(M.hedef.y-M.H)*c;
  const sal=(ruzgar?.09:.035)*M.ruz*Math.min(a,1-c);P2.x+=Math.sin(G.t*1.3)*sal;P2.z+=Math.cos(G.t*1.1)*sal*.6;// rüzgârda yük sallanır
- M.parca.position.copy(P2);if(M.yatik)M.parca.rotation.z=Math.PI/2*(1-e(k/.3));if(M.ind){if(M.q0)M.parca.quaternion.slerpQuaternions(M.q0,M.q1,b)}else M.parca.rotation.y=Math.sin(G.t*.8)*(ruzgar?.12:.04);
+ M.parca.position.copy(P2);if(M.yatik)M.parca.rotation.z=Math.PI/2*(1-e(k/.3));if(M.ind){if(M.q0)M.parca.quaternion.slerpQuaternions(M.q0,M.q1,b)}else if(M.qs&&k<.75)M.parca.quaternion.slerpQuaternions(M.qs,M.qe,e((k-.2)/.5));else M.parca.rotation.y=Math.sin(G.t*.8)*(ruzgar?.12:.04);
  try{vincYonel(P2,dt);const uc=bomUcu();const ust=P2.clone();ust.y+=M.yatik&&k<.3?2.4:M.yari;halatCiz(uc,ust)}catch(e){}
  M.ov.innerHTML=`<b style="letter-spacing:.06em">${T(M.ind?'mtH2':'mtH')}</b> · ${Math.round(k*100)}%<br><span style="opacity:.85">${T(M.ind?'mtTxtI':M.tip==='ankraj'?'mtTxtA':M.tip==='hub'?'mtTxtH':'mtTxt')}</span><br><b style="color:${ruzgar?'#ff8a7f':'#8ff0a4'}">${T('mtRuz').replace('{w}',M.ruz.toFixed(1))}</b>${ruzgar&&bas?'<br><b style="color:#ff8a7f">'+T('mtDur')+'</b>':''}`;
  if(k>=1){const m=mtKayit();let p='';if(M.ind)p=T('pIndir');else if(M.tip==='kule'){m.k++;p=T('pKule').replace('{k}',m.k)}else if(M.tip==='nasel'){m.n=1;p=T('pNasel')}else if(M.tip==='hub'){m.h=1;p=T('pHub')}else if(M.tip==='ankraj'){m.a=1;p=T('pAnk')}else{m.h=1;m.b++;p=m.b>=3?T('pTur'):T('pKanat').replace('{k}',m.b)}if(!M.ind)save();kuleGoster();

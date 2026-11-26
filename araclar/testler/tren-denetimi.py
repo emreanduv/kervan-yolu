@@ -13,7 +13,7 @@ with sync_playwright() as p:
     pg.evaluate("(()=>{const H=SANTIYE.HZ();const i=H.ri;const p=sideAt(i,LANE);truck.v.x=p.x;truck.v.z=p.z;truck.v.speed=0;truck.v.h=Math.atan2(-(RS[i+1].x-RS[i].x),-(RS[i+1].z-RS[i].z));snapCam();H.tetik=true;H.st='kapali';H.s=-22;H.t=4})()")
     for k in range(10):
         pg.wait_for_timeout(1000)
-    r=pg.evaluate("(()=>{const H=SANTIYE.HZ();return [Math.round(H.s),H.fren,H.kaza,G.dmg,aracaDegiyor(H.train)]})()");print('tren tırda',r)
+    r=pg.evaluate("(()=>{const H=SANTIYE.HZ();return [Math.round(H.s),H.fren,H.kaza,G.dmg,trenDegiyor()]})()");print('tren tırda',r)
     # 2) tır çekilince tren devam eder
     pg.evaluate("(()=>{const H=SANTIYE.HZ();const i=H.ri-30;const p=sideAt(i,LANE);truck.v.x=p.x;truck.v.z=p.z;snapCam();H.s=Math.max(H.s,-10)})()");pg.wait_for_timeout(6000)
     print('tır çekildi',pg.evaluate("(()=>{const H=SANTIYE.HZ();return [Math.round(H.s),H.fren,H.st]})()"))
@@ -22,7 +22,7 @@ with sync_playwright() as p:
     for k in range(8):
         pg.evaluate("_s0();input.gas=1");pg.wait_for_timeout(500)
     pg.evaluate("input.gas=0")
-    print('tır trene',pg.evaluate("(()=>{const H=SANTIYE.HZ();return [aracaDegiyor(H.train),Math.round(((H.ri-roadF(truck.v))*ROADLEN/(NS-1))*10)/10]})()"))
+    print('tır trene',pg.evaluate("(()=>{const H=SANTIYE.HZ();return [trenDegiyor(),Math.round(((H.ri-roadF(truck.v))*ROADLEN/(NS-1))*10)/10]})()"))
     a=pg.evaluate("(()=>{const H=SANTIYE.HZ();return [H.s,H.fren,H.kaza]})()")
     print(errs)
     raise SystemExit(0 if (r[1] and r[2] and not r[4] and not errs) else 1)
