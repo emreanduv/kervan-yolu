@@ -3,7 +3,7 @@ import os
 from playwright.sync_api import sync_playwright
 KOK='file://'+os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..','www','index.html'))
 J="""([hedefSec,arac,ac])=>{const v=arac==='fork'?fork.v:truck.v;const g=eval(hedefSec);g.updateMatrixWorld();const c=new THREE.Vector3(),sz=new THREE.Vector3();const bb=new THREE.Box3().setFromObject(g);bb.getCenter(c);bb.getSize(sz);const R=Math.hypot(sz.x,sz.z)/2+(arac==='fork'?2.6:6.5);
- const h=ac;v.h=h;v.x=c.x+Math.sin(h)*R;v.z=c.z+Math.cos(h)*R;v.speed=0;v.steer=0;window._g={g,v,arac,max:0};return [c.x,c.z]}"""
+ const h=ac;v.h=h;let RR=R;do{v.x=c.x+Math.sin(h)*RR;v.z=c.z+Math.cos(h)*RR;RR+=.5}while(collides(v,v.x,v.z,true).size&&RR<R+30);v.speed=0;v.steer=0;window._g={g,v,arac,max:0};return [c.x,c.z]}"""
 K="""()=>{const {g,v,arac}=_g;const fx=-Math.sin(v.h),fz=-Math.cos(v.h),rx=-fz,rz=fx;const pts=arac==='fork'?[[.45,.7],[.45,-.7],[-.8,.7],[-.8,-.7],[-2,0]]:[[5.2,1],[5.2,-1],[2.5,1.1],[2.5,-1.1]];
  const b=yerelKutu(g);g.updateMatrixWorld();const inv=g.matrixWorld.clone().invert();let ic=0;for(const[a,bb]of pts){const p=new THREE.Vector3(v.x+fx*a+rx*bb,getH(v.x,v.z)+(arac==='fork'?.8:1),v.z+fz*a+rz*bb).applyMatrix4(inv);const d=Math.min(p.x-b.min.x,b.max.x-p.x,p.z-b.min.z,b.max.z-p.z);if(d>.15&&p.y>b.min.y&&p.y<b.max.y)ic=Math.max(ic,d)}return ic}"""
 with sync_playwright() as p:

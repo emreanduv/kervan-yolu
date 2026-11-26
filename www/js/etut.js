@@ -80,7 +80,7 @@ function cakilG(g,i,ic){const t=new THREE.Group();g.add(t);const m=new THREE.Mes
  const pos=[],idx=[];for(let k=-6;k<=6;k++){const j=clamp(i+k,1,NS-2);const w=4.6+(1-Math.abs(k)/6)*3.2;const a=sideAt(j,ic*4.2),b=sideAt(j,ic*w);pos.push(a.x,getH(a.x,a.z)+.24,a.z,b.x,getH(b.x,b.z)+.16,b.z);if(k<6){const n=(k+6)*2;idx.push(n,n+1,n+2,n+1,n+3,n+2)}}
  const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));ge.setIndex(idx);ge.computeVertexNormals();const me=new THREE.Mesh(ge,m);me.receiveShadow=true;t.add(me);return t}
 
-function kur(){EN=[];const g=new THREE.Group();g.userData.gecirgen=1;scene.add(g);WOBJ.push(g);const R=rng('etut-'+REG);const lo=70,hi=NS-1-64-14;
+function kur(){EN=[];const g=new THREE.Group();scene.add(g);WOBJ.push(g);const R=rng('etut-'+REG);const lo=70,hi=NS-1-64-14;
  const egr=[];for(let i=lo;i<hi;i+=3){if(yasak(i))continue;const e=egri(i);egr.push([i,e.k,e.ic])}egr.sort((a,b)=>b[1]-a[1]);
  const al=(n,uz)=>{const out=[];for(const e of egr){if(out.length>=n)break;if(EN.some(o=>Math.abs(o.i-e[0])<uz)||out.some(o=>Math.abs(o[0]-e[0])<uz))continue;out.push(e)}return out};
  let id=0;const ekle=(tip,i,ic)=>{const o={id:tip+'-'+(id++),tip,i,ic,km:(i/(NS-1)*ROADLENS[REG]/1000)};EN.push(o);return o};
@@ -106,7 +106,8 @@ function kur(){EN=[];const g=new THREE.Group();g.userData.gecirgen=1;scene.add(g
   else if(o.tip==='toprak'){const mk=()=>{const t=new THREE.Group();g.add(t);const m=P('#7a6248',{shininess:2});for(let k=-1;k<=1;k++){const q=sideAt(clamp(o.i+k*2,1,NS-2),ic*5.0);const r=new THREE.Mesh(new THREE.DodecahedronGeometry(1.3,0),m);r.scale.set(1.4,.6,1.8);r.position.set(q.x,getH(q.x,q.z)+.3,q.z);t.add(r)}return t};o.bad=mk();o.ok=null}
   else if(o.tip==='bom'||o.tip==='yanal'){o.bad=null;o.ok=null}
   else if(o.tip==='og'){const c=P('#b8b6ae',{shininess:6});o.bad=direk(g,sideAt(o.i,ic*5),9,c,1);o.ok=direk(g,sideAt(o.i,ic*10.5),9,c,1)}}
- gorsel();dekor(g)}
+ gecirgenYap();gorsel();dekor(g)}
+function gecirgenYap(){}// etüt engelleri de katı: yalnız havadaki teller (yükseklik kuralıyla) ve kanadın taşan ucu (etüt hasar kuralıyla) ayrı işlenir
 function gorsel(){const H=hazir();const free=typeof mode!=='undefined'&&mode!=='career';for(const o of EN){const f=free||H.has(o.id)||(G&&G.etutSec&&G.etutSec.has(o.id)&&G.docs)||o.acil;if(o.bad)o.bad.visible=!f;if(o.ok)o.ok.visible=!!f||o.bad===null}}
 
 // ---------- saha yolu ve yayla dekoru ----------
