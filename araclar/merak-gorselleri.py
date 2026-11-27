@@ -33,7 +33,7 @@ async def main():
                  e.style.cssText='position:fixed;inset:0;z-index:999;pointer-events:none;font-family:"Barlow Condensed",sans-serif;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 58%,rgba(0,0,0,.78) 100%)';
                  e.innerHTML=`<div style="position:absolute;top:5%;left:0;right:0;text-align:center;letter-spacing:6px;font-size:15px;font-weight:700;color:#ffcf4a">KERVAN YOLU</div>
                  <div style="position:absolute;bottom:17%;left:7%;right:7%;font-size:38px;font-weight:800;line-height:1.02;text-shadow:0 2px 14px rgba(0,0,0,.7)">${b}</div>
-                 <div style="position:absolute;bottom:12.5%;left:7%;font-size:15px;letter-spacing:2px;opacity:.85">${k.toUpperCase()}</div>
+                 <div style="position:absolute;bottom:12.5%;left:7%;font-size:15px;letter-spacing:2px;opacity:.85">${k.toLocaleUpperCase('tr-TR')}</div>
                  <div style="position:absolute;bottom:4.5%;left:7%;right:7%;display:flex;justify-content:space-between;align-items:flex-end">
                   <div style="font-size:44px;font-weight:800;color:#ffcf4a;line-height:1">${t}</div>
                   <div style="text-align:right;font-size:13px;opacity:.85;line-height:1.3">1923 sefer<br>Bir Mr. Anduv! yapımıdır.</div></div>`}""",[buyuk,kucuk,TARIH])
