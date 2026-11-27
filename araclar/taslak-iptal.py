@@ -18,7 +18,7 @@ for st in ('READY_FOR_REVIEW',):
 # Yeni derlemeyle değiştirmek için: store/INCELEMEDEN-CEK içinde store/DERLEME ile aynı numara varsa, incelemeyi bekleyen başvuru geri çekilir.
 cek=open('store/INCELEMEDEN-CEK').read().strip() if os.path.exists('store/INCELEMEDEN-CEK') else ''
 if cek and cek==open('store/DERLEME').read().strip():
-    for st in ('WAITING_FOR_REVIEW','UNRESOLVED_ISSUES'):
+    for st in ('WAITING_FOR_REVIEW','UNRESOLVED_ISSUES','IN_REVIEW'):
         for x in get('/v1/reviewSubmissions',**{'filter[app]':APP,'filter[platform]':'IOS','filter[state]':st})['data']:
             send('PATCH',f"/v1/reviewSubmissions/{x['id']}",{'data':{'type':'reviewSubmissions','id':x['id'],'attributes':{'canceled':True}}})
     for k in range(30):
