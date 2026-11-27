@@ -1,7 +1,5 @@
-1.1.3:
-- Gerçek vinçler: yük dorseden kalkar, vinç döner, halat bom ucundan iner; parçalar istife takozların üstüne ya da kuleye hiçbir şeyin içinden geçmeden iner. Limanda mobil liman vinci.
-- Gerçek hemzemin geçitler: uzanan ray hattı, beton geçit plakaları, uyarı levhası; tren uzaktan korna çalarak gelir, lokomotif ve yük vagonlarıyla geçer. Tır raydayken tren durur.
-- Sahadan acil çağrılar: türbin durduğunda ya da montaj malzeme beklediğinde bildirim gelir; çağrıya koşan şoför ek ücret alır. Ayarlardan kapatılabilir.
-- Tırın bütün gövdesi gerçek: kabin, dorse ve yük levhaların, direklerin, kayaların ve binaların içinden geçmiyor.
-- Yolun üstündeki hiçbir şey yükten alçak değil: teller, gümrük tabelası, akaryakıt kanopisi, köy evleri ve ağaçlar en yüksek yükün üstünde ya da yolun dışında.
-- Kamerayla tır arasına giren kanopi, çatı ya da ağaç yarı saydam olur; tır hiç kaybolmaz.
+1.1.4:
+- Hemzemin geçitlerde bariyer kolları yola iner ve şeridi kapatır, uçlarında kırmızı ışık yanıp söner. Karşıdan gelen araçlar bariyerde durur, refakat araçları raya park etmez, tren raydaki her araç için acil fren yapar.
+- Tır saha girişinde artık yola gömülmüyor; akaryakıt istasyonu ve kantar zemini araziye oturuyor.
+- Rüzgâr türbini üreticisi ve yatırımcı şirket adları yenilendi; eski kayıtlar kendiliğinden güncellenir.
+- Görsel düzeltmeler: üst bilgi çubuğu çentikli ekranlarda doğru yerde, hedef ışık sütunu tıra yaklaşınca kayboluyor.
