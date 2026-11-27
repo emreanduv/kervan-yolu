@@ -17,7 +17,7 @@ Object.assign(REGIONS,{
   amp:50,rid:10,climb:.06,coastW:18,sea:0x1f6d8a,fee:1.2,snow:1,snowLine:62,peri:1,cols:{g1:'#9a9a5c',g2:'#78794a',dry:'#c7b383',rock:'#c9b08a'}}});
 REG_KEYS.push('canakkale','hatay','karadeniz','kapadokya');
 Object.assign(RES,{canakkale:{tr:'Biga RES',en:'Biga Wind Farm'},hatay:{tr:'Belen RES',en:'Belen Wind Farm'},karadeniz:{tr:'Çaykara RES',en:'Çaykara Wind Farm'},kapadokya:{tr:'Niğde-Kayseri RES',en:'Niğde-Kayseri Wind Farm'}});
-Object.assign(INV,{canakkale:['İçdeş Enerji','Sanka Enerji'],hatay:['Göriş Enerji','Fena Enerji'],karadeniz:['Kalyan Enerji','Ordan Enerji'],kapadokya:['Enarjisa','Esengöç Enerji']});
+Object.assign(INV,{canakkale:['Daşiç Enerji','Konsa Enerji'],hatay:['Rişgü Enerji','Nafi Enerji'],karadeniz:['Yonkal Enerji','Danor Enerji'],kapadokya:['Jisanerya','Göçesen Enerji']});
 if(typeof REAL_KM!=='undefined')Object.assign(REAL_KM,{canakkale:35,hatay:30,karadeniz:95,kapadokya:260});
 if(typeof DUZ_REG!=='undefined')Object.assign(DUZ_REG,{hatay:.6,karadeniz:.7});
 // Belen geçidi meşhur rüzgârı: kanatta limanda bekleme olasılığı yüksek

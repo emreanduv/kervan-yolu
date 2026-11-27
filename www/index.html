@@ -267,7 +267,7 @@ let L='tr';const T=k=>(STR[L][k]!==undefined?STR[L][k]:k);
 const $=id=>document.getElementById(id);
 const SKEY='kervanyolu_v1';
 function freshSave(){return{lang:null,money:0,km:0,best:0,done:{},full:0,tips:{},rateAsks:0,rated:0,muted:false,tab:'free',tod:'aksam',reg:'marmara'}}
-let SAVE=freshSave();try{const s=JSON.parse(localStorage.getItem(SKEY));if(s)SAVE=Object.assign(freshSave(),s)}catch(e){}
+let SAVE=freshSave();try{let ham=localStorage.getItem(SKEY);/* eski kayıtlardaki şirket adları yeni (daha bariz bozulmuş) adlara çevrilir */if(ham){const ESK={'SIMENZ GAMAZA':'MENSİ GASAMA','JE VERNAVA':'NOVAREJ','NURDAKS':'DONREKS','EMERKAN':'KONERA','KESXAS':'TASVEK','GALDWIND':'VINDGOL','Borasan EnBaW':'Sanbor Enerji','Sinerjika':'Jisanerya','Enarjisa':'Jisanerya','Akfan Enerji':'Fenak Enerji','Alemdar Enerji':'Darlem Enerji','Zarlu Enerji':'Lurzo Enerji','Kalyan Enerji':'Yonkal Enerji','Bilgen Enerji':'Ginbil Enerji','Eksin Enerji':'Simek Enerji','İçdeş Enerji':'Daşiç Enerji','Sanka Enerji':'Konsa Enerji','Göriş Enerji':'Rişgü Enerji','Fena Enerji':'Nafi Enerji','Ordan Enerji':'Danor Enerji','Esengöç Enerji':'Göçesen Enerji'};for(const k in ESK)ham=ham.split(k).join(ESK[k])}const s=JSON.parse(ham);if(s)SAVE=Object.assign(freshSave(),s)}catch(e){}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}}
 
 // ================= YARDIMCILAR =================
@@ -377,9 +377,9 @@ const REGIONS={
   cols:{g1:'#8fa04c',g2:'#6c8838',dry:'#c9b46a',rock:'#8a8070'}}};
 const REG_KEYS=['marmara','ege','sivas','trakya'];
 // Türbin üreticileri ve yatırımcılar isim bozma yöntemiyle (Emre'nin kuralı): gerçek ad hiçbir yerde yazmaz
-const OEMS=['NURDAKS','EMERKAN','KESXAS','SIMENZ GAMAZA','JE VERNAVA','GALDWIND'];
-const OEM_COL={NURDAKS:'#1d3e7a',EMERKAN:'#1e7a3c',KESXAS:'#1f5fa8','SIMENZ GAMAZA':'#0b6f78','JE VERNAVA':'#2b2f6b',GALDWIND:'#1b6b4a'};
-const INV={marmara:['Sinerjika','Akfan Enerji'],ege:['Alemdar Enerji','Zarlu Enerji'],sivas:['Kalyan Enerji','Bilgen Enerji'],trakya:['Borasan EnBaW','Eksin Enerji']};
+const OEMS=['DONREKS','KONERA','TASVEK','MENSİ GASAMA','NOVAREJ','VINDGOL'];
+const OEM_COL={DONREKS:'#1d3e7a',KONERA:'#1e7a3c',TASVEK:'#1f5fa8','MENSİ GASAMA':'#0b6f78','NOVAREJ':'#2b2f6b',VINDGOL:'#1b6b4a'};
+const INV={marmara:['Jisanerya','Fenak Enerji'],ege:['Darlem Enerji','Lurzo Enerji'],sivas:['Yonkal Enerji','Ginbil Enerji'],trakya:['Sanbor Enerji','Simek Enerji']};
 const RES={marmara:{tr:'Balıkesir RES',en:'Balıkesir Wind Farm'},ege:{tr:'Bergama RES',en:'Bergama Wind Farm'},sivas:{tr:'Sivas RES',en:'Sivas Wind Farm'},trakya:{tr:'Ganos RES',en:'Ganos Wind Farm'}};
 let REG='marmara',BUILT_REG=null,RPTS=REGIONS.marmara.rp;const RG=()=>REGIONS[REG];
 const ROADLENS={};const HOBS=[];let VZ=null,CZ=null;
@@ -1164,7 +1164,7 @@ function setupVehicles(){MAT.blade.map=bladeTex();MAT.blade.needsUpdate=true;set
  logo(kanat,1.8,.45,1.27,0,1.0,Math.PI/2);logo(hub,1.6,.4,0,2.4,2.3,0);
  nasel.children.filter(o=>o.isMesh&&o.material&&o.material.map&&o.geometry.parameters&&o.geometry.parameters.width===2.8).forEach(o=>o.visible=false);
  kon.children.filter(o=>o.isMesh&&o.geometry.parameters&&o.geometry.parameters.width===2).forEach(o=>o.visible=false);
- drawOem('NURDAKS');
+ drawOem('DONREKS');
  CARGO={kule,kanat,raf,nasel,hub,aktarma:akt,ankraj:ank,konteyner:kon};
  // gece farları
 }
@@ -1177,8 +1177,8 @@ function resetGame(m,n){katiSifirla();katiSifirla2();if(trailer){trailer.ext=0;t
  world.straps.forEach(s=>s.visible=false);ownStraps('');for(const k in CARGO)CARGO[k].visible=false;CARGO.kanat.rotation.x=0;
  for(const mk of world.markers)scene.remove(mk);world.markers=[];drone.g.visible=false;fork.g.visible=false;
  const t=job.type;let start='yard';
- if(t==='kasa'){fork.g.visible=true;crates.forEach((c,i)=>{c.visible=true;labelCrate(c,(job.oem||'NURDAKS')+'|'+T(['cr1','cr2','cr3'][i]));c.position.set(17.2,YARD_Y,-1+i*5.2);c.rotation.set(0,0,0)})}
- if(t==='yedek'){const c=crates[1];c.visible=true;labelCrate(c,(job.oem||'NURDAKS')+'|'+T('cr4'));trailer.g.add(c);c.position.copy(trailer.slots[1]);c.rotation.set(0,0,0)}
+ if(t==='kasa'){fork.g.visible=true;crates.forEach((c,i)=>{c.visible=true;labelCrate(c,(job.oem||'DONREKS')+'|'+T(['cr1','cr2','cr3'][i]));c.position.set(17.2,YARD_Y,-1+i*5.2);c.rotation.set(0,0,0)})}
+ if(t==='yedek'){const c=crates[1];c.visible=true;labelCrate(c,(job.oem||'DONREKS')+'|'+T('cr4'));trailer.g.add(c);c.position.copy(trailer.slots[1]);c.rotation.set(0,0,0)}
  if(t==='kule')CARGO.kule.visible=true;if(t==='kanat')CARGO.kanat.visible=true;if(CARGO[t]&&!['kule','kanat','raf'].includes(t))CARGO[t].visible=true;if(t==='donus'){CARGO.raf.visible=true;start='site'}
  G.target=start==='site'?{x:DEPOT.x,z:DEPOT.z}:{x:SITE.x,z:SITE.z};
  if(start==='site'){const i=NS-14;const a=RS[i+1],b=RS[i];truck.v=newVeh(RS[i].x,RS[i].z,Math.atan2(-(b.x-a.x),-(b.z-a.z)),TRUCKP);const a2=RS[i-3];truck.v.h=Math.atan2(-(a2.x-RS[i].x),-(a2.z-RS[i].z))}else truck.v=newVeh(0,2,0,TRUCKP);
