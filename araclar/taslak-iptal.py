@@ -23,9 +23,10 @@ if cek and cek==open('store/DERLEME').read().strip():
             send('PATCH',f"/v1/reviewSubmissions/{x['id']}",{'data':{'type':'reviewSubmissions','id':x['id'],'attributes':{'canceled':True}}})
     for k in range(30):
         time.sleep(10)
-        v=get(f'/v1/apps/{APP}/appStoreVersions',**{'filter[platform]':'IOS','filter[versionString]':SURUM})['data']
-        st=v and v[0]['attributes']['appStoreState'];print('bekleniyor',st)
-        if st not in ('WAITING_FOR_REVIEW','IN_REVIEW'):break
+        v=get(f'/v1/apps/{APP}/appStoreVersions',**{'filter[platform]':'IOS','limit':5})['data']
+        sts=[x['attributes']['appStoreState'] for x in v];print('bekleniyor',sts)
+        if not any(t in ('WAITING_FOR_REVIEW','IN_REVIEW') for t in sts):break
+        # başka sürüm numarasıyla incelemede olan da beklenir
     for x in get('/v1/reviewSubmissions',**{'filter[app]':APP,'filter[platform]':'IOS','filter[state]':'READY_FOR_REVIEW'})['data']:
         for it in get(f"/v1/reviewSubmissions/{x['id']}/items")['data']:
             send('DELETE',f"/v1/reviewSubmissionItems/{it['id']}")
