@@ -267,7 +267,7 @@ let L='tr';const T=k=>(STR[L][k]!==undefined?STR[L][k]:k);
 const $=id=>document.getElementById(id);
 const SKEY='kervanyolu_v1';
 function freshSave(){return{lang:null,money:0,km:0,best:0,done:{},full:0,tips:{},rateAsks:0,rated:0,muted:false,tab:'free',tod:'aksam',reg:'marmara'}}
-let SAVE=freshSave();try{let ham=localStorage.getItem(SKEY);/* eski kayıtlardaki şirket adları yeni (daha bariz bozulmuş) adlara çevrilir */if(ham){const ESK={'SIMENZ GAMAZA':'MENSİ GASAMA','JE VERNAVA':'NOVAREJ','NURDAKS':'DONREKS','EMERKAN':'KONERA','KESXAS':'TASVEK','GALDWIND':'VINDGOL','Borasan EnBaW':'Sanbor Enerji','Sinerjika':'Jisanerya','Enarjisa':'Jisanerya','Akfan Enerji':'Fenak Enerji','Alemdar Enerji':'Darlem Enerji','Zarlu Enerji':'Lurzo Enerji','Kalyan Enerji':'Yonkal Enerji','Bilgen Enerji':'Ginbil Enerji','Eksin Enerji':'Simek Enerji','İçdeş Enerji':'Daşiç Enerji','Sanka Enerji':'Konsa Enerji','Göriş Enerji':'Rişgü Enerji','Fena Enerji':'Nafi Enerji','Ordan Enerji':'Danor Enerji','Esengöç Enerji':'Göçesen Enerji'};for(const k in ESK)ham=ham.split(k).join(ESK[k])}const s=JSON.parse(ham);if(s)SAVE=Object.assign(freshSave(),s)}catch(e){}
+let SAVE=freshSave();try{let ham=localStorage.getItem(SKEY);/* eski kayıtlardaki şirket adları yeni (daha bariz bozulmuş) adlara çevrilir */if(ham){const ESK={'SIMENZ GAMAZA':'MENSİ GASAMA','JE VERNAVA':'NOVAREJ','NURDAKS':'DONREKS','EMERKAN':'EMERKAN','KESXAS':'TASVEK','GALDWIND':'VINDGOL','Borasan EnBaW':'Sanbor Enerji','Sinerjika':'Jisanerya','Enarjisa':'Jisanerya','Akfan Enerji':'Fenak Enerji','Alemdar Enerji':'Darlem Enerji','Zarlu Enerji':'Lurzo Enerji','Kalyan Enerji':'Yonkal Enerji','Bilgen Enerji':'Ginbil Enerji','Eksin Enerji':'Simek Enerji','İçdeş Enerji':'Daşiç Enerji','Sanka Enerji':'Konsa Enerji','Göriş Enerji':'Rişgü Enerji','Fena Enerji':'Nafi Enerji','Ordan Enerji':'Danor Enerji','Esengöç Enerji':'Göçesen Enerji'};for(const k in ESK)ham=ham.split(k).join(ESK[k])}const s=JSON.parse(ham);if(s)SAVE=Object.assign(freshSave(),s)}catch(e){}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}}
 
 // ================= YARDIMCILAR =================
@@ -377,8 +377,8 @@ const REGIONS={
   cols:{g1:'#8fa04c',g2:'#6c8838',dry:'#c9b46a',rock:'#8a8070'}}};
 const REG_KEYS=['marmara','ege','sivas','trakya'];
 // Türbin üreticileri ve yatırımcılar isim bozma yöntemiyle (Emre'nin kuralı): gerçek ad hiçbir yerde yazmaz
-const OEMS=['DONREKS','KONERA','TASVEK','MENSİ GASAMA','NOVAREJ','VINDGOL'];
-const OEM_COL={DONREKS:'#1d3e7a',KONERA:'#1e7a3c',TASVEK:'#1f5fa8','MENSİ GASAMA':'#0b6f78','NOVAREJ':'#2b2f6b',VINDGOL:'#1b6b4a'};
+const OEMS=['DONREKS','EMERKAN','TASVEK','MENSİ GASAMA','NOVAREJ','VINDGOL'];
+const OEM_COL={DONREKS:'#1d3e7a',EMERKAN:'#1e7a3c',TASVEK:'#1f5fa8','MENSİ GASAMA':'#0b6f78','NOVAREJ':'#2b2f6b',VINDGOL:'#1b6b4a'};
 const INV={marmara:['Jisanerya','Fenak Enerji'],ege:['Darlem Enerji','Lurzo Enerji'],sivas:['Yonkal Enerji','Ginbil Enerji'],trakya:['Sanbor Enerji','Simek Enerji']};
 const RES={marmara:{tr:'Balıkesir RES',en:'Balıkesir Wind Farm'},ege:{tr:'Bergama RES',en:'Bergama Wind Farm'},sivas:{tr:'Sivas RES',en:'Sivas Wind Farm'},trakya:{tr:'Ganos RES',en:'Ganos Wind Farm'}};
 let REG='marmara',BUILT_REG=null,RPTS=REGIONS.marmara.rp;const RG=()=>REGIONS[REG];
