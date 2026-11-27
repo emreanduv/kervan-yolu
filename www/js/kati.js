@@ -13,7 +13,10 @@ function ortuGuncelle(dt){_oT-=dt;if(_oT>0)return;_oT=.1;if(typeof truck==='unde
  const vur=new Set();for(const h of hedefler){const d=h.clone().sub(camera.position);const L=d.length();if(L<4)continue;_rc.set(camera.position,d.normalize());_rc.far=L-2;for(const x of _rc.intersectObjects(ORTU,false))vur.add(x.object)}
  vur.forEach(o=>{if(!_sol.has(o)){_sol.set(o,o.material);const m=o.material.clone();m.transparent=true;m.opacity=.22;m.depthWrite=false;o.material=m}});
  _sol.forEach((m,o)=>{if(!vur.has(o)){o.material.dispose&&o.material.dispose();o.material=m;_sol.delete(o)}})}
-const _uc=updCamera;updCamera=function(dt){_uc(dt);try{ortuGuncelle(dt||.016)}catch(e){}};
+// Hedef ışık sütunları (teslim, yükleme, zincir) uzaktan yer göstermek içindir; tır 70 m'ye yaklaşınca sütun söner, yerdeki halka kalır.
+// Yoksa yakında 26 m'lik saydam sütun kulenin, kanopinin önüne biniyor ve bir hata gibi görünüyor. 'visible'a dokunmaz, yalnız kamera katmanını değiştirir.
+function sutunSondur(){if(typeof truck==='undefined'||!truck||!truck.g)return;const t=truck.g.position;for(const b of[typeof ringBeam!=='undefined'&&ringBeam,typeof pickBeam!=='undefined'&&pickBeam,typeof CZ!=='undefined'&&CZ&&CZ.beam]){if(!b)continue;const d=Math.hypot(b.position.x-t.x,b.position.z-t.z);b.layers.set(d<70?31:0)}}
+const _uc=updCamera;updCamera=function(dt){_uc(dt);try{ortuGuncelle(dt||.016)}catch(e){}try{sutunSondur()}catch(e){}};
 const _br2=buildRegion;buildRegion=function(r){_br2(r);try{ortuKur()}catch(e){console.log('ortu',e)}};
 window.ORTU_SAY=()=>ORTU.length;window.ORTU_TEST=(c)=>{camera.position.copy(c);_oT=0;ortuGuncelle(.1);return _sol.size};
 })();
