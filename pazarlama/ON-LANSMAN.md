@@ -16,3 +16,10 @@ Görseller: `pazarlama/*-4x5.png` (akış), `*-9x16.png` (hikâye). Üretici: `a
 Etiketler (her paylaşımda 3–5): #KervanYolu #TırOyunu #RüzgarEnerjisi #MobilOyun #MrAnduv
 
 "Sektörden biri" cümlesi (isteğe bağlı, bir kez, çıkış gününde): "Rüzgâr türbini taşımanın ne demek olduğunu yakından bilen biri olarak bu oyunu yaptım."
+
+## Lansman seti (27 Kasım 2026, en güncel derlemeden)
+- `pazarlama/lansman/kv-01…10.png` (4:5 akış), `hikaye/kv-hikaye-01…10.png` (9:16), metinler `PAYLASIM-METINLERI-KERVAN-YOLU.md`.
+- Üretim: `python3 araclar/lansman-gorselleri.py pazarlama/lansman/final2.json 4x5 <klasör>` (+ `9x16`), kartlar `araclar/lansman-kartlari.py` (zemin için `zemin.json`).
+- Sahneler: Ege kanat kaldırıcı (kapak), Bandırma liman vinci, Marmara gece nasel, Sivas zincir, Karadeniz çay bahçeleri, Kapadokya peri bacaları, Hatay Belen, Trakya ayçiçeği, sefer raporu, kapanış.
+- Yalnız yayındaki sürümde (1.1.1) olan şeyler gösterildi; sahada vinçle montaj (1.1.3, incelemede) bilerek konmadı.
+- Ders: küçük yazılar `toLocaleUpperCase('tr-TR')` ile büyütülür (yoksa "LIMANI", "LOJISTIĞI"). Merak görsellerinde bu hata vardı, üretici düzeltildi.
