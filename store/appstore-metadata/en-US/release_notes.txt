@@ -1,7 +1,7 @@
-1.1.2:
+1.1.3:
+- Real cranes: the load leaves the trailer, the crane slews, the rope hangs from the boom tip, and parts reach the laydown (on timber blocks) or the tower without passing through anything. A mobile harbour crane at the port.
+- Real level crossings: a long track, concrete crossing panels and a warning sign; the train sounds its horn and passes with a locomotive and freight wagons. It stops if the truck is on the rails.
 - Urgent calls from the site: when a turbine stops or the assembly crew waits for parts, a notification arrives and the driver who answers earns a bonus. Can be turned off in Settings.
 - The whole truck is solid: cab, trailer and load no longer pass through signs, poles, rocks or buildings.
-- At level crossings the train never touches the truck and brakes hard if it must.
-- Nothing over the road hangs lower than the load: customs sign, fuel canopy, chain-up gantry, village eaves, trees and road signs now clear the tallest load or sit off the road.
-- Overhead wires now hang relative to the road: an empty truck passes under them, and an unfixed survey wire only touches tall loads such as towers and blades.
-- A waiting escort no longer drives into the truck.
+- Nothing over the road hangs lower than the load: wires, customs sign, fuel canopy, village houses and trees clear the tallest load or sit off the road.
+- Canopies, roofs and trees between the camera and the truck turn see-through, so the truck never disappears.
