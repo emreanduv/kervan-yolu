@@ -1,0 +1,140 @@
+{
+  "name": "kervan-yolu-desktop",
+  "productName": "Kervan Yolu",
+  "version": "1.1.7",
+  "description": "Kervan Yolu — Steam (Windows, macOS, Linux) sürümü",
+  "author": {
+    "name": "Mr. Anduv!",
+    "email": "emreanduvart@gmail.com"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --x64 --publish never",
+    "dist:mac": "electron-builder --mac --universal --publish never",
+    "dist:linux": "electron-builder --linux --x64 --publish never"
+  },
+  "dependencies": {
+    "steamworks.js": "0.4.0"
+  },
+  "devDependencies": {
+    "electron": "38.8.6",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.anduv.kervanyolu.desktop",
+    "productName": "Kervan Yolu",
+    "executableName": "KervanYolu",
+    "copyright": "© 2026 Mr. Anduv!",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "steam.json",
+      "build/icon.png",
+      "www/**/*",
+      "!www/**/*.map"
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks.js/dist/**"
+    ],
+    "electronLanguages": [
+      "tr",
+      "en-US"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "steam-windows-${version}.${ext}",
+      "extraFiles": [
+        {
+          "from": "node_modules/steamworks.js/dist/win64/steam_api64.dll",
+          "to": "steam_api64.dll"
+        }
+      ]
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.simulation-games",
+      "x64ArchFiles": "**/steamworksjs.darwin-*.node",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "artifactName": "steam-macos-${version}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "Game",
+      "maintainer": "Mr. Anduv! <emreanduvart@gmail.com>",
+      "synopsis": "Kervan Yolu",
+      "desktop": {
+        "entry": {
+          "Name": "Kervan Yolu",
+          "Comment": "Kervan Yolu",
+          "Categories": "Game;Simulation;"
+        }
+      },
+      "artifactName": "linux-${version}.${ext}",
+      "extraFiles": [
+        {
+          "from": "node_modules/steamworks.js/dist/linux64/libsteam_api.so",
+          "to": "libsteam_api.so"
+        }
+      ]
+    },
+    "deb": {
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1",
+        "libsecret-1-0"
+      ]
+    }
+  },
+  "homepage": "https://github.com/emreanduv"
+}
