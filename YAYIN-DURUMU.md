@@ -41,3 +41,6 @@ SHA-256: 06:D1:CD:D6:E7:08:75:1E:29:FE:20:CC:54:BD:38:3D:B3:CB:63:A9:D5:C0:A0:B7
 - iOS 1.0.0 (13), Mr. Anduv! FM dahil, ve Tam Sürüm IAP (com.anduv.kervanyolu.tamsurum) aynı başvuruda.
 - Yayın: onaydan sonra otomatik (AFTER_APPROVAL). Yayına çıkınca store/SON-SURUM = 1.0.0 yapılır.
 - İnceleme sürerken bu sürüme dokunulmaz; sıradaki işler: Google Play, Steam, VR (Quest).
+
+- 28 Kasım 2026 18:17: App Store 1.1.7 onaylandı, Ready for Distribution. store/SON-SURUM = 1.1.7.
+- 28 Kasım 2026: Meta Quest doğal Android paketi (com.anduv.kervanyolu.vr, kod 2, 2D panel, 1,99 $). Meta PWA'yı yalnız ücretsiz satıyor; TWA bırakıldı. Steam: KYC belgeleri Valve kuyruğunda (45 iş günü); onay gelince App ID desktop/steam.json'a.
