@@ -542,7 +542,7 @@ function tahliyeStep(dt){const s=G.th;s.t+=dt;const LV=PORTOPS.lv;const par=trai
  let da=s.a1-s.a0;da=Math.atan2(Math.sin(da),Math.cos(da));const an=s.a0+da*b,r=s.r0+(s.r1-s.r0)*b;
  const P=new THREE.Vector3(s.c.x+Math.cos(an)*r,k<.75?s.S.y+(s.H-s.S.y)*a:s.H+(s.E.y-s.H)*c2,s.c.z+Math.sin(an)*r);
  trailer.cargo.position.copy(par.worldToLocal(P.clone()));
- if(LV){vincYonel(P,dt,LV);const ust=P.clone();ust.y+=4;halatCiz(bomUcu(LV),ust,LV)}
+ if(LV){const H=askiKur(LV,trailer.cargo);vincYonel(H||P,dt,LV);if(H)askiKur(LV,trailer.cargo);else{const ust=P.clone();ust.y+=4;halatCiz(bomUcu(LV),ust,LV)}}
  if(s.t>6.8){trailer.cargo.position.set(0,0,0);if(LV)sahaVincHal(LV);const v=truck.v;v.x=s.x0;v.z=s.z0;v.h=s.h0;trailer.th=v.h;placeVehicles(0);G.thCam=false;snapCam();phase='drive';G.pst='gumruk';setObj(T('o_prep'));toast(T('t_tahliyeOk'),'#8ff0a4',2.4);blip(400,700,.2)}}
 function canopyFade(){const c=PORTOPS&&PORTOPS.can;if(!c||!c.roof||!truck)return;const d=Math.hypot(truck.g.position.x-c.position.x,truck.g.position.z-c.position.z);const o=clamp((d-6)/14,.18,1);for(const m of c.roof){m.material.opacity=o;m.material.depthWrite=o>.95}}
 function portLogic(dt){canopyFade();// true dönerse sürüş mantığının geri kalanı bekler
@@ -926,7 +926,25 @@ function bomUcu(V){V=V||window.SAHA_VINC;V.cg.updateWorldMatrix(true,true);retur
 function vincYonel(P,dt,V){V=V||window.SAHA_VINC;if(!V)return;V.cg.updateWorldMatrix(true,false);const L=V.cg.worldToLocal(P.clone());const th=Math.atan2(L.z,-L.x);const pr=Math.max(0,Math.hypot(L.x,L.z)-2.4);
  const luf=Math.asin(Math.min(.82,Math.max(.12,pr/V.L)));const k=dt?Math.min(1,dt*2.5):1;let d=th-V.ust.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));V.ust.rotation.y+=d*k;V.bm.rotation.z+=(luf-V.bm.rotation.z)*k}
 function halatCiz(a,b,V){V=V||window.SAHA_VINC;if(!V)return;V.cg.updateWorldMatrix(true,false);const la=V.cg.worldToLocal(a.clone()),lb=V.cg.worldToLocal(b.clone());const d=lb.clone().sub(la);const L=Math.max(.3,d.length());V.ip.position.copy(la).add(lb).multiplyScalar(.5);V.ip.scale.set(1,L,1);V.ip.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());V.kanca.position.copy(lb);V.kanca.position.y+=.35;V.kanca.rotation.set(0,V.ust.rotation.y,0)}
-function sahaVincHal(V){V=V||window.SAHA_VINC;if(!V)return;const u=bomUcu(V);halatCiz(u,u.clone().add(new THREE.Vector3(0,-24,0)),V)}
+function sahaVincHal(V){V=V||window.SAHA_VINC;if(!V)return;askiGizle(V);const u=bomUcu(V);halatCiz(u,u.clone().add(new THREE.Vector3(0,-24,0)),V)}
+/* VİNÇ BAĞLAMASI (Emre, 28 Kasım 2026): yük tek halatla bir ucundan asılmaz. Kanca yükün ağırlık merkezinin (görünen gövdenin ortası) tam üstündedir;
+   kancadan iki sapan kaldırma kirişinin (spreader) uçlarına, kirişin iki ucundan ikişer sapan yükün dört bağlama noktasına iner (dört sapan).
+   Bütün vinç kaldırmaları (limanda gemiden dorseye, sahada istif ve montaj) askiKur ile yapılır. Denetim: araclar/testler/aski-denetimi.py */
+const _av=new THREE.Vector3(),_ac=new THREE.Vector3();function askiKur(V,obj){V=V||window.SAHA_VINC;if(!V||!obj)return null;obj.updateWorldMatrix(true,true);const ag=new THREE.Vector3();let agw=0;const inv=new THREE.Matrix4().copy(obj.matrixWorld).invert(),bb=new THREE.Box3(),tb=new THREE.Box3(),m=new THREE.Matrix4();
+ obj.traverse(o=>{if(!o.isMesh||o.userData.aski)return;let q=o;while(q&&q!==obj){if(!q.visible)return;q=q.parent}if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();tb.copy(o.geometry.boundingBox).applyMatrix4(m.multiplyMatrices(inv,o.matrixWorld));bb.union(tb);const ts=tb.getSize(_av);const vol=Math.max(.001,ts.x*ts.y*ts.z);tb.getCenter(_ac);ag.addScaledVector(_ac,vol);agw+=vol});
+ /* ağırlık merkezi: parçaların hacimle ağırlıklı ortası (kanatta kök tarafı ağır, kanca köke yakın durur) */const gl=agw>0?ag.multiplyScalar(1/agw):null;
+ if(bb.isEmpty())return null;const c=gl?new THREE.Vector3(gl.x,0,gl.z):bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3()),ux=sz.x>=sz.z;const top=bb.max.y;
+ const uz=(ux?sz.x:sz.z),L=Math.max(1.5,Math.min(uz*.7,16)),W=Math.max(.6,(ux?sz.z:sz.x)*.42);
+ const sc=new THREE.Vector3();obj.getWorldScale(sc);const ky=top+2.2/Math.max(.2,sc.y),hy=ky+L*.55/Math.max(.2,sc.y);
+ const W2=(t,w,y)=>(ux?new THREE.Vector3(c.x+t,y,c.z+w):new THREE.Vector3(c.x+w,y,c.z+t)).applyMatrix4(obj.matrixWorld);
+ const gm=W2(0,0,(bb.min.y+bb.max.y)/2),H=W2(0,0,hy);H.x=gm.x;H.z=gm.z;/* kanca, ağırlık merkezinin dünyada tam düşey üstünde */const E1=W2(-L/2,0,ky),E2=W2(L/2,0,ky);
+ let A=V.aski;if(!A){A=V.aski={g:new THREE.Group(),s:[]};const sm=P('#2a2a2a',{shininess:20});for(let i=0;i<6;i++){const mm=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1,5),sm);mm.userData.aski=1;A.s.push(mm);A.g.add(mm)}
+  A.kiris=new THREE.Mesh(new THREE.BoxGeometry(.5,.5,1),P('#e0b21c',{shininess:30}));A.kiris.userData.aski=1;A.kiris.castShadow=true;A.g.add(A.kiris);A.g.userData.gecirgen=1;A.g.userData.dinamik=1;scene.add(A.g)}
+ A.g.visible=true;const seg=(mm,a,b)=>{const d=b.clone().sub(a);mm.position.copy(a).add(b).multiplyScalar(.5);mm.scale.set(1,Math.max(.05,d.length()),1);mm.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize())};
+ seg(A.s[0],H,E1);seg(A.s[1],H,E2);seg(A.s[2],E1,W2(-L/2,-W,top));seg(A.s[3],E1,W2(-L/2,W,top));seg(A.s[4],E2,W2(L/2,-W,top));seg(A.s[5],E2,W2(L/2,W,top));
+ const dk=E2.clone().sub(E1);A.kiris.position.copy(E1).add(E2).multiplyScalar(.5);A.kiris.scale.set(1,1,Math.max(.1,dk.length()));A.kiris.lookAt(E2);
+ halatCiz(bomUcu(V),H,V);window._ASKI={H,merkez:gm};return H}
+function askiGizle(V){V=V||window.SAHA_VINC;if(V&&V.aski)V.aski.g.visible=false}
 function buildSite(){
  const s=new THREE.Group();s.position.set(SITE.x,SITE_Y,SITE.z);scene.add(s);world.site=s;const SX=SITE.x,SZ=SITE.z;world.siteSign=null;
  // saha yerleşimi yola göre: u = gelen yol yönü, w = yanı. Ortada 34 m yarıçaplı boş dönüş alanı bırakılır.
