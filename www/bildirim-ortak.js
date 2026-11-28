@@ -75,23 +75,44 @@
       durum.soruldu = 1; yaz(); sor();
     }, 2600);
   }
-  var satirDugme = null;
-  function satirYenile() { if (satirDugme) satirDugme.textContent = durum.acik === 1 ? T('ac') : T('kap'); }
-  function satirKur() {
+  // Ayarlar satırı. Düğme kendi satırındaysa (yazı + düğme) satır kopyalanır; düğme bir düğme listesindeyse düğmenin kendisi
+  // "Bildirimler: Açık" olarak kopyalanır. Pencere her açılışta yeniden kurulsa da satır kendiliğinden eklenir.
+  var satirlar = [];
+  function yazAcKap() { return durum.acik === 1 ? T('ac') : T('kap'); }
+  function satirYenile() {
+    satirlar = satirlar.filter(function (x) { return x.d.isConnected; });
+    satirlar.forEach(function (x) { if (x.tek) x.d.textContent = T('satir') + ': ' + yazAcKap(); else { x.d.textContent = yazAcKap(); if (x.y) x.y.textContent = T('satir'); } });
+  }
+  async function degistir() { oku(); if (durum.acik === 1) { durum.acik = 0; yaz(); iptal(); satirYenile(); } else { durum.soruldu = 1; await izinIste(); } }
+  function temizle(el) {
+    if (el.removeAttribute) ['id', 'hidden', 'data-t', 'data-i18n', 'data-a', 'data-k', 'onclick', 'href'].forEach(function (a) { el.removeAttribute(a); });
+    Array.prototype.forEach.call(el.querySelectorAll('*'), function (e) { ['id', 'data-t', 'data-i18n', 'data-a', 'data-k', 'onclick', 'href'].forEach(function (a) { e.removeAttribute(a); }); });
+    el.hidden = false; el.style.display = '';
+  }
+  function satirEkle() {
     if (!O.ayarSatiri || !LN()) return;
-    var b = document.querySelector(O.ayarSatiri); if (!b) return;
-    var satir = b.parentElement, kopya = satir.cloneNode(true);
-    kopya.id = 'bilOrtakSatir'; kopya.hidden = false; kopya.removeAttribute('hidden');
-    Array.prototype.forEach.call(kopya.querySelectorAll('[id]'), function (e) { e.removeAttribute('id'); });
-    Array.prototype.forEach.call(kopya.querySelectorAll('[data-t],[data-i18n]'), function (e) { e.removeAttribute('data-t'); e.removeAttribute('data-i18n'); });
-    var bd = kopya.querySelector('button') || kopya.lastElementChild;
-    var yaziEl = null; Array.prototype.some.call(kopya.children, function (c) { if (c !== bd && !c.contains(bd)) { yaziEl = c; return true; } return false; });
-    if (yaziEl) yaziEl.textContent = T('satir');
-    satirDugme = bd; satirYenile();
-    bd.onclick = async function (e) { e.preventDefault(); e.stopPropagation(); oku(); if (durum.acik === 1) { durum.acik = 0; yaz(); iptal(); satirYenile(); } else { durum.soruldu = 1; await izinIste(); } };
-    satir.parentNode.insertBefore(kopya, satir.nextSibling);
-    // dil değişince yazıyı tazele
-    setInterval(function () { if (yaziEl && yaziEl.textContent !== T('satir')) { yaziEl.textContent = T('satir'); satirYenile(); } }, 1500);
+    Array.prototype.forEach.call(document.querySelectorAll(O.ayarSatiri), function (b) {
+      var satir = b.parentElement; if (!satir) return;
+      var tek = satir.querySelectorAll('button,a,[role=button]').length > 1 || O.ayarTek;
+      var hedef = tek ? b : satir;
+      if (hedef.nextElementSibling && hedef.nextElementSibling.classList.contains('bilOrtakSatir')) return;
+      var k = hedef.cloneNode(true); temizle(k); k.classList.add('bilOrtakSatir');
+      var x;
+      if (tek) x = { d: k, tek: 1 };
+      else {
+        var bd = k.querySelector('button,a,[role=button]') || k.lastElementChild, yz = null;
+        Array.prototype.some.call(k.children, function (c) { if (c !== bd && !c.contains(bd)) { yz = c; return true; } return false; });
+        x = { d: bd, y: yz };
+      }
+      x.d.addEventListener('click', function (e) { e.preventDefault(); e.stopImmediatePropagation(); degistir(); }, true);
+      satirlar.push(x); hedef.parentNode.insertBefore(k, hedef.nextSibling);
+    });
+    satirYenile();
+  }
+  function satirKur() {
+    if (!O.ayarSatiri) return; satirEkle();
+    var bek = 0; new MutationObserver(function () { if (bek) return; bek = 1; setTimeout(function () { bek = 0; satirEkle(); }, 30); }).observe(document.body, { childList: true, subtree: true });
+    setInterval(satirYenile, 1500);   // dil değişince yazıyı tazele
   }
   function hepsiniSil() { durum = {}; try { localStorage.removeItem(K); } catch (e) {} iptal(); satirYenile(); }
   function silmeKur() {
@@ -100,8 +121,8 @@
     Storage.prototype.removeItem = function (k) { rem.call(this, k); if (this === localStorage && O.kayitAnahtari && O.kayitAnahtari.test && O.kayitAnahtari.test(k) && k !== K) { durum = {}; rem.call(this, K); iptal(); satirYenile(); } };
     Storage.prototype.clear = function () { clr.call(this); if (this === localStorage) { durum = {}; iptal(); satirYenile(); } };
     if (O.silDugmesi) {
-      var s = document.querySelector(O.silDugmesi), say = 0, zm = 0;
-      if (s) s.addEventListener('click', function () { say++; clearTimeout(zm); zm = setTimeout(function () { say = 0; }, 4000); if (say >= 2) { say = 0; hepsiniSil(); } }, true);
+      var say = 0, zm = 0;
+      document.addEventListener('click', function (e) { var t = e.target && e.target.closest && e.target.closest(O.silDugmesi); if (!t) return; say++; clearTimeout(zm); zm = setTimeout(function () { say = 0; }, 4000); if (say >= 2) { say = 0; hepsiniSil(); } }, true);
     }
   }
   function kur(o) {
@@ -119,5 +140,5 @@
     iptal();
     window.BildirimOrtak.hazir = true;
   }
-  window.BildirimOrtak = { kur: kur, basari: basari, planla: planla, iptal: iptal, sor: sor, sil: hepsiniSil, hazir: false };
+  window.BildirimOrtak = { kur: kur, degistir: degistir, acikMi: function () { oku(); return durum.acik === 1; }, var: function () { return !!LN(); }, basari: basari, planla: planla, iptal: iptal, sor: sor, sil: hepsiniSil, hazir: false };
 })();
