@@ -29,3 +29,9 @@ Kural: mağazadaki sürüm (main, 1.1.4) olduğu gibi kalır. Bu dal bitip sekiz
 - Gerçek yerleşim: OSM'deki 3839 bina izinin 80 m'lik hücre özeti (sayı, taban alanı, yön) ve 11 caminin gerçek konumu. Kent kesimi (50 km/sa) kurulan binalardan hesaplanır.
 - Yön levhaları gerçek uzaklıkla (Belen, geçit, RES); takograf gerçek ölçekli haritada gerçek süre sayar.
 - Sıradaki: D-817 gerçekte bölünmüş yol (2×2 şerit, orta refüj) — yol kesiti bölge verisinden; alçak evlere kiremit çatı; Belen RES'in gerçek türbin konumları (OSM power=generator); diğer bölgeler.
+
+## Durum (28 Kasım 2026, akşam)
+- Çanakkale gerçek rota: Karabiga Limanı → Biga yöresi rüzgâr sahası, 16,6 km (OSRM/OSM), Copernicus DEM, OSM yerleşim ve 19 gerçek türbin. Gerçek kıyı liman yerleşimiyle aynı tarafta (bağlantı yolu yok); kasaba içi ilk 480 m atıldı. En dar viraj ≈24 m yarıçaplı gerçek firkete.
+- rota.js genel: veri dosyaları `veri/{rota,dem,bina,res}-<bölge>.js`, bölge ayarı `AYAR` (yon, bas, bag, kes).
+- Bölünmüş yolda aynı yönde akan trafik: sol şeritte önde uzaklaşan ve arkadan gelip sollayan araçlar; tır sol şeritteyse arkadaki araç onu izler.
+- Dokuz denetim (sekiz katı cisim + rampa) Çanakkale'de geçti.

@@ -206,7 +206,7 @@ body.fotom #speedo,body.fotom #cl,body.fotom #cr,body.fotom #bcam,body.fotom #hS
 <div id="hPause" class="tb">II</div>
 
 <script src="iletisim.js"></script>
-<script src="veri/rota-hatay.js"></script><script src="veri/dem-hatay.js"></script><script src="veri/bina-hatay.js"></script><script src="veri/res-hatay.js"></script><script src="js/rota.js"></script>
+<script src="veri/rota-hatay.js"></script><script src="veri/dem-hatay.js"></script><script src="veri/bina-hatay.js"></script><script src="veri/res-hatay.js"></script><script src="veri/rota-canakkale.js"></script><script src="veri/dem-canakkale.js"></script><script src="veri/bina-canakkale.js"></script><script src="veri/res-canakkale.js"></script><script src="js/rota.js"></script>
 <script src="lib/three.min.js"></script>
 <script>
 "use strict";
@@ -678,7 +678,7 @@ function telsizLogic(dt){if(!G||phase!=='drive'||!(ESC&&ESC.g.visible))return;if
  if(VZ&&VZ.v0&&!G.tlz.koy&&VZ.v0-i>6&&VZ.v0-i<30){G.tlz.koy=1;G.tlzT=9;telsiz(T(POL&&POL.g.visible?'tz_koyPol':'tz_koy'));return}
  if(ESC2&&ESC2.g.visible&&!G.tlz.arka&&i>NS*.35&&TRAF.filter(c=>c.on&&!(c.crashT>0)&&(c.i-i)*(G.trSgn||1)<-2&&(c.i-i)*(G.trSgn||1)>-60).length>=2){G.tlz.arka=1;G.tlzT=9;telsiz(T('tz_arka'));return}
  if(!G.tlz.son&&NS-1-i<40){G.tlz.son=1;G.tlzT=9;telsiz(T('tz_son'));return}
- const ds=ROADLEN/(NS-1),sg=G.trSgn||1;const onc=TRAF.filter(c=>c.on&&!c.cift&&!(c.crashT>0)).map(c=>({c,a:(c.i-i)*sg*ds})).filter(o=>o.a>25&&o.a<230).sort((x,y)=>x.a-y.a)[0];
+ const ds=ROADLEN/(NS-1),sg=G.trSgn||1;const onc=TRAF.filter(c=>c.on&&!c.cift&&!c.ayni&&!(c.crashT>0)).map(c=>({c,a:(c.i-i)*sg*ds})).filter(o=>o.a>25&&o.a<230).sort((x,y)=>x.a-y.a)[0];
  if(onc&&!onc.c.tlz){onc.c.tlz=1;G.tlzT=7;G.tlzG=0;telsiz(T(HEAVY.includes(G.job.type)?(onc.c.vir===1&&G.job.type==='kanat'?'tz_karsiV':'tz_karsi'):'tz_karsi2'));return}
  G.tlzG=(G.tlzG||0)+dt+9.5;if(G.tlzG>75&&Math.abs(truck.v.speed)>4){G.tlzG=0;G.tlzT=9;const busy=TRAF.some(c=>c.on&&Math.abs((c.i-i)*ds)<320);telsiz(T(busy?'tz_kopru':['tz_acik','tz_kopru'][Math.floor(Math.random()*2)]))}}
 // Mr. Anduv! FM yol ve hava bülteni: radyo açıkken sürüşte ~3,5 dakikada bir, bölgeye ve havaya göre
@@ -755,21 +755,22 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
  const a=RS[Math.max(0,ti-2)],b=RS[Math.min(NS-1,ti+2)];const fwdx=-Math.sin(v.h),fwdz=-Math.cos(v.h);const sgn=((b.x-a.x)*fwdx+(b.z-a.z)*fwdz)>=0?1:-1;G.trSgn=sgn;
  const tOff=laneOf(ti,v.x,v.z);const max=MOBILE?4:5;G.trT=(G.trT||0)-dt;
  if(G.trT<=0&&Math.abs(v.speed)>2){G.trT=4+Math.random()*7;const act=TRAF.filter(c=>c.on).length;if(act<max){const free=TRAF.filter(c=>!c.on);const c=free[Math.floor(Math.random()*free.length)];
-   const i0=ti+sgn*(130+Math.floor(Math.random()*90));const cf=TILED&&RG().cift&&sgn>0;const vil=VZ&&i0>VZ.v0-15&&i0<VZ.v1+15;if(c&&i0>50&&i0<NS-50&&!vil&&!TRAF.some(o=>o.on&&Math.abs(o.i-i0)<35)){c.on=true;c.i=i0;c.dir=-sgn;/* bölünmüş yol: karşı yön refüjün öbür yanındaki yolda akar */c.cift=cf?1:0;c.off=cf?-(9.9+(Math.random()<.5?0:4.6)):-LANE*sgn;c.spd=c.spd0*(RG().snow?.7:1)*(.9+Math.random()*.2);c.brake=false;c.honk=0;c.crashT=0;c.hit=0;c.tlz=0;c.g.visible=true}}}
+   const cf=TILED&&RG().cift&&sgn>0;/* bölünmüş yolda araçların bir kısmı aynı yönde, sol şeritte: kimi önde uzaklaşır, kimi arkadan gelip sollar */const ay=cf&&Math.random()<.45,ayG=ay&&Math.random()<.5;const i0=ay?(ayG?ti-sgn*(90+Math.floor(Math.random()*40)):ti+sgn*(70+Math.floor(Math.random()*50))):ti+sgn*(130+Math.floor(Math.random()*90));const vil=VZ&&i0>VZ.v0-15&&i0<VZ.v1+15;if(c&&i0>50&&i0<NS-50&&!vil&&!TRAF.some(o=>o.on&&Math.abs(o.i-i0)<35)){c.on=true;c.i=i0;c.dir=ay?sgn:-sgn;c.ayni=ay?1:0;c.izle=false;/* bölünmüş yol: karşı yön refüjün öbür yanındaki yolda akar */c.cift=cf&&!ay?1:0;c.off=ay?-LANE*sgn:cf?-(9.9+(Math.random()<.5?0:4.6)):-LANE*sgn;c.spd=c.spd0*(RG().snow?.7:1)*(.9+Math.random()*.2);c.brake=false;c.honk=0;c.crashT=0;c.hit=0;c.tlz=0;c.g.visible=true}}}
  for(const c of TRAF){if(!c.on)continue;
   const ahead=(c.i-ti)*sgn*ds;// tıra olan uzaklık (önde +)
-  const heavy=HEAVY.includes(G.job.type)&&G.job.type!=='free';if(heavy&&ahead>0&&ahead<170&&!c.cift){c.yield=true}else if(ahead<-25)c.yield=false;
+  const heavy=HEAVY.includes(G.job.type)&&G.job.type!=='free';if(heavy&&ahead>0&&ahead<170&&!c.cift&&!c.ayni){c.yield=true}else if(ahead<-25)c.yield=false;
   if(c.yield&&c.vir===undefined){c.vir=0;const st=c.dir;for(let k=0;k<=24;k+=2){const j=clamp(Math.round(c.i)+st*k,6,NS-7);const a=RS[j-6],b=RS[j],d=RS[j+6];const an=Math.abs(Math.atan2((b.x-a.x)*(d.z-b.z)-(b.z-a.z)*(d.x-b.x),(b.x-a.x)*(d.x-b.x)+(b.z-a.z)*(d.z-b.z)));if(an>.16){c.vir=k<=4?2:1;break}}}
   if(!c.yield)c.vir=undefined;
-  const offT=c.cift?c.off:c.yield?-(c.vir===2&&G.job.type==='kanat'?6.6:LANE+1.9)*sgn:-LANE*sgn;c.off+=clamp(offT-c.off,-2.5*dt,2.5*dt);
+  const offT=c.cift||c.ayni?c.off:c.yield?-(c.vir===2&&G.job.type==='kanat'?6.6:LANE+1.9)*sgn:-LANE*sgn;c.off+=clamp(offT-c.off,-2.5*dt,2.5*dt);
   const inLane=!c.cift&&Math.abs(tOff-c.off)<(c.wid/2+1.45);
   if(c.crashT>0){c.crashT-=dt;if(window.vehAnim)vehAnim(c,dt,c.g.rotation.y);if(c.crashT<=0){hitMark(null)}continue}
-  if(inLane&&ahead>0&&ahead<90&&!c.yield){c.brake=true;if(!c.honk){c.honk=1;blip(420,420,.25);setTimeout(()=>blip(330,330,.3),280);if(G.warnT<=0){toast(T('t_oncoming'),'#ffb36b',2.2);G.warnT=2.5}G.laneV=(G.laneV||0)+1}}
+  if(c.ayni){c.brake=false;c.izle=inLane&&ahead<0&&ahead>-38}
+  else if(inLane&&ahead>0&&ahead<90&&!c.yield){c.brake=true;if(!c.honk){c.honk=1;blip(420,420,.25);setTimeout(()=>blip(330,330,.3),280);if(G.warnT<=0){toast(T('t_oncoming'),'#ffb36b',2.2);G.warnT=2.5}G.laneV=(G.laneV||0)+1}}
   else if(!inLane&&c.brake&&ahead>10)c.brake=false;
   /* hemzemin geçit: bariyer inerken ya da inikken dur çizgisinde bekler (fren mesafesi yetmiyorsa geçip gider) */
   const gr=window.GECIT?GECIT():null;let gStop=null;if(gr===null)c.gb=false;else{const sI=gr-c.dir*9;const rem=(sI-c.i)*c.dir*ds;const cc=c.cur===undefined?c.spd:c.cur;if(c.gb||(rem>-.5&&rem<140&&rem>cc*cc/12-1)){c.gb=true;gStop=sI}}
-  const target=(gStop!==null||c.brake||(c.yield&&ahead>0&&(ahead<130||c.vir===1)))?0:(c.yield?c.spd*.45:c.spd);c.cur=(c.cur===undefined?c.spd:c.cur);if(gStop!==null){const rem=(gStop-c.i)*c.dir*ds;c.cur=Math.min(c.cur,Math.sqrt(Math.max(0,12*rem)))}c.cur+=clamp(target-c.cur,-6*dt,2*dt);c.i+=c.dir*c.cur*dt/ds;if(gStop!==null&&(c.i-gStop)*c.dir>0)c.i=gStop;
-  if(c.i<40||c.i>NS-40||ahead<-60){c.on=false;c.g.visible=false;continue}
+  const target=c.izle?Math.max(0,Math.abs(v.speed)-.5):(gStop!==null||c.brake||(c.yield&&ahead>0&&(ahead<130||c.vir===1)))?0:(c.yield?c.spd*.45:c.spd);c.cur=(c.cur===undefined?c.spd:c.cur);if(gStop!==null){const rem=(gStop-c.i)*c.dir*ds;c.cur=Math.min(c.cur,Math.sqrt(Math.max(0,12*rem)))}c.cur+=clamp(target-c.cur,-6*dt,2*dt);c.i+=c.dir*c.cur*dt/ds;if(gStop!==null&&(c.i-gStop)*c.dir>0)c.i=gStop;
+  if(c.i<40||c.i>NS-40||(c.ayni?ahead<-220||ahead>420:ahead<-60)){c.on=false;c.g.visible=false;continue}
   const i0=Math.floor(c.i),f=c.i-i0;const p0=sideAt(i0,c.off),p1=sideAt(Math.min(NS-1,i0+1),c.off);const x=lerp(p0.x,p1.x,f),z=lerp(p0.z,p1.z,f);
   const tx=RS[Math.min(NS-1,i0+1)].x-RS[i0].x,tz=RS[Math.min(NS-1,i0+1)].z-RS[i0].z;const h=Math.atan2(-tx*c.dir,-tz*c.dir);
   c.g.position.set(x,getH(x,z)+.05,z);c.g.rotation.set(0,h,0);if(window.vehAnim)vehAnim(c,dt,h);for(const w of c.W)w.g.rotation.x-=c.cur/0.4*dt;

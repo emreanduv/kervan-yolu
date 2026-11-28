@@ -9,10 +9,15 @@
 /* yon: gerçek rotanın ilk yönü (oyunda atan2(x,z)); bas: gerçek rotanın oyundaki başlangıcı; bag: limandan gerçek yola bağlantı yolu.
    Hatay: gerçek deniz yolun sağında (batıda); oyundaki liman da denizi solunda bekler. Rota +z'ye döndürülür, liman yol ile deniz arasında kalır,
    limandan çıkan yol U dönüşüyle (liman bağlantı yolu) D-817'ye bağlanır. */
-const KAYNAK={hatay:()=>({yol:window.ROTA_HATAY,dem:window.DEM_HATAY,bina:window.BINA_HATAY,res:window.RES_HATAY,yon:0,bas:[180,150],bag:[[0,40],[0,-60],[0,-120],[25,-175],[80,-200],[140,-182],[172,-130],[180,-60],[180,20],[180,95]]})};
+const BAG_U=[[0,40],[0,-60],[0,-120],[25,-175],[80,-200],[140,-182],[172,-130],[180,-60],[180,20],[180,95]];
+/* kes: baştan atılan nokta sayısı (Karabiga'da OSRM rotası ilk 480 m'de kasaba içinde dönüyor; liman yolu D-200 bağlantısından başlar) */
+const AYAR={hatay:{yon:0,bas:[180,150],bag:BAG_U},canakkale:{kes:12}};
+/* veri dosyaları: veri/rota-<ad>.js (ROTA_<AD>), dem-<ad>.js (DEM_<AD>), bina-<ad>.js (BINA_<AD>), res-<ad>.js (RES_<AD>) */
+const KAYNAK=new Proxy({},{get:(_,ad)=>()=>{const U=String(ad).toUpperCase();return Object.assign({yol:window['ROTA_'+U],dem:window['DEM_'+U],bina:window['BINA_'+U],res:window['RES_'+U]},AYAR[ad]||{})}});
 const ON=400,EGIM=0.08;const onbellek={};
 function coz(ad){if(onbellek[ad])return onbellek[ad];const k=KAYNAK[ad]&&KAYNAK[ad]();if(!k||!k.yol)return null;
  const E=[],N=[],H=[];let e=0,n=0;for(const t of k.yol.split(';')){if(!t)continue;const a=t.split(',');e+=+a[0];n+=+a[1];E.push(e);N.push(n);H.push(+a[2])}
+ if(k.kes){const q=k.kes;E.splice(0,q);N.splice(0,q);H.splice(0,q);const e0=E[0],n0=N[0];for(let i=0;i<E.length;i++){E[i]-=e0;N[i]-=n0}}
  /* ilk ON metrenin yönü oyundaki -z olacak şekilde döndür */
  let j=0,s=0;while(j<E.length-1&&s<ON){s+=Math.hypot(E[j+1]-E[j],N[j+1]-N[j]);j++}
  const hx=E[j]-E[0],hz=-(N[j]-N[0]);const a0=Math.atan2(hx,hz),fi=(k.yon==null?Math.PI:k.yon)-a0;const B=k.bas||[0,40];const c=Math.cos(fi),si=Math.sin(fi);
