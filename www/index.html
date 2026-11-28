@@ -206,7 +206,7 @@ body.fotom #speedo,body.fotom #cl,body.fotom #cr,body.fotom #bcam,body.fotom #hS
 <div id="hPause" class="tb">II</div>
 
 <script src="iletisim.js"></script>
-<script src="veri/rota-hatay.js"></script><script src="veri/dem-hatay.js"></script><script src="veri/bina-hatay.js"></script><script src="veri/res-hatay.js"></script><script src="veri/rota-canakkale.js"></script><script src="veri/dem-canakkale.js"></script><script src="veri/bina-canakkale.js"></script><script src="veri/res-canakkale.js"></script><script src="js/rota.js"></script>
+<script src="veri/rota-hatay.js"></script><script src="veri/dem-hatay.js"></script><script src="veri/bina-hatay.js"></script><script src="veri/res-hatay.js"></script><script src="veri/rota-canakkale.js"></script><script src="veri/dem-canakkale.js"></script><script src="veri/bina-canakkale.js"></script><script src="veri/res-canakkale.js"></script><script src="veri/rota-trakya.js"></script><script src="veri/dem-trakya.js"></script><script src="veri/bina-trakya.js"></script><script src="veri/res-trakya.js"></script><script src="veri/rota-ege.js"></script><script src="veri/dem-ege.js"></script><script src="veri/bina-ege.js"></script><script src="veri/res-ege.js"></script><script src="veri/rota-marmara.js"></script><script src="veri/dem-marmara.js"></script><script src="veri/bina-marmara.js"></script><script src="veri/res-marmara.js"></script><script src="js/rota.js"></script>
 <script src="lib/three.min.js"></script>
 <script>
 "use strict";
@@ -361,11 +361,11 @@ const YARD_Y=3;
 const yardMask=(x,z)=>(1-sstep(0,18,Math.max(0,Math.abs(x+5)-62)))*(1-sstep(0,18,Math.max(0,Math.abs(z-5)-50)));
 // ================= BÖLGELER (gerçek rüzgâr bölgeleri) =================
 const REGIONS={
- marmara:{name:{tr:'Marmara',en:'Marmara'},from:{tr:'Bandırma Limanı',en:'Bandırma Port'},to:{tr:'Balıkesir Yaylası',en:'Balıkesir Uplands'},
+ marmara:{rota:'marmara',name:{tr:'Marmara',en:'Marmara'},from:{tr:'Bandırma Limanı',en:'Bandırma Port'},to:{tr:'Balıkesir Yaylası',en:'Balıkesir Uplands'},
   rp:[[0,40],[0,-60],[22,-200],[95,-330],[122,-470],[62,-600],[4,-730],[22,-870],[110,-990],[230,-1070],[350,-1170],[418,-1290],[432,-1360]],
   amp:70,rid:12,climb:.035,coastW:20,sea:0x1f5f7a,fee:1,
   cols:{g1:'#6f8f3e',g2:'#47692c',dry:'#a59b5c',rock:'#857a6c'}},
- ege:{name:{tr:'Ege',en:'Aegean'},from:{tr:'Aliağa Limanı',en:'Aliağa Port'},to:{tr:'Bergama Tepeleri',en:'Bergama Hills'},
+ ege:{rota:'ege',name:{tr:'Ege',en:'Aegean'},from:{tr:'Aliağa Limanı',en:'Aliağa Port'},to:{tr:'Bergama Tepeleri',en:'Bergama Hills'},
   rp:[[0,40],[0,-60],[26,-170],[105,-250],[200,-240],[262,-312],[244,-420],[170,-492],[156,-600],[232,-676],[344,-668],[452,-728],[480,-842],[414,-934],[380,-1044],[436,-1142],[548,-1182],[636,-1268],[650,-1392]],
   amp:96,rid:20,climb:.03,coastW:30,sea:0x17708f,fee:1.12,olive:1,village:1,
   cols:{g1:'#8c9a52',g2:'#5f7238',dry:'#bda86e',rock:'#a49580'}},
@@ -373,7 +373,7 @@ const REGIONS={
   rp:[[0,40],[0,-70],[40,-200],[130,-300],[160,-430],[120,-560],[170,-690],[280,-760],[390,-850],[420,-980],[360,-1100],[400,-1230],[510,-1300],[600,-1400],[610,-1500]],
   amp:62,rid:14,climb:.07,coastW:18,sea:0x24506a,fee:1.18,snow:1,snowLine:22,
   cols:{g1:'#6f8a4a',g2:'#4c6a33',dry:'#9c9360',rock:'#7b7670'}},
- trakya:{name:{tr:'Trakya',en:'Thrace'},from:{tr:'Tekirdağ Limanı',en:'Tekirdağ Port'},to:{tr:'Ganos Dağı',en:'Mount Ganos'},
+ trakya:{rota:'trakya',name:{tr:'Trakya',en:'Thrace'},from:{tr:'Tekirdağ Limanı',en:'Tekirdağ Port'},to:{tr:'Ganos Dağı',en:'Mount Ganos'},
   rp:[[0,40],[0,-80],[58,-230],[176,-330],[318,-384],[456,-470],[520,-620],[484,-782],[520,-944],[600,-1080],[640,-1240],[622,-1400],[640,-1520]],
   amp:30,rid:5,climb:.055,coastW:10,sea:0x2a6a8a,fee:1.1,fields:1,wind:1,
   cols:{g1:'#8fa04c',g2:'#6c8838',dry:'#c9b46a',rock:'#8a8070'}}};
@@ -769,7 +769,9 @@ function trafficStep(dt){if(!G||!TRAF.length)return;const v=truck.v;const ti=roa
   else if(!inLane&&c.brake&&ahead>10)c.brake=false;
   /* hemzemin geçit: bariyer inerken ya da inikken dur çizgisinde bekler (fren mesafesi yetmiyorsa geçip gider) */
   const gr=window.GECIT?GECIT():null;let gStop=null;if(gr===null)c.gb=false;else{const sI=gr-c.dir*9;const rem=(sI-c.i)*c.dir*ds;const cc=c.cur===undefined?c.spd:c.cur;if(c.gb||(rem>-.5&&rem<140&&rem>cc*cc/12-1)){c.gb=true;gStop=sI}}
-  const target=c.izle?Math.max(0,Math.abs(v.speed)-.5):(gStop!==null||c.brake||(c.yield&&ahead>0&&(ahead<130||c.vir===1)))?0:(c.yield?c.spd*.45:c.spd);c.cur=(c.cur===undefined?c.spd:c.cur);if(gStop!==null){const rem=(gStop-c.i)*c.dir*ds;c.cur=Math.min(c.cur,Math.sqrt(Math.max(0,12*rem)))}c.cur+=clamp(target-c.cur,-6*dt,2*dt);c.i+=c.dir*c.cur*dt/ds;if(gStop!==null&&(c.i-gStop)*c.dir>0)c.i=gStop;
+  /* rayda durmaz: ağır yüke yol verirken ya da frenlerken duruş yeri hemzemin geçide düşecekse araç geçidi geçip öyle durur */
+  const gd=gr===null?null:(gr-c.i)*c.dir*ds,ccr=c.cur===undefined?c.spd:c.cur,rayda=gStop===null&&gd!==null&&gd<ccr*ccr/12+3&&gd>-(c.len||5)-4;
+  let target=c.izle?Math.max(0,Math.abs(v.speed)-.5):(gStop!==null||c.brake||(c.yield&&ahead>0&&(ahead<130||c.vir===1)))?0:(c.yield?c.spd*.45:c.spd);if(rayda&&!c.izle)target=Math.max(target,c.spd*.45);c.cur=(c.cur===undefined?c.spd:c.cur);if(gStop!==null){const rem=(gStop-c.i)*c.dir*ds;c.cur=Math.min(c.cur,Math.sqrt(Math.max(0,12*rem)))}c.cur+=clamp(target-c.cur,-6*dt,2*dt);c.i+=c.dir*c.cur*dt/ds;if(gStop!==null&&(c.i-gStop)*c.dir>0)c.i=gStop;
   if(c.i<40||c.i>NS-40||(c.ayni?ahead<-220||ahead>420:ahead<-60)){c.on=false;c.g.visible=false;continue}
   const i0=Math.floor(c.i),f=c.i-i0;const p0=sideAt(i0,c.off),p1=sideAt(Math.min(NS-1,i0+1),c.off);const x=lerp(p0.x,p1.x,f),z=lerp(p0.z,p1.z,f);
   const tx=RS[Math.min(NS-1,i0+1)].x-RS[i0].x,tz=RS[Math.min(NS-1,i0+1)].z-RS[i0].z;const h=Math.atan2(-tx*c.dir,-tz*c.dir);

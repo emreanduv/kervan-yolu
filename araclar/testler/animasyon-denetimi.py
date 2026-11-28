@@ -1,3 +1,4 @@
+# Tır sahaya gelen yolun yönünde durur (gerçek rotalarda saha her yönden gelinebilir; eskiden yön hep -z sayılıyordu).
 # Animasyon denetimi: vinçle yapılan her taşıma (limanda gemiden dorseye tahliye, sahada dorseden istife indirme ve kuleye montaj)
 # adım adım oynatılır; taşınan yükün yüzeyindeki noktalar katı dünyaya (katiDunyaVar) sorulur. Yük hiçbir katı nesnenin içinden geçmemeli.
 # Hedef kule (montajda yerine oturan parça) ve istifteki eski parçalar sayılmaz.
@@ -23,7 +24,7 @@ with sync_playwright() as p:
             res=pg.evaluate(TAH+f"('{t}')");print(r,'tahliye',t,res);kotu+=res[1]
         for t in ['kule','kanat','nasel','hub','ankraj']:
             for ind in [True,False]:
-                pg.evaluate(f"for(const k in CARGO)CARGO[k].visible=false;if(CARGO['{t}'])CARGO['{t}'].visible=true;truck.v.x=SITE.x;truck.v.z=SITE.z;placeVehicles(0)")
+                pg.evaluate(f"for(const k in CARGO)CARGO[k].visible=false;if(CARGO['{t}'])CARGO['{t}'].visible=true;truck.v.x=SITE.x;truck.v.z=SITE.z;truck.v.h=Math.atan2(SITE.x-RS[NS-12].x,SITE.z-RS[NS-12].z);placeVehicles(0)")
                 res=pg.evaluate(MON+f"('{t}',{'true' if ind else 'false'})");print(r,'indir' if ind else 'montaj',t,res)
                 if isinstance(res,list):kotu+=res[1]
         pg.evaluate("toMenu()");pg.wait_for_timeout(300)

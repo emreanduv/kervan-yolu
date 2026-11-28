@@ -11,20 +11,26 @@
    limandan çıkan yol U dönüşüyle (liman bağlantı yolu) D-817'ye bağlanır. */
 const BAG_U=[[0,40],[0,-60],[0,-120],[25,-175],[80,-200],[140,-182],[172,-130],[180,-60],[180,20],[180,95]];
 /* kes: baştan atılan nokta sayısı (Karabiga'da OSRM rotası ilk 480 m'de kasaba içinde dönüyor; liman yolu D-200 bağlantısından başlar) */
-const AYAR={hatay:{yon:0,bas:[180,150],bag:BAG_U},canakkale:{kes:12}};
+/* Trakya: Tekirdağ Limanı'ndan çıkan rota ilk 160 m'de kentin içinde kuzeye kıvrılıyor; sahil yolundan başlar, deniz (Marmara) liman yerleşimindeki gibi solda kalır; son 240 m saha içinde geri kıvrıldığı için atılır */
+/* Ege: Aliaport'tan çıkan yol önce 800 m güneye inip geri döner; rota dönüş noktasından başlar, Aliağa körfezi solda kalır */
+/* Marmara: Bandırma Limanı'ndan çıkan rota ilk 1,8 km'de liman çevresinde dolanır (atılır); Edincik yolu batıya gider, Bandırma körfezi Hatay'daki gibi sağda kalır: rota +z'ye döner, liman bağlantı yoluyla bağlanır */
+const AYAR={marmara:{kes:44,yon:0,bas:[180,150],bag:BAG_U},ege:{kes:20},hatay:{yon:0,bas:[180,150],bag:BAG_U},canakkale:{kes:12},trakya:{kes:4,son:6}};
 /* veri dosyaları: veri/rota-<ad>.js (ROTA_<AD>), dem-<ad>.js (DEM_<AD>), bina-<ad>.js (BINA_<AD>), res-<ad>.js (RES_<AD>) */
 const KAYNAK=new Proxy({},{get:(_,ad)=>()=>{const U=String(ad).toUpperCase();return Object.assign({yol:window['ROTA_'+U],dem:window['DEM_'+U],bina:window['BINA_'+U],res:window['RES_'+U]},AYAR[ad]||{})}});
 const ON=400,EGIM=0.08;const onbellek={};
 function coz(ad){if(onbellek[ad])return onbellek[ad];const k=KAYNAK[ad]&&KAYNAK[ad]();if(!k||!k.yol)return null;
  const E=[],N=[],H=[];let e=0,n=0;for(const t of k.yol.split(';')){if(!t)continue;const a=t.split(',');e+=+a[0];n+=+a[1];E.push(e);N.push(n);H.push(+a[2])}
- if(k.kes){const q=k.kes;E.splice(0,q);N.splice(0,q);H.splice(0,q);const e0=E[0],n0=N[0];for(let i=0;i<E.length;i++){E[i]-=e0;N[i]-=n0}}
+ /* kes: baştaki noktalar atılır; DEM, bina ve türbin verisi ilk başlangıca göre olduğundan kayma O ile taşınır */
+ /* son: sondan atılan nokta sayısı (rota sahanın içinde geri kıvrılıyorsa saha yerleşimi yolun üstüne düşer) */
+ if(k.son){E.splice(-k.son);N.splice(-k.son);H.splice(-k.son)}
+ const O=[0,0];if(k.kes){const q=k.kes;E.splice(0,q);N.splice(0,q);H.splice(0,q);O[0]=E[0];O[1]=N[0];for(let i=0;i<E.length;i++){E[i]-=O[0];N[i]-=O[1]}}
  /* ilk ON metrenin yönü oyundaki -z olacak şekilde döndür */
  let j=0,s=0;while(j<E.length-1&&s<ON){s+=Math.hypot(E[j+1]-E[j],N[j+1]-N[j]);j++}
  const hx=E[j]-E[0],hz=-(N[j]-N[0]);const a0=Math.atan2(hx,hz),fi=(k.yon==null?Math.PI:k.yon)-a0;const B=k.bas||[0,40];const c=Math.cos(fi),si=Math.sin(fi);
  /* oyun tabanı: x=e, z=-n; döndürme atan2(x,z) açısına fi ekler */
- const ileri=(ee,nn)=>{const x=ee,z=-nn;return[x*c+z*si+B[0],-x*si+z*c+B[1]]};
- const geri=(x,z)=>{x-=B[0];z-=B[1];const bx=x*c-z*si,bz=x*si+z*c;return[bx,-bz]};
- const X=[],Z=[],S=[];let L=0;for(let i=0;i<E.length;i++){const p=ileri(E[i],N[i]);X.push(p[0]);Z.push(p[1]);if(i)L+=Math.hypot(X[i]-X[i-1],Z[i]-Z[i-1]);S.push(L)}
+ const ileri=(ee,nn)=>{const x=ee-O[0],z=-(nn-O[1]);return[x*c+z*si+B[0],-x*si+z*c+B[1]]};
+ const geri=(x,z)=>{x-=B[0];z-=B[1];const bx=x*c-z*si,bz=x*si+z*c;return[bx+O[0],-bz+O[1]]};
+ const X=[],Z=[],S=[];let L=0;for(let i=0;i<E.length;i++){const p=ileri(E[i]+O[0],N[i]+O[1]);X.push(p[0]);Z.push(p[1]);if(i)L+=Math.hypot(X[i]-X[i-1],Z[i]-Z[i-1]);S.push(L)}
  let demF=null;if(k.dem){const D=k.dem,nx=Math.round((D.x1-D.x0)/D.C)+1,nz=Math.round((D.z1-D.z0)/D.C)+1;const g=new Float32Array(nx*nz).fill(NaN);
   const rows=D.v.split('|');for(let r=0;r<rows.length&&r<nz;r++){const v=rows[r].split(',');for(let q=0;q<v.length&&q<nx;q++)if(v[q]!=='')g[r*nx+q]=+v[q]}
   demF=(x,z)=>{const p=geri(x,z);let fx=(p[0]-D.x0)/D.C,fz=(p[1]-D.z0)/D.C;if(fx<0||fz<0||fx>=nx-1||fz>=nz-1)return NaN;const i=fx|0,jj=fz|0;fx-=i;fz-=jj;

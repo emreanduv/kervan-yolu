@@ -50,7 +50,9 @@ window.dunyaKaroSay=()=>({ag:MESH.size,veri:DATA.size});
 /* parçalı ağaçlar: ≈500 örnekte (≈1,1 km) bir parça, her parçanın kendi örnekli ağları */
 /* gerçek rüzgâr santralleri: OSM'deki türbinler gerçek yerinde (rotadan 2,5 km'ye kadar) */
 function resKur(){const GR=ROTA.yol(RG().rota);if(!GR||!GR.res)return;let n=0;for(const s of GR.res.split(';')){const [e,nn]=s.split(',').map(Number);const p=GR.ileri(e,nn);const x=p[0],z=p[1];
- const r=yakin(x,z);let d=r.rd;if(d>=999){let bd=1e18;for(let i=0;i<NS;i+=20)bd=Math.min(bd,(RS[i].x-x)**2+(RS[i].z-z)**2);d=Math.sqrt(bd)}if(d>2500||d<35)continue;if(world.turbines.some(q=>Math.hypot(q.x-x,q.z-z)<90))continue;
+ const r=yakin(x,z);let d=r.rd;if(d>=999){let bd=1e18;for(let i=0;i<NS;i+=20)bd=Math.min(bd,(RS[i].x-x)**2+(RS[i].z-z)**2);d=Math.sqrt(bd)}if(d>2500||d<35)continue;
+ /* saha çevresi vinç çalışma alanı: istif, indirme ve montaj hattına gerçek türbin konmaz */
+ if(typeof SITE!=='undefined'&&SITE&&(Math.hypot(x-SITE.x,z-SITE.z)<180||siteMask(x,z)>0))continue;if(world.turbines.some(q=>Math.hypot(q.x-x,q.z-z)<90))continue;
  const t=makeTurbine();t.g.position.set(x,getH(x,z)-.5,z);obsC(x,z,3);t.g.rotation.y=Math.PI/2+.25;t.rot.rotation.z=rnd()*6;scene.add(t.g);world.rotors.push({r:t.rot,s:.7+rnd()*.35});world.turbines.push({x,z});n++}console.log('gerçek türbin',n)}
 window.agacParca=function(){try{resKur()}catch(e){console.log('res',e)}const N0=MOBILE?320:520,AD=500;const d=new THREE.Object3D(),col=new THREE.Color();const pg=pineGeo(),lg=leafGeo(),tg=new THREE.CylinderGeometry(.22,.32,2.4,5);
  const m1=P('#2f5a2c',{shininess:8}),m2=P('#3f6b30',{shininess:8}),m3=P('#5a4128');
