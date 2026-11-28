@@ -1,3 +1,4 @@
-1.1.5:
-- Gizlilik politikası sayfası yeni adresine taşındı.
-- Küçük kararlılık düzeltmeleri.
+1.1.6:
+- Takılma yok: saha rampasında ağır yükle geri manevra halkasını geçince artık durduğun yerde manevra düğmesi çıkar.
+- En ağır yükle de yokuşlar sürünme vitesinde çıkılır, tır geri kaymaz.
+- Çamurlu saha yolunda dozer çamurun başladığı yerde çağrılabilir; aynı yerde iki kez kalırsan çekici seni ileri çeker.

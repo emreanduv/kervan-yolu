@@ -1,3 +1,4 @@
-1.1.5:
-- The privacy policy page moved to its new address.
-- Minor stability fixes.
+1.1.6:
+- No more getting stuck: after passing the reverse-manoeuvre ring with a heavy load, the manoeuvre button now appears where you stop.
+- Even the heaviest load crawls up every grade without rolling back.
+- On a muddy site road the dozer can be called where the mud starts; stuck twice in the same place, a tow truck pulls you ahead.
