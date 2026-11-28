@@ -35,3 +35,8 @@ Kural: mağazadaki sürüm (main, 1.1.4) olduğu gibi kalır. Bu dal bitip sekiz
 - rota.js genel: veri dosyaları `veri/{rota,dem,bina,res}-<bölge>.js`, bölge ayarı `AYAR` (yon, bas, bag, kes).
 - Bölünmüş yolda aynı yönde akan trafik: sol şeritte önde uzaklaşan ve arkadan gelip sollayan araçlar; tır sol şeritteyse arkadaki araç onu izler.
 - Dokuz denetim (sekiz katı cisim + rampa) Çanakkale'de geçti.
+
+## Satış düzeni (Emre ile anlaşıldı, 28 Kasım 2026)
+- Hatay gerçek haritası herkese ücretsiz, serbest sürüşte açık.
+- Öbür gerçek haritalar Tam Sürüm'e (1,99 $) dahil; ayrı tek tek harita satışı yok.
+- Haritalar çoğalınca (6–8 bölge) ayrı "Gerçek Türkiye haritaları" paketi (0,99 $) düşünülebilir; Tam Sürüm sahiplerine indirim/hediye.
