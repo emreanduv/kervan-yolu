@@ -1,4 +1,4 @@
-1.1.6:
-- Takılma yok: saha rampasında ağır yükle geri manevra halkasını geçince artık durduğun yerde manevra düğmesi çıkar.
-- En ağır yükle de yokuşlar sürünme vitesinde çıkılır, tır geri kaymaz.
+1.1.7:
+- Vinç bağlaması gerçek oldu: kanca yükün ağırlık merkezinin üstünde, kaldırma kirişi ve dört sapanla kaldırılır.
+- Takılma yok: saha rampasında geri manevra halkasını geçince manevra düğmesi durduğun yerde çıkar; en ağır yükle de yokuşlar sürünme vitesinde çıkılır.
 - Çamurlu saha yolunda dozer çamurun başladığı yerde çağrılabilir; aynı yerde iki kez kalırsan çekici seni ileri çeker.

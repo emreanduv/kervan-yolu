@@ -1,4 +1,4 @@
-1.1.6:
-- No more getting stuck: after passing the reverse-manoeuvre ring with a heavy load, the manoeuvre button now appears where you stop.
-- Even the heaviest load crawls up every grade without rolling back.
+1.1.7:
+- Realistic crane rigging: the hook sits above the load centre of gravity, lifting with a spreader beam and four slings.
+- No more getting stuck: after passing the reverse-manoeuvre ring, the button appears where you stop; even the heaviest load crawls up every grade.
 - On a muddy site road the dozer can be called where the mud starts; stuck twice in the same place, a tow truck pulls you ahead.
