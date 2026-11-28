@@ -33,5 +33,12 @@ with sync_playwright() as p:
                 pg.wait_for_timeout(700);mx=max(mx,pg.evaluate(K))
             pg.evaluate("input.gas=0")
             if mx>0: kotu.append((hedef[:12],'truck',round(ac,2),round(mx,2)))
+    # bölünmüş yol (Hatay, D-817): tır orta refüj bariyerine sürülür; refüjü geçemez, karşı yola inemez
+    pg.evaluate("toMenu()");pg.wait_for_timeout(300);pg.evaluate("SAVE.reg='hatay';startGame('free')");pg.wait_for_timeout(5000)
+    for f in [0.2,0.5,0.8]:
+        r=pg.evaluate(f"""(async()=>{{const i=Math.round(NS*{f});const p=sideAt(i,-2.3),q=sideAt(i+8,-6.2);const v=truck.v;v.x=p.x;v.z=p.z;v.speed=0;v.h=Math.atan2(-(q.x-p.x),-(q.z-p.z));G.ri=i;
+          input.gas=1;for(let k=0;k<40;k++)await new Promise(r=>setTimeout(r,100));input.gas=0;return [yanOf(v.x,v.z),yanOf(trailer.g.position.x,trailer.g.position.z)]}})()""")
+        print('bariyer',f,[round(x,2) for x in r])
+        if min(r)<-5.0: kotu.append(('bariyer',f,r))
     print('SONUÇ',kotu,errs[:3])
     raise SystemExit(1 if kotu or errs else 0)
