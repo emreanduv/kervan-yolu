@@ -1,15 +1,14 @@
 name: Kervan Yolu (Meta Quest APK)
-# Quest'te büyük 2D pencere olarak açılır. emreanduv.github.io/kervan-yolu/vr (KY_MAGAZA='quest': tam oyun, uygulama içi satın alma yok)
-# sitesini Meta'nın bubblewrap'iyle Quest uygulamasına (TWA) paketler. İmza: yükleme anahtarı (ANDROID_KEYSTORE_B64 sırrı).
-# Tetik: store/TETIK-QUEST commit'i (ilk satır sürüm adı, ikinci satır sürüm kodu).
+# Quest'te 2D panel uygulaması olarak açılan doğal Android (Capacitor) paketi. Meta web uygulaması (PWA/TWA) paketlerini
+# yalnız ücretsiz satıyor; Kervan Yolu Quest'te 1,99 $ tam oyun olduğu için doğal paket (28 Kasım 2026).
+# KY_MAGAZA='quest': Tam Sürüm kilidi ve uygulama içi puan yok; Google'a bağlı eklentiler (Play Billing, In-App Review)
+# ve bildirim eklentisi pakete girmez. Meta bildirim şartları araclar/quest-yama.py'de.
+# İmza: yükleme anahtarı (ANDROID_KEYSTORE_B64 sırrı). Tetik: store/TETIK-QUEST (1. satır sürüm adı, 2. satır sürüm kodu).
 on:
   push:
     branches: [main]
     paths: ['store/TETIK-QUEST']
   workflow_dispatch:
-    inputs:
-      version_name: { description: "Sürüm adı", default: "1.1.7" }
-      version_code: { description: "Sürüm kodu", default: "1" }
 permissions:
   contents: write
 jobs:
@@ -19,89 +18,48 @@ jobs:
       - uses: actions/checkout@v4
       - name: Sürüm
         run: |
-          VN="${{ env.VN }}"; VC="${{ env.VC }}"
-          [ -n "$VN" ] || VN=$(sed -n 1p store/TETIK-QUEST); [ -n "$VC" ] || VC=$(sed -n 2p store/TETIK-QUEST)
+          VN=$(sed -n 1p store/TETIK-QUEST); VC=$(sed -n 2p store/TETIK-QUEST)
           echo "VN=$VN" >> $GITHUB_ENV; echo "VC=$VC" >> $GITHUB_ENV; echo "Sürüm $VN ($VC)"
       - name: Yayın öncesi kontrol
         env: { SURUM: "${{ env.VN }}" }
         run: bash araclar/yayin-kontrol.sh
-      - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
+      - name: Quest mağaza işareti ve görüş adresi
+        env: { FM: "${{ vars.FEEDBACK_MAIL }}" }
+        run: printf "window.FEEDBACK_MAIL='%s';\nwindow.KY_MAGAZA='quest';\n" "${FM:-emreanduvart@gmail.com}" > www/iletisim.js
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm i -g @meta-quest/bubblewrap-cli@1.24.1
-      - name: Bubblewrap ayarları ve TWA tanımı
-        run: |
-          mkdir -p ~/.bubblewrap proje
-          # bubblewrap eski SDK düzenini (tools/) arar: komut satırı araçlarını oraya bağla; build-tools 34.0.0 gerekli
-          [ -e "$ANDROID_HOME/tools" ] || sudo ln -s "$ANDROID_HOME/cmdline-tools/latest" "$ANDROID_HOME/tools"
-          [ -d "$ANDROID_HOME/build-tools/34.0.0" ] || yes | sudo "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;34.0.0" >/dev/null
-          ls "$ANDROID_HOME" "$ANDROID_HOME/build-tools"
-          printf '{"jdkPath":"%s","androidSdkPath":"%s"}' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
-          cat > proje/twa-manifest.json <<JSON
-          {
-            "packageId": "com.anduv.kervanyolu.vr",
-            "host": "emreanduv.github.io",
-            "name": "Kervan Yolu",
-            "launcherName": "Kervan Yolu",
-            "display": "standalone",
-            "themeColor": "#0b1622",
-            "navigationColor": "#0b1622",
-            "navigationColorDark": "#0b1622",
-            "navigationDividerColor": "#0b1622",
-            "navigationDividerColorDark": "#0b1622",
-            "backgroundColor": "#0b1622",
-            "enableNotifications": false,
-            "startUrl": "/kervan-yolu/vr/index.html",
-            "iconUrl": "https://emreanduv.github.io/kervan-yolu/vr/ikon-512.png",
-            "maskableIconUrl": "https://emreanduv.github.io/kervan-yolu/vr/ikon-512.png",
-            "splashScreenFadeOutDuration": 300,
-            "signingKey": { "path": "./android.keystore", "alias": "android" },
-            "appVersionName": "${{ env.VN }}",
-            "appVersionCode": ${{ env.VC }},
-            "shortcuts": [],
-            "generatorApp": "bubblewrap-cli",
-            "webManifestUrl": "https://emreanduv.github.io/kervan-yolu/vr/manifest.webmanifest",
-            "fallbackType": "customtabs",
-            "features": {},
-            "alphaDependencies": { "enabled": false },
-            "enableSiteSettingsShortcut": false,
-            "isChromeOSOnly": false,
-            "isMetaQuest": true,
-            "fullScopeUrl": "https://emreanduv.github.io/kervan-yolu/vr/",
-            "minSdkVersion": 29,
-            "orientation": "landscape",
-            "fingerprints": [],
-            "additionalTrustedOrigins": [],
-            "retainedBundles": [],
-            "appVersion": "${{ env.VN }}"
-          }
-          JSON
-          cat proje/twa-manifest.json
-      - name: Projeyi üret ve imzasız derle
-        working-directory: proje
-        run: |
-          (yes | bubblewrap update --skipVersionUpgrade --manifest=./twa-manifest.json) 2>&1 | tee /tmp/gunluk.txt || true
-          ls | tee -a /tmp/gunluk.txt
-          (yes | bubblewrap build --skipSigning --manifest=./twa-manifest.json) 2>&1 | tee -a /tmp/gunluk.txt || true
-          test -f app-release-unsigned-aligned.apk   # yes'in kırık boru çıkışı hata sayılmasın; asıl ölçüt APK
-      - name: Günlüğü quest-gunluk dalına yaz
-        if: always()
-        run: |
-          mkdir -p /tmp/g && cp /tmp/gunluk.txt /tmp/g/ 2>/dev/null || echo yok > /tmp/g/gunluk.txt; cd /tmp/g
-          git init -q -b quest-gunluk && git config user.name gha && git config user.email gha@x && git add . && git commit -qm gunluk
-          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" quest-gunluk
-      - name: İmzala ve yayınla
-        env:
-          GH_TOKEN: "${{ github.token }}"
-          KS: "${{ secrets.ANDROID_KEYSTORE_B64 }}"
-          SIFRE: "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - name: Quest'e uymayan eklentileri çıkar
+        run: npm uninstall --no-audit --no-fund @capgo/native-purchases @capacitor-community/in-app-review @capacitor/local-notifications
+      - run: npx cap sync android
+      - name: Meta bildirim şartları (paket adı, SDK 29/34, panel uygulaması)
+        run: python3 araclar/quest-yama.py android
+      - name: Yükleme anahtarı
+        env: { KS: "${{ secrets.ANDROID_KEYSTORE_B64 }}" }
         run: |
           if [ -z "$KS" ]; then echo "::error::ANDROID_KEYSTORE_B64 sırrı yok; Meta imzasız APK kabul etmez"; exit 1; fi
-          printf '%s' "$KS" | base64 -d > /tmp/upload.jks
-          AD=kervan-yolu-quest-${{ env.VN }}-${{ env.VC }}.apk
-          java -jar "$ANDROID_HOME/build-tools/34.0.0/lib/apksigner.jar" sign --ks /tmp/upload.jks --ks-key-alias kervanyolu --ks-pass env:SIFRE --key-pass env:SIFRE --out /tmp/$AD proje/app-release-unsigned-aligned.apk
-          java -jar "$ANDROID_HOME/build-tools/34.0.0/lib/apksigner.jar" verify --print-certs /tmp/$AD | head -5
-          rm -f /tmp/upload.jks
+          printf '%s' "$KS" | base64 -d > $RUNNER_TEMP/upload.jks; echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> $GITHUB_ENV
+      - name: APK derle
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ env.VC }}
+          VERSION_NAME: ${{ env.VN }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: kervanyolu
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
+      - name: Denetle ve yayınla
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          $BT/aapt dump badging $APK | grep -E "package:|sdkVersion|targetSdkVersion|uses-permission|uses-feature"
+          $BT/aapt dump badging $APK | grep -q "targetSdkVersion:'34'"
+          $BT/aapt dump badging $APK | grep -q "name='com.anduv.kervanyolu.vr'"
+          ! $BT/aapt dump permissions $APK | grep -E "BILLING|POST_NOTIFICATIONS|SCHEDULE_EXACT_ALARM"
+          java -jar $BT/lib/apksigner.jar verify --verbose --print-certs $APK | grep -E "v2 scheme|SHA-256" | head -3
+          rm -f $RUNNER_TEMP/upload.jks
+          AD=kervan-yolu-quest-${{ env.VN }}-${{ env.VC }}.apk; cp $APK /tmp/$AD
           T=quest-${{ env.VN }}-${{ env.VC }}-${{ github.run_number }}
-          gh release create "$T" -R "${{ github.repository }}" --title "Kervan Yolu Quest ${{ env.VN }} (${{ env.VC }})" --notes "Meta Horizon Store için imzalı APK" --prerelease "/tmp/$AD"
+          gh release create "$T" -R "${{ github.repository }}" --title "Kervan Yolu Quest ${{ env.VN }} (${{ env.VC }}) doğal paket" --notes "Meta Horizon Store için imzalı doğal APK (2D panel, 1,99 $ tam oyun)" --prerelease "/tmp/$AD"
