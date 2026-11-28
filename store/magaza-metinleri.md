@@ -10,7 +10,7 @@
 | Yaş | App Store 4+ · Play: IARC "şiddet yok" → PEGI 3 / ESRB Everyone |
 | Gizlilik | Veri toplanmıyor (App Store "Data Not Collected", Play Veri güvenliği: veri toplanmıyor/paylaşılmıyor) |
 | Reklam | Yok |
-| Gizlilik politikası | https://github.com/emreanduv/kervan-yolu/blob/main/docs/GIZLILIK.md |
+| Gizlilik politikası | https://emreanduv.github.io/kervan-yolu/gizlilik.html |
 | Destek | https://emreanduv.github.io/ |
 | Yön | Dikey ve yatay (kabin içi yatayda) |
 
