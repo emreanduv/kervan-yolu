@@ -48,7 +48,11 @@ window.dunyaAdim=function(px,pz,butce,R){if(!grp)return;R=R||(MOBILE?1250:1500);
  if(DATA.size>2500){for(const k of DATA.keys()){if(DATA.size<=1800)break;if(!MESH.has(k))DATA.delete(k)}}};
 window.dunyaKaroSay=()=>({ag:MESH.size,veri:DATA.size});
 /* parçalı ağaçlar: ≈500 örnekte (≈1,1 km) bir parça, her parçanın kendi örnekli ağları */
-window.agacParca=function(){const N0=MOBILE?320:520,AD=500;const d=new THREE.Object3D(),col=new THREE.Color();const pg=pineGeo(),lg=leafGeo(),tg=new THREE.CylinderGeometry(.22,.32,2.4,5);
+/* gerçek rüzgâr santralleri: OSM'deki türbinler gerçek yerinde (rotadan 2,5 km'ye kadar) */
+function resKur(){const GR=ROTA.yol(RG().rota);if(!GR||!GR.res)return;let n=0;for(const s of GR.res.split(';')){const [e,nn]=s.split(',').map(Number);const p=GR.ileri(e,nn);const x=p[0],z=p[1];
+ const r=yakin(x,z);let d=r.rd;if(d>=999){let bd=1e18;for(let i=0;i<NS;i+=20)bd=Math.min(bd,(RS[i].x-x)**2+(RS[i].z-z)**2);d=Math.sqrt(bd)}if(d>2500||d<35)continue;if(world.turbines.some(q=>Math.hypot(q.x-x,q.z-z)<90))continue;
+ const t=makeTurbine();t.g.position.set(x,getH(x,z)-.5,z);obsC(x,z,3);t.g.rotation.y=Math.PI/2+.25;t.rot.rotation.z=rnd()*6;scene.add(t.g);world.rotors.push({r:t.rot,s:.7+rnd()*.35});world.turbines.push({x,z});n++}console.log('gerçek türbin',n)}
+window.agacParca=function(){try{resKur()}catch(e){console.log('res',e)}const N0=MOBILE?320:520,AD=500;const d=new THREE.Object3D(),col=new THREE.Color();const pg=pineGeo(),lg=leafGeo(),tg=new THREE.CylinderGeometry(.22,.32,2.4,5);
  const m1=P('#2f5a2c',{shininess:8}),m2=P('#3f6b30',{shininess:8}),m3=P('#5a4128');
  for(let i0=0;i0<NS;i0+=AD){const i1=Math.min(NS,i0+AD);const N=Math.max(60,Math.round(N0*(i1-i0)/AD));
   const crown=new THREE.InstancedMesh(pg,m1,N),crown2=new THREE.InstancedMesh(lg,m2,N),trunk=new THREE.InstancedMesh(tg,m3,N*2);let c1=0,c2=0,ct=0,tries=0;
@@ -88,7 +92,11 @@ window.yapiKur=function(){DOLU.clear();window.KENT=new Uint8Array(NS);const GR=R
  for(const k in parc){const g=new THREE.Group();for(const key in parc[k]){const L=parc[k][key];const kat=key==='s'?3:+key.slice(1);
    const m=mat[key]||(mat[key]=new THREE.MeshLambertMaterial({map:key==='s'?null:cephe()}));const im=new THREE.InstancedMesh(kutuGeo(Math.max(1,kat),key==='s'?1:3),m,L.length);
    L.forEach((b,ii)=>{const y=Math.min(getH(b[0]-b[2]/2,b[1]),getH(b[0]+b[2]/2,b[1]),getH(b[0],b[1]-b[3]/2),getH(b[0],b[1]+b[3]/2))-.6;dm.position.set(b[0],y,b[1]);dm.rotation.set(0,b[5],0);dm.scale.set(b[2],b[4]+.6,b[3]);dm.updateMatrix();im.setMatrixAt(ii,dm.matrix);col.set(b[6]);im.setColorAt(ii,col)});
-   im.castShadow=true;im.receiveShadow=true;im.frustumCulled=false;if(im.instanceColor)im.instanceColor.needsUpdate=true;g.add(im)}
+   im.castShadow=true;im.receiveShadow=true;im.frustumCulled=false;if(im.instanceColor)im.instanceColor.needsUpdate=true;g.add(im);
+   /* 1-2 katlı evlere kiremit kırma çatı (Hatay köy ve kasaba evleri gibi); apartman ve depo düz damlı */
+   if(key==='k1'||key==='k2'){const rg=new THREE.ConeGeometry(Math.SQRT1_2,1,4,1);rg.rotateY(Math.PI/4);rg.translate(0,.5,0);const rm=mat.cati||(mat.cati=P('#a4492f',{shininess:14}));const ri=new THREE.InstancedMesh(rg,rm,L.length);
+    L.forEach((b,ii)=>{const y=Math.min(getH(b[0]-b[2]/2,b[1]),getH(b[0]+b[2]/2,b[1]),getH(b[0],b[1]-b[3]/2),getH(b[0],b[1]+b[3]/2))-.6;dm.position.set(b[0],y+b[4]+.6,b[1]);dm.rotation.set(0,b[5],0);dm.scale.set(b[2]*1.08,1.6+Math.min(b[2],b[3])*.12,b[3]*1.08);dm.updateMatrix();ri.setMatrixAt(ii,dm.matrix);col.setHSL(.03+hash2(ii,7)*.03,.55,.36+hash2(ii,3)*.1);ri.setColorAt(ii,col)});
+    ri.castShadow=true;ri.frustumCulled=false;ri.instanceColor.needsUpdate=true;g.add(ri)}}
   scene.add(g);PARCA.push({i0:+k*500,i1:+k*500+500,g})}
  /* camiler: gerçek konum; ışıkla değil yapı olarak (saygı kuralı: yalnız durağan yapı, etkileşim yok) */
  const tas=P('#ebe6dc',{shininess:12}),kur=P('#8d969c',{shininess:40});
