@@ -22,11 +22,16 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] 22 Kas 2026: Emre derleme 8'i denedi, sorun yok dedi → gönderim başlatıldı; sürüm taslak gönderime (reviewSubmission) eklendi
 - [ ] **Kalan tek adım:** Apple, ilk tek seferlik ürünün (Tam Sürüm) API'yle gönderilmesine izin vermiyor (`FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION`). Emre App Store Connect'e girince: sürüm 1.0.0 sayfası → "In-App Purchases" bölümünde Tam Sürüm'ü seç → "Add for Review" → "Submit for Review" (Claude yerleşik tarayıcıda yapar)
 - Ders (bütün yeni ürünler): ilk Tam Sürüm ürünü her zaman sürüm sayfasından elle eklenir; sonraki sürümlerde `araclar/appstore-gonder.py` kendisi gönderir
-- [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
+- [ ] 28 Kas 2026: Google Play başladı (1.1.7). Play Console'da uygulama formu dolduruldu (Kervan Yolu, com.anduv.kervanyolu, Türkçe, Oyun, Ücretsiz); beyanlar + Oluştur Emre'de. GitHub sırları ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD Emre'de; sonra store/TETIK-ANDROID ile imzalı AAB. Eski not: (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
 - [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra
 - [x] EN ekran görüntüleri yeniden üretildi (KM/H)
 - [x] 22 Kas 2026: takılma düzeltmeleri (derleme 2-4), ses koruyucu v3 (5-6), yük kayması uyarısı hedef hızla (7)
 - [x] 22 Kas 2026, derleme 8: Ege bölgesi (Aliağa Limanı → Bergama Tepeleri) + kanat kaldırıcı; bölge seçimi; 8 ekran görüntüsü TR/EN (ilk ikisi Ege), mağaza metinleri ve yenilikler güncellendi, appstore-hazir ile yüklendi, derleme 8 sürüme seçilir
+
+## 28 Kasım 2026: 1.1.7 Android, Steam ve Meta Quest
+- Google Play: uygulama açıldı (Console uygulama no 4973263960746336747). Beyanlar, kategori (Simülasyon), iletişim, TR mağaza metinleri girildi. İmzalı AAB `builds` dalında (kervan-yolu-1.1.7-2.aab). Emre'de: görseller, içerik derecelendirmesi (IARC şartı), kapalı test kanalı + AAB yükleme; sonra Tam Sürüm ürünü `com.anduv.kervanyolu.tamsurum` 1,99 $ ve Testers Community.
+- Steam: `desktop/` (Electron + steamworks.js), `masaustu.yml` (tetik store/TETIK-MASAUSTU), Windows/macOS/Linux paketleri GitHub sürümü `masaustu-1.1.7`. Steam'de 1,99 $ tam oyun, uygulama içi satın alma yok (KY_MAGAZA='steam'). App ID gelince desktop/steam.json. Kayıt: Steam Auto-Cloud → Electron userData "Local Storage".
+- Meta Quest: TWA `com.anduv.kervanyolu.vr`, site emreanduv.github.io/kervan-yolu/vr (KY_MAGAZA='quest'), assetlinks yükleme anahtarıyla; `quest.yml` (tetik store/TETIK-QUEST: sürüm adı + kodu) imzalı APK'yı GitHub sürümüne koyar. Horizon'da 1,99 $ tam oyun; uygulama Horizon panelinde açılacak.
 
 ## Android yükleme anahtarı — KAYBETME
 `kervanyolu-upload.jks`, alias `kervanyolu`, şifre `SIFRE-OKU.txt` (git dışında, `imza-anahtari/`; Google Drive "Kervan Yolu — Yedekler" klasörüne de koy)

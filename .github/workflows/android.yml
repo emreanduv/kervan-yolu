@@ -7,7 +7,7 @@ on:
     inputs:
       version_name:
         description: "Sürüm adı (ör. 1.0.0)"
-        default: "1.0.0"
+        default: "1.1.7"
 permissions:
   contents: write
 jobs:
@@ -19,7 +19,7 @@ jobs:
         env: { FM: "${{ vars.FEEDBACK_MAIL }}" }
         run: printf "window.FEEDBACK_MAIL='%s';\n" "${FM:-emreanduvart@gmail.com}" > www/iletisim.js
       - name: Yayın öncesi kontrol (main dalı, özellikler eksiksiz, sürüm geri gitmiyor)
-        env: { SURUM: "${{ inputs.version_name || '1.0.0' }}" }
+        env: { SURUM: "${{ inputs.version_name || '1.1.7' }}" }
         run: bash araclar/yayin-kontrol.sh
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
@@ -30,18 +30,18 @@ jobs:
       - name: Yükleme anahtarı (repo sırrı ANDROID_KEYSTORE_B64 varsa paket imzalı çıkar)
         env: { KS: "${{ secrets.ANDROID_KEYSTORE_B64 }}" }
         run: |
-          if [ -n "$KS" ]; then printf '%s' "$KS" | base64 -d > $RUNNER_TEMP/upload.jks; echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> $GITHUB_ENV; echo "İmzalı derlenecek"; else echo "::warning::ANDROID_KEYSTORE_B64 yok, paket imzasız çıkacak"; fi
+          if [ -n "$KS" ]; then printf '%s' "$KS" | base64 -d > $RUNNER_TEMP/upload.jks; echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> $GITHUB_ENV; echo "İmzalı derlenecek"; else echo "::error::ANDROID_KEYSTORE_B64 sırrı yok; Google Play imzasız paketi kabul etmez"; exit 1; fi
       - name: AAB derle
         working-directory: android
         env:
           VERSION_CODE: ${{ github.run_number }}
-          VERSION_NAME: ${{ inputs.version_name || '1.0.0' }}
+          VERSION_NAME: ${{ inputs.version_name || '1.1.7' }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: kervanyolu
         run: chmod +x gradlew && ./gradlew bundleRelease --no-daemon
       - name: Paketi builds dalına koy
         run: |
-          OUT=kervan-yolu-${{ inputs.version_name || '1.0.0' }}-${{ github.run_number }}.aab
+          OUT=kervan-yolu-${{ inputs.version_name || '1.1.7' }}-${{ github.run_number }}.aab
           cp android/app/build/outputs/bundle/release/app-release.aab /tmp/$OUT
           mkdir -p /tmp/b/android && cp /tmp/$OUT /tmp/b/android/ && cd /tmp/b
           git init -q -b builds && git config user.name "github-actions" && git config user.email "actions@github.com"
@@ -49,5 +49,5 @@ jobs:
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" builds
       - uses: actions/upload-artifact@v4
         with:
-          name: kervan-yolu-${{ inputs.version_name || '1.0.0' }}-${{ github.run_number }}.aab
+          name: kervan-yolu-${{ inputs.version_name || '1.1.7' }}-${{ github.run_number }}.aab
           path: android/app/build/outputs/bundle/release/app-release.aab

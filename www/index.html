@@ -1555,7 +1555,7 @@ addEventListener('pointerup',e=>{if(dragging&&pd<10)tapScene(e.clientX,e.clientY
 const FREE_LIMIT=3;
 const PRODUCT='com.anduv.kervanyolu.tamsurum';
 const IAP=()=>window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.NativePurchases;
-const PAID=()=>{try{const p=window.Capacitor&&window.Capacitor.getPlatform&&window.Capacitor.getPlatform();return p==='ios'||p==='android'}catch(e){return false}};
+const PAID=()=>{if(window.KY_MAGAZA)return false;try{const p=window.Capacitor&&window.Capacitor.getPlatform&&window.Capacitor.getPlatform();return p==='ios'||p==='android'}catch(e){return false}};
 const needFull=n=>PAID()&&!SAVE.full&&n>FREE_LIMIT;
 let fullFor=null;
 function openFull(n){fullFor=n||null;$('fH').textContent=T('fullT');$('fText').textContent=T('fullText');$('fList').innerHTML=T('fullList').map(x=>`<li>${x}</li>`).join('');
@@ -1574,9 +1574,11 @@ setTimeout(()=>{if(!SAVE.full&&IAP())restorePurchases(false)},2500);
 
 // ================= REHBER, AYARLAR, PUAN, PAYLAŞ, GÖRÜŞ =================
 const CAP=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+/* Steam ve Meta Quest paketinde mağaza 1,99 $ tam oyun satar: uygulama içi puan ve satın alma yok (window.KY_MAGAZA) */
+const RATEOK=()=>CAP()&&!window.KY_MAGAZA;
 const PLAT=()=>{try{return window.Capacitor?window.Capacitor.getPlatform():'web'}catch(e){return'web'}};
 const APPSTORE_ID='6837800818';
-const STORE_URL=()=>PLAT()==='android'?'https://play.google.com/store/apps/details?id=com.anduv.kervanyolu':(APPSTORE_ID?'https://apps.apple.com/app/id'+APPSTORE_ID:'https://emreanduv.github.io/');
+const STORE_URL=()=>window.KY_MAGAZA?'https://emreanduv.github.io/kervan-yolu/':PLAT()==='android'?'https://play.google.com/store/apps/details?id=com.anduv.kervanyolu':(APPSTORE_ID?'https://apps.apple.com/app/id'+APPSTORE_ID:'https://emreanduv.github.io/');
 let coachCur=null,coachT=0;
 const COACH={tako:['c_takoT','c_tako'],gas:['c_gasT','c_gas'],fork:['c_forkT','c_fork'],strap:['c_strapT','c_strap'],drone:['c_droneT','c_drone'],cam:['c_camT','c_cam'],off:['c_offT','c_off'],kanat:['c_kanatT','c_kanat'],night:['c_nightT','c_night'],hard:['c_hardT','c_hard'],lifter:['c_liftT','c_lift'],chain:['c_chainT','c_chain'],wind:['c_windT','c_wind']};
 function coach(k){if(!G||SAVE.tips[k]||coachCur===k)return;if(coachCur&&coachCur!=='gas')return;const m=COACH[k];if(!m)return;coachCur=k;coachT=k==='gas'?999:5;const e=$('coach');e.innerHTML='<b>'+T(m[0])+'</b>'+T(m[1]);e.style.display='block';if(k!=='gas'){SAVE.tips[k]=1;save()}}
@@ -1600,8 +1602,8 @@ $('bShare').onclick=()=>shareGame(0);
 function feedback(){const to=window.FEEDBACK_MAIL||'';const sub='Kervan Yolu '+VERSION+' — '+(L==='tr'?'Görüş':'Feedback');
  const body=(L==='tr'?'Merhaba,\n\n\n\n— Bilgi (silmeyin) —\n':'Hi,\n\n\n\n— Info (please keep) —\n')+'Sürüm/Version: '+VERSION+'\nPlatform: '+PLAT()+' · '+navigator.userAgent+'\nSefer/Job: '+nextSefer()+' · '+(L==='tr'?'Kazanç':'Earnings')+': '+Math.round(SAVE.money)+' ₺ · km: '+SAVE.km.toFixed(1);
  location.href='mai'+'lto:'+to+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body)}
-async function rateNow(){SAVE.rated=1;save();const R=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.InAppReview;if(R&&CAP()){try{await R.requestReview();return}catch(e){}}openUrl(STORE_URL())}
-function maybeAskRate(meaningful){const b=$('rateBox');b.style.display='none';if(!meaningful||!CAP()||SAVE.rated||SAVE.rateAsks>=2)return;SAVE.rateAsks++;save();
+async function rateNow(){SAVE.rated=1;save();const R=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.InAppReview;if(R&&RATEOK()){try{await R.requestReview();return}catch(e){}}openUrl(STORE_URL())}
+function maybeAskRate(meaningful){const b=$('rateBox');b.style.display='none';if(!meaningful||!RATEOK()||SAVE.rated||SAVE.rateAsks>=2)return;SAVE.rateAsks++;save();
  $('rbQ').textContent=T('rateQ');$('rbYes').textContent=T('rateYes');$('rbFeed').textContent=T('rateFeed');$('rbLater').textContent=T('later');b.style.display='block'}
 $('rbYes').onclick=()=>{$('rateBox').style.display='none';rateNow()};$('rbFeed').onclick=()=>{$('rateBox').style.display='none';SAVE.rated=1;save();feedback()};$('rbLater').onclick=()=>{$('rateBox').style.display='none'};
 let eraseArm=0;
@@ -1613,7 +1615,7 @@ function openSettings(from){backTo=from||'menu';fillSettings();show('setp')}
 function fillSettings(){$('sH').textContent=T('settings');$('sLangL').textContent=T('language');$('sSndL').textContent=T('sound');$('sSnd').textContent=SAVE.muted?T('off'):T('on');fmSet();
  $('sHelpL').textContent=T('help');$('sHelp').textContent=T('open');$('sRateL').textContent=T('rateL');$('setRate').textContent=T('rate');$('sFeedL').textContent=T('feedL');$('setFeed').textContent=T('feed');
  $('sShareL').textContent=T('share');$('sShare').textContent=T('open');$('sEraseL').textContent=T('eraseL');$('setErase').textContent=T('erase');$('sVer').textContent=T('version')+' '+VERSION;
- $('rowRate').style.display=CAP()?'flex':'none';$('sFullL').textContent=T('fullT');$('setBuy').textContent=T('fullBuy');$('setRestore').textContent=T('restore');drawFullChip();document.querySelectorAll('[data-sl]').forEach(b=>b.classList.toggle('gold',b.dataset.sl===L))}
+ $('rowRate').style.display=RATEOK()?'flex':'none';$('sFullL').textContent=T('fullT');$('setBuy').textContent=T('fullBuy');$('setRestore').textContent=T('restore');drawFullChip();document.querySelectorAll('[data-sl]').forEach(b=>b.classList.toggle('gold',b.dataset.sl===L))}
 $('bSet').onclick=()=>openSettings('menu');$('sClose').onclick=()=>{show(backTo);if(backTo==='menu')renderMenu()};
 $('sSnd').onclick=()=>{setMute(!SAVE.muted);fillSettings()};$('sHelp').onclick=()=>openHelp('setp');
 document.querySelectorAll('[data-sl]').forEach(b=>b.onclick=()=>{pickLang(b.dataset.sl);fillSettings()});
