@@ -116,3 +116,9 @@ Hatalar tek tek değil kuralla çözülür. Hareket eden her araç (tır, dorse,
 - Bugünkü katı cisimler: tır, dorse (yüküyle birlikte, tam genişlik), forklift, yerdeki kasalar, istif yükleri, tren (`window.KATI_EK`), trafik araçları, eskort ve polis aracı. Modüller kendi cisimlerini `window.KATI_EK.push(grup)` ile ekler.
 - **Yeni hareketli bir şey eklerken üç adım:** (1) katı cisim listesine ekle, (2) kendi hareketinde `aracaDegiyor` ya da `collides` ile sına, (3) `araclar/testler/`'deki denetime bir senaryo ekle (örnek: `tren-denetimi.py`). Üçü yapılmadan özellik bitmiş sayılmaz.
 - Aynı mantık bütün 3B oyunlara (Gelişim Defteri G102) uygulanır.
+
+### Repolar private, vitrin public (Emre'nin kuralı, 28 Kasım 2026)
+- **Bütün repolar private.** Yalnız iki repo public: `emreanduv/emreanduv` (profil) ve `emreanduv/emreanduv.github.io` (vitrin). Yeni bir oyun/uygulama reposu açılırken ilk günden private açılır.
+- Herkesin görmesi gereken her şey vitrine işlenir: gizlilik politikaları, destek sayfası, web/VR sürümleri, önizlemeler, tanıtım metinleri ve bağlantılar → `emreanduv.github.io/<ürün-adı>/…`. Oyun/uygulamanın ana klasörü (kod) private repoda kalır.
+- Mağazalara (App Store, Google Play, Meta, Steam) verilen gizlilik/destek/pazarlama bağlantısı **asla** `github.com/emreanduv/<repo>/…` (blob, issues, docs) olmaz; her zaman vitrin adresi. Bir sayfa repoda değişirse vitrindeki kopyası da aynı gün güncellenir.
+- İstisna (yalnız Emre'nin kararıyla): GitHub Actions bütçesi bitip iş durursa, bir repo ay başında dakikalar yenilenene kadar **kısa süreli** public yapılabilir. Açmadan önce repoda anahtar/şifre/.env/imza dosyası olmadığı denetlenir; ay dönünce yeniden private yapılır.
