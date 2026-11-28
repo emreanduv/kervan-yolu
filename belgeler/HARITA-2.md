@@ -23,3 +23,9 @@ Kural: mağazadaki sürüm (main, 1.1.4) olduğu gibi kalır. Bu dal bitip sekiz
 - Sekiz denetim marmara + hatay geçti; önizleme: emreanduv.github.io/kervan-yolu/harita2/?bolge=hatay
 - Bilinen eksikler: liman yerleşimi oyundaki gibi denizi solda varsayıyor, gerçek kıyı sağda (liman yerleşimini gerçek kıyıya göre çevir);
   İskenderun kent kesimi, Belen kasabası, kesim türleri; trafik, tesis, kamera sayısı 23 km'ye göre; mini harita; harita ekranı.
+
+## Durum (28 Kasım 2026, öğle)
+- Liman gerçek kıyıya oturdu: dünya 180° çevrildi, liman yol ile deniz arasında; limandan U dönüşlü bağlantı yolu D-817'ye bağlanır.
+- Gerçek yerleşim: OSM'deki 3839 bina izinin 80 m'lik hücre özeti (sayı, taban alanı, yön) ve 11 caminin gerçek konumu. Kent kesimi (50 km/sa) kurulan binalardan hesaplanır.
+- Yön levhaları gerçek uzaklıkla (Belen, geçit, RES); takograf gerçek ölçekli haritada gerçek süre sayar.
+- Sıradaki: D-817 gerçekte bölünmüş yol (2×2 şerit, orta refüj) — yol kesiti bölge verisinden; alçak evlere kiremit çatı; Belen RES'in gerçek türbin konumları (OSM power=generator); diğer bölgeler.
