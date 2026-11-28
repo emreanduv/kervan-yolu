@@ -1,7 +1,7 @@
 # Kervan Yolu — Yayın durumu (22 Kasım 2026)
 
 Kimlik: `com.anduv.kervanyolu` (iOS + Android) · SKU `kervan-yolu` · Mağazada ücretsiz, Tam Sürüm 1,99 $ (`com.anduv.kervanyolu.tamsurum`, ilk 3 sefer açık) · Dikey + yatay
-Gizlilik: https://github.com/emreanduv/kervan-yolu/blob/main/docs/GIZLILIK.md · Mağaza metinleri: `store/magaza-metinleri.md`, `store/appstore-metadata/`
+Gizlilik: https://emreanduv.github.io/kervan-yolu/gizlilik.html (28 Kas 2026: repo private iken GitHub bağlantısı kırıldı; 1.1.5 ile değişti) · Mağaza metinleri: `store/magaza-metinleri.md`, `store/appstore-metadata/`
 Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar/magaza-gorselleri.py`), `store/play-icon-512.png`
 
 ## Durum

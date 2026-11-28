@@ -1,5 +1,3 @@
-1.1.4:
-- Hemzemin geçitlerde bariyer kolları yola iner ve şeridi kapatır, uçlarında kırmızı ışık yanıp söner. Karşıdan gelen araçlar bariyerde durur, refakat araçları raya park etmez, tren raydaki her araç için acil fren yapar.
-- Tır saha girişinde artık yola gömülmüyor; akaryakıt istasyonu ve kantar zemini araziye oturuyor.
-- Rüzgâr türbini üreticisi ve yatırımcı şirket adları yenilendi; eski kayıtlar kendiliğinden güncellenir.
-- Görsel düzeltmeler: üst bilgi çubuğu çentikli ekranlarda doğru yerde, hedef ışık sütunu tıra yaklaşınca kayboluyor.
+1.1.5:
+- Gizlilik politikası sayfası yeni adresine taşındı.
+- Küçük kararlılık düzeltmeleri.

@@ -1,5 +1,3 @@
-1.1.4:
-- Level crossings: barrier arms now come down across the road and close the lane, with flashing red tip lights. Oncoming cars stop at the barrier, escort vehicles never park on the track, and the train brakes for any vehicle on the rails.
-- The truck no longer sinks into the road at the site entrance; the fuel station and weigh station surfaces sit on the terrain.
-- New names for the turbine makers and investor companies; old saves update automatically.
-- Visual fixes: the top bar sits correctly on notched screens, and the target light beam fades as the truck gets close.
+1.1.5:
+- The privacy policy page moved to its new address.
+- Minor stability fixes.
