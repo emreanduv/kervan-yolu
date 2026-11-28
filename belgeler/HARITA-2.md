@@ -1,0 +1,19 @@
+# Harita 2: büyük, gerçek, çeşitli haritalar (dal: harita-2)
+
+Kural: mağazadaki sürüm (main, 1.1.4) olduğu gibi kalır. Bu dal bitip sekiz denetim + telefon denemesi + Emre'nin testi geçmeden main'e birleşmez.
+
+## Bugün
+- Her bölge tek yol: 700 örnek nokta, ≈1,5 km (`REGIONS[*].rp`, `buildRegion`, `RS/NS/ROADLEN`).
+- Arazi gürültüyle; gerçek yükseklik yok.
+
+## Hedef
+1. **Gerçek yükseklik:** rota boyunca SRTM 90 m (OpenTopoData) profili; dağ geçidi, kıyı, yayla gerçeğe uygun. (İskenderun kıyısı 9 m → Belen 543 m doğrulandı.)
+2. **Uzun rota, kesimlerle:** her sefer 8–15 km; kesim türleri: liman çıkışı, çevreyolu/kavşak, bölünmüş devlet yolu, kasaba içi (dönel kavşak, ışık), köy yolu, dağ geçidi (serpantin), saha yolu (stabilize). Her kesimin kendi şerit genişliği, hız sınırı, trafiği, etüt engelleri.
+3. **Akışlı dünya:** yol ve arazi parça parça yüklenir/boşaltılır (telefon belleği); uzak görünüm basit (LOD). KATI sistemi, yol zarfı ve sekiz denetim parçalı dünyaya taşınır.
+4. **Çeşitlilik:** bazı seferlerde iki rota (kısa ama dar/alçak telli ↔ uzun ama geniş) — gerçek güzergâh etüdü gibi; harita ekranı; mevsim ve hava.
+5. **Yeni bölgeler** (evren kuralı: önce Türkiye'nin güzellikleri), iş verisi ya da proje konumu kullanılmadan, yalnız kamuya açık coğrafya.
+
+## Sıra
+1. Altyapı: kesimli rota + akışlı dünya, sekiz denetim parçalı dünyada (pilot: Hatay, İskenderun → Belen, gerçek profil).
+2. Pilotu web önizleme olarak Emre'ye aç (mağazaya değil).
+3. Emre'nin notlarından sonra öteki bölgeler.
