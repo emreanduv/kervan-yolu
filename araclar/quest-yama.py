@@ -4,7 +4,7 @@
 Meta, web uygulaması (PWA/TWA) paketlerini yalnız ücretsiz satıyor; Kervan Yolu Quest'te 1,99 $ tam oyun
 olduğu için doğal Android paketi gerekir. Meta'nın sürüm bildirimi şartları
 (developers.meta.com/vr/distribute/publish-mobile-manifest):
-  minSdk 29-34, targetSdk 34, installLocation auto, başlatıcı etkinlikte excludeFromRecents,
+  minSdk 29-34, targetSdk 34, allowBackup false (Quest'te Google yedeği yok; Meta güvenlik testi uyarıyor), installLocation auto, başlatıcı etkinlikte excludeFromRecents,
   com.oculus.supportedDevices, 2D uygulamada headtracking required=false.
 Kullanım: python3 araclar/quest-yama.py android
 """
@@ -42,6 +42,7 @@ if "excludeFromRecents" not in t:
     t = t.replace('android:name=".MainActivity"', 'android:name=".MainActivity"\n            android:excludeFromRecents="true"', 1)
 if "android.hardware.vr.headtracking" not in t:
     t = t.replace("</manifest>", '    <uses-feature android:name="android.hardware.vr.headtracking" android:required="false" android:version="1" />\n</manifest>', 1)
+t = t.replace('android:allowBackup="true"', 'android:allowBackup="false"')
 for yasak in ("com.android.vending.BILLING", "android.permission.POST_NOTIFICATIONS", "android.permission.SCHEDULE_EXACT_ALARM"):
     t = re.sub(r'\s*<uses-permission android:name="' + re.escape(yasak) + r'"\s*/>', "", t)
 m.write_text(t)
