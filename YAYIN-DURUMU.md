@@ -22,7 +22,7 @@ Görseller: `store/screenshots/{tr,en}/{iphone69,ipad13,play}` (`python3 araclar
 - [x] 22 Kas 2026: Emre derleme 8'i denedi, sorun yok dedi → gönderim başlatıldı; sürüm taslak gönderime (reviewSubmission) eklendi
 - [ ] **Kalan tek adım:** Apple, ilk tek seferlik ürünün (Tam Sürüm) API'yle gönderilmesine izin vermiyor (`FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION`). Emre App Store Connect'e girince: sürüm 1.0.0 sayfası → "In-App Purchases" bölümünde Tam Sürüm'ü seç → "Add for Review" → "Submit for Review" (Claude yerleşik tarayıcıda yapar)
 - Ders (bütün yeni ürünler): ilk Tam Sürüm ürünü her zaman sürüm sayfasından elle eklenir; sonraki sürümlerde `araclar/appstore-gonder.py` kendisi gönderir
-- [ ] (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
+- [ ] 28 Kas 2026: Google Play başladı (1.1.7). Play Console'da uygulama formu dolduruldu (Kervan Yolu, com.anduv.kervanyolu, Türkçe, Oyun, Ücretsiz); beyanlar + Oluştur Emre'de. GitHub sırları ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD Emre'de; sonra store/TETIK-ANDROID ile imzalı AAB. Eski not: (Bekletiliyor, Emre 21 Kas 2026) Google Play: sonra bütün oyunlar için toplu çalışmada yapılacak. Android anahtarı hazır (`imza-anahtari/`, Emre'ye verildi)
 - [ ] Steam (Electron) ve Meta Horizon (WebXR/Quest) paketleri: Apple ve Google'dan sonra
 - [x] EN ekran görüntüleri yeniden üretildi (KM/H)
 - [x] 22 Kas 2026: takılma düzeltmeleri (derleme 2-4), ses koruyucu v3 (5-6), yük kayması uyarısı hedef hızla (7)
