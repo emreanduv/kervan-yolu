@@ -70,7 +70,7 @@
     durum.b = (durum.b || 0) + 1; yaz();
     if (durum.soruldu || durum.acik === 1 || durum.b < 2) return;
     setTimeout(function () {
-      var acikPencere = Array.prototype.some.call(document.querySelectorAll('#rateBox,.rateBox,[data-puan-kutusu]'), function (e) { return !e.hidden && e.offsetParent !== null; });
+      var acikPencere = Array.prototype.some.call(document.querySelectorAll('#rateBox,.rateBox,#puanKutu,.puanKutu,#puanKutusu,[data-puan-kutusu]'), function (e) { return !e.hidden && e.offsetParent !== null; });
       if (acikPencere || document.hidden) return;
       durum.soruldu = 1; yaz(); sor();
     }, 2600);
@@ -85,8 +85,10 @@
   }
   async function degistir() { oku(); if (durum.acik === 1) { durum.acik = 0; yaz(); iptal(); satirYenile(); } else { durum.soruldu = 1; await izinIste(); } }
   function temizle(el) {
-    if (el.removeAttribute) ['id', 'hidden', 'data-t', 'data-i18n', 'data-a', 'data-k', 'onclick', 'href'].forEach(function (a) { el.removeAttribute(a); });
-    Array.prototype.forEach.call(el.querySelectorAll('*'), function (e) { ['id', 'data-t', 'data-i18n', 'data-a', 'data-k', 'onclick', 'href'].forEach(function (a) { e.removeAttribute(a); }); });
+    // kopyada oyunun kendi bağları kalmasın: id, data-*, on*, href
+    [el].concat(Array.prototype.slice.call(el.querySelectorAll('*'))).forEach(function (e) {
+      Array.prototype.slice.call(e.attributes).forEach(function (a) { if (a.name === 'id' || a.name === 'href' || a.name === 'hidden' || a.name.indexOf('data-') === 0 || a.name.indexOf('on') === 0) e.removeAttribute(a.name); });
+    });
     el.hidden = false; el.style.display = '';
   }
   function satirEkle() {
