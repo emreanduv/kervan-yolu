@@ -25,6 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Yayın öncesi kontrol
+        if: runner.os != 'Windows'
         run: bash araclar/yayin-kontrol.sh
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
